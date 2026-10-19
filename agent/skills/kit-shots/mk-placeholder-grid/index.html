@@ -1,0 +1,9 @@
+<!doctype html><html><head><meta charset="utf-8">
+<style>html,body{margin:0;background:linear-gradient(135deg,#f3eefe 0%,#e8f6ff 50%,#fff1f6 100%)} #main{position:absolute;inset:0}</style></head>
+<body><div id="main"></div>
+<script src="/skills/kit-motion/kit.js"></script>
+<script src="/skills/kit-shots/mk-placeholder-grid/shot.js"></script>
+<script>
+  const tl = SLATE.timeline().add(KIT.shots["mk-placeholder-grid"](document.getElementById("main"), { dur: SLATE.duration }), 0);
+  window.render = t => tl.at(t);
+</script></body></html>

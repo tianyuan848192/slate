@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<link rel="stylesheet" href="/assets/fonts/lib/inter.css">
+<link rel="stylesheet" href="/assets/fonts/lib/noto-serif-sc.css">
+<style>
+  *{margin:0;padding:0;box-sizing:border-box}
+  html,body{width:100%;height:100%;overflow:hidden;background:#0b0c0e}
+  #root{position:absolute;inset:0;overflow:hidden;
+    background:radial-gradient(ellipse at 50% 44%, color-mix(in srgb,#14171c 88%,#c5a3ff) 0%, #0b0c0e 72%);}
+  .card{position:absolute;left:14%;width:72%;top:22%;height:50%;
+    display:flex;flex-direction:column;align-items:center;justify-content:center;
+    border:1px solid color-mix(in srgb,#343a46 72%,transparent);
+    background:color-mix(in srgb,#14171c 78%,transparent);}
+  .label{font-family:"Noto Serif SC",serif;font-weight:700;color:#94a3b8;letter-spacing:0.08em}
+  .stat{font-family:Inter,system-ui,sans-serif;font-weight:600}
+</style>
+</head>
+<body>
+<div id="root">
+  <div class="card">
+    <div class="label">本季度新增用户</div>
+    <div class="stat" id="stat">12500</div>
+  </div>
+</div>
+<script src="/skills/kit-motion/kit.js"></script>
+<script src="/skills/kit-motion/count-up.js"></script>
+<script>
+  const u = SLATE.u;
+  const root = document.getElementById("root");
+  const card = root.querySelector(".card");
+  card.style.borderRadius = (4 * u) + "px";
+  card.style.gap = (2 * u) + "px";
+  root.querySelector(".label").style.fontSize = (5 * u) + "px";
+  const stat = root.querySelector("#stat");
+  stat.style.fontSize = Math.min(20 * u, SLATE.width * 0.12) + "px";
+
+  SLATE.waits = SLATE.waits || [];
+  SLATE.waits.push(document.fonts.load('600 100px "Inter"'));
+  SLATE.waits.push(document.fonts.load('700 50px "Noto Serif SC"', "本季度新增用户"));
+
+  const tl = SLATE.timeline();
+  KIT.motions.countUp(tl, stat, {
+    at: 0, dur: SLATE.duration || 3,
+    start: 1200, end: 12500, prefix: "", suffix: "+",
+    color: "#c5a3ff", glow: true
+  });
+  window.render = t => tl.at(t);
+</script>
+</body>
+</html>

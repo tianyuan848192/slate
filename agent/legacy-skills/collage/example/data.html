@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<link rel="stylesheet" href="/skills/collage/style.css">
+<script src="/skills/collage/components.js"></script>
+</head>
+<body>
+<script>
+  // 数据剪报：一张剪下来的柱状图 + 一个大数字。柱子是从底线后面推上来的纸条，旁白点到"七到九月"时换成红色并圈出来
+  // 数字都是示例数据：做片时只用用户给的或有出处的统计，出处标签写明来源和年份。结尾一张新纸从右边盖过来，接下一镜
+  const { seg, u: U, width: W, height: H } = SLATE;
+  const st = CL.stage({ paper: 'cream', push: 0.04, drift: [U * 3, 0], exit: 'sheet' });
+  const w = st.world;
+  const h = CL.heading(w, { kicker: '数据', text: '登陆台风集中在 7～9 月' });
+  const box = st.area({ top: h.bottom + U * 2 });
+
+  // 左：剪报上的柱状图
+  const card = CL.tornCard(w, { x: box.x, y: box.y + U, w: box.w * 0.61, h: box.h - U, tone: 'newsprint', rotate: -1, seed: 33 });
+  const cap = CL.text(card.inner, { x: card.x + U * 4, y: card.y + U * 5.6, text: '各月平均登陆个数', size: U * 3, weight: 700, color: CL.C.ink2 });
+  const months = ['5月', '6月', '7月', '8月', '9月', '10月', '11月'], vals = [0.3, 0.9, 1.8, 2.1, 1.5, 0.5, 0.1];
+  const chart = CL.bars(card.inner, { x: card.x + U * 4, y: card.y + U * 8, w: card.w - U * 8, h: card.h - U * 10, items: months.map((m, i) => ({ label: m, value: vals[i] })), digits: 1, seed: 70 });
+  const hiBars = [2, 3, 4].map(i => chart.box(i)), b2 = hiBars[0], b4 = hiBars[2], topY = Math.min(...hiBars.map(b => b.y));
+  const ring = CL.circle(card.inner, { x: b2.x, y: topY - U * 0.5, w: b4.x + b4.w - b2.x, h: chart.base - topY - U * 1.5, pad: U * 1.2, seed: 9 });
+
+  // 右：大数字 + 手写批注 + 指回柱子的箭头
+  const rx = card.x + card.w + (box.x + box.w - card.x - card.w) / 2;
+  const big = CL.counter(w, { x: rx, y: box.y + box.h * 0.52, value: 7, prefix: '约', unit: '个', label: '平均每年登陆', size: U * 15 });
+  const memo = CL.note(w, { x: rx, y: box.y + box.h * 0.8, text: '7～9 月约占 3/4', anchor: 'middle', rotate: -3 });
+  const arw = CL.arrow(w, { from: [rx - U * 17, box.y + box.h * 0.74], to: [b4.x + b4.w + U * 9, b4.y + U * 13], bend: -0.25, seed: 13 });
+  const src = CL.sourceTag(st.hud, { text: '数据：示例，仅演示版式' });
+
+  function render(t) {
+    const T = CL.step(t);
+    st.set(t);
+    h.draw(seg(T, 0.2, 1.2));
+    card.draw(seg(T, 0.4, 0.9));
+    cap.draw(seg(T, 0.9, 1.3));
+    chart.draw(seg(T, 1.0, 2.8));
+    big.draw(seg(T, 2.2, 3.4));
+    chart.focus([2, 3, 4], seg(T, 3.6, 4.0));
+    ring.draw(seg(T, 3.8, 4.4));
+    memo.draw(seg(T, 4.2, 4.9, SLATE.ease.linear));
+    arw.draw(seg(T, 4.9, 5.4));
+    src.draw(seg(T, 1.2, 1.6));
+  }
+</script>
+</body>
+</html>

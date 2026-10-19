@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="zh">
+<head>
+<meta charset="utf-8" />
+<link rel="stylesheet" href="/assets/fonts/lib/noto-serif-sc.css" />
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body { width: 100%; height: 100%; overflow: hidden; }
+  body { background: linear-gradient(135deg, #274060 0%, #112233 100%); }
+  #root { position: absolute; inset: 0; }
+  #card {
+    position: absolute; left: 50%; top: 50%;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    background: rgba(255, 255, 255, 0.06); border: 2px solid rgba(244, 242, 236, 0.25);
+    border-radius: 18px; color: #f4f2ec; font-family: "Noto Serif SC", serif; text-align: center;
+  }
+  #card h1 { font-weight: 700; line-height: 1.15; }
+  #card p { opacity: 0.75; margin-top: 0.4em; }
+</style>
+</head>
+<body>
+<div id="root">
+  <div id="card">
+    <h1>营收创下新高</h1>
+    <p>第三季度同比增长 42%</p>
+  </div>
+</div>
+<script src="/skills/kit-motion/kit.js"></script>
+<script src="/skills/kit-motion/hw-arrow.js"></script>
+<script>
+  const u = SLATE.u;
+  const card = document.getElementById("card");
+  const cw = 60 * u, ch = 26 * u;
+  Object.assign(card.style, {
+    width: cw + "px", height: ch + "px", marginLeft: -cw / 2 + "px", marginTop: -ch / 2 - 4 * u + "px",
+  });
+  card.querySelector("h1").style.fontSize = 8 * u + "px";
+  card.querySelector("p").style.fontSize = 4 * u + "px";
+
+  SLATE.waits = SLATE.waits || [];
+  SLATE.waits.push(Promise.all([
+    document.fonts.load('700 80px "Noto Serif SC"'),
+    document.fonts.load('400 40px "Noto Serif SC"'),
+  ]).catch(() => {}));
+
+  const tl = SLATE.timeline();
+  KIT.motions.hwArrow(tl, card, { at: 0, dur: 4, side: "left", style: "gentle", stroke: "plain", boil: "calm", size: 32 * u, weight: 10 });
+  KIT.motions.hwArrow(tl, card, { at: 0.5, dur: 4, side: "right", style: "swoop", stroke: "spray", boil: "lively", color: "#ffd166", size: 32 * u, weight: 10 });
+  window.render = (t) => tl.at(t);
+</script>
+</body>
+</html>

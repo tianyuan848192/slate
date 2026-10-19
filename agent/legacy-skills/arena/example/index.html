@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<link rel="stylesheet" href="/skills/arena/style.css">
+<script src="/skills/arena/components.js"></script>
+</head>
+<body>
+<script>
+  // 开场：标题故障入场 → 五位选手卡翻转亮相（示例数据，做片时换成真实选手和有出处的信息）
+  const { seg, u: U, width: W, height: H } = SLATE;
+  const st = NA.stage({ zoom: [1.02, 1.06] });
+  const w = st.world;
+  const t1 = NA.title(w, { x: W / 2, y: H * 0.25, text: '大模型擂台', size: U * 11, anchor: 'middle' });
+  const sub = NA.label(w, { x: W / 2, y: H * 0.25 + U * 6, text: '五位选手 · 七个领域 · 一张成绩单', size: U * 3, anchor: 'middle', color: NA.C.ink2, weight: 600 });
+  const names = ['模型 A', '模型 B', '模型 C', '模型 D', '模型 E'];
+  const tags = ['推理见长', '代码稳定', '中文语感', '长文本', '速度快'];
+  const cw = U * 25, gap = U * 3, x0 = W / 2 - (cw * 5 + gap * 4) / 2;
+  const cards = names.map((n, i) => NA.player(w, {
+    x: x0 + i * (cw + gap), y: H * 0.38, w: cw, h: U * 40, name: n, vendor: '示例厂商', tag: tags[i], index: i,
+    stats: [{ k: '推理', v: '—', p: 0.5 + i * 0.08 }, { k: '代码', v: '—', p: 0.8 - i * 0.07 }],
+  }));
+  const wm = NA.watermark(st.hud, { text: '示例数据' });
+
+  function render(t) {
+    st.set(t);
+    t1.draw(seg(t, 0.15, 1.3)); t1.sweep(seg(t, 1.4, 2.2, SLATE.ease.linear));
+    sub.draw(seg(t, 0.9, 1.6));
+    cards.forEach((c, i) => {
+      c.draw(seg(t, 1.6 + i * 0.25, 2.6 + i * 0.25));
+      // 依次点名：每位选手高亮 0.6 秒，其余压暗
+      const on = seg(t, 4 + i * 0.6, 4.25 + i * 0.6) - seg(t, 4.45 + i * 0.6, 4.7 + i * 0.6);
+      c.focus(on);
+    });
+    wm.draw(seg(t, 0.5, 1));
+  }
+</script>
+</body>
+</html>

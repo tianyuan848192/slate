@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<link rel="stylesheet" href="/skills/swiss/style.css">
+<script src="/skills/swiss/components.js"></script>
+</head>
+<body>
+<script>
+  // 新品发布开场（16:9，7 秒；示例品牌和产品，做片时换成用户的）
+  //   0～1.2 秒 网格从左上角长出，信号色大数字"2"升起并翻到位 → 1.1 秒 两行大标题 → 1.6 秒 产品图从下往上揭示，之后缓慢推近
+  //   → 2.6 秒 底部两条注释行 → 4.8 秒 网格线收走，只剩海报本身
+  const { u: U } = SLATE;
+  const { lin } = SW;
+  const st = SW.stage({ grid: 'build' });
+  const G = st.G, w = st.world;
+
+  const fo = SW.folio(st.hud, { items: [[0, 'HUSH'], [3, '主动降噪耳机'], [6, '新品发布'], [11, '01 / 05', 'end']] });
+
+  // 左半版：小标题、两行大标题、两条注释
+  const ty = G.y(2) - U * 2;
+  const kick = SW.text(w, { x: G.x(0), y: ty - U * 5, text: '2026 秋季新品', size: U * 2.6, weight: 600 });
+  const ttl = SW.title(w, { x: G.x(0), y: ty, lines: ['听见', '安静本身'], size: U * 12.5, weight: 700 });
+  const n1 = SW.note(w, { x: G.x(0), y: G.y(5), w: G.w(3), text: 'HUSH 2 头戴式降噪耳机' });
+  const n2 = SW.note(w, { x: G.x(3), y: G.y(5), w: G.w(3), text: '10 月 24 日发售' });
+
+  // 右半版：信号色大数字压在产品后面，产品是透明底抠图，不加底板
+  const big = SW.numeral(w, { x: G.x(6) - U * 2, y: G.y(0) - U * 1, value: '2', size: U * 66, lh: 0.8, weight: 800, color: SW.C.signal });
+  const prod = SW.product(w, { ...G.box(8, 4, 2, 4), src: 'hush-cutout.svg', mode: 'cutout', bg: 'none', pad: 0.02, pos: '100% 100%', zoom: [1, 1.05] });
+
+  function render(t) {
+    st.set(t);
+    st.grid.out(lin(t, 4.8, 6.0));
+    fo.draw(lin(t, 0.1, 0.9));
+    big.draw(lin(t, 0.3, 1.5));
+    kick.draw(lin(t, 0.9, 1.6));
+    ttl.draw(lin(t, 1.1, 2.1));
+    prod.draw(lin(t, 1.6, 2.7));
+    prod.push(lin(t, 1.6, 7));
+    n1.draw(lin(t, 2.6, 3.3));
+    n2.draw(lin(t, 2.75, 3.45));
+  }
+</script>
+</body>
+</html>

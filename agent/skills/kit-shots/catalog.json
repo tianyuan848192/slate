@@ -1,0 +1,2129 @@
+[
+ {
+  "id": "bar-chart-race",
+  "title": "条形图竞赛",
+  "summary": "排名条形随时间序列增长并互相超越，坐标轴随数值上涨重新缩放，领先者换成强调色",
+  "use_when": "讲多个对象多年数据的排名变化、市场份额争夺、谁后来居上",
+  "native": 12,
+  "ratios": [
+   "16:9"
+  ],
+  "webgl": false,
+  "content_fields": [
+   {
+    "key": "title",
+    "desc": "主标题"
+   },
+   {
+    "key": "subtitle",
+    "desc": "副标题"
+   },
+   {
+    "key": "periodCaption",
+    "desc": "右上角时期的小标签，如“年份”"
+   },
+   {
+    "key": "periods",
+    "desc": "时期标签数组，如 [\"2019\",\"2020\"]"
+   },
+   {
+    "key": "series",
+    "desc": "数据系列数组 [{name, values:[每个时期一个数]}]；也可以是“名称: v1, v2”每行一条的文本"
+   },
+   {
+    "key": "barCount",
+    "desc": "同时显示的条数（3–12）"
+   },
+   {
+    "key": "periodDuration",
+    "desc": "每个时期的秒数（原设计时长下）"
+   },
+   {
+    "key": "valuePrefix",
+    "desc": "数值前缀"
+   },
+   {
+    "key": "valueSuffix",
+    "desc": "数值后缀"
+   },
+   {
+    "key": "valueDecimals",
+    "desc": "小数位数"
+   },
+   {
+    "key": "source",
+    "desc": "左下角数据来源说明"
+   }
+  ],
+  "theme_vars": [
+   {
+    "name": "--kit-accent",
+    "desc": "领先者的强调色"
+   },
+   {
+    "name": "--kit-bg",
+    "desc": "背景色"
+   },
+   {
+    "name": "--kit-ink",
+    "desc": "主文字和普通条形颜色"
+   },
+   {
+    "name": "--kit-muted",
+    "desc": "次要文字颜色"
+   },
+   {
+    "name": "--kit-font",
+    "desc": "字体栈"
+   }
+  ],
+  "notes": "默认 6 个时期、每期 2 秒：前 10 秒是竞赛，最后 2 秒停在终局。实际时长短于 12 秒时整场竞赛等比压缩，更长时就停在最后一帧。为了避开字幕区，绘图区从原来的 236–996px 收到 222–810px，数据来源也挪到了 820px 左右，所以每一行比原作略矮。排名、超越、配色和坐标轴缩放的算法和原作一致：每个时期插 10 个关键帧，换位用 smoothstep 过渡；强调色不做渐变，数值一超过就整体交给新的领先者。",
+  "frame_s": 0.16
+ },
+ {
+  "id": "code-diff",
+  "content_fields": [
+   {
+    "desc": "标题栏中高亮显示的文件名",
+    "key": "filename"
+   },
+   {
+    "desc": "文件名后的说明文字",
+    "key": "label"
+   },
+   {
+    "desc": "改动前的代码（多行字符串，用 \\n 分行）",
+    "key": "before"
+   },
+   {
+    "desc": "改动后的代码（多行字符串）。和 before 按行比较，算出删除行和新增行",
+    "key": "after"
+   }
+  ],
+  "native": 6,
+  "notes": "节奏和原作一样：0–0.5s 编辑器淡入，同时从 0.985 放大到 1；0.45s 起代码淡入；1.2s 删除行收起，每行错开 0.08s；1.9s 新增行展开，每行错开 0.12s；之后一直停到镜头结束，原作没有退场。行高收起或展开时，行内文字跟着纵向压扁或拉开，免得和相邻行的文字重叠；原作是直接裁切。语法高亮用内置的简易 JS 分词器生成，配色沿用原作的暗色主题。按行比较用最长公共子序列。代码建议不超过 9 行。",
+  "ratios": [
+   "16:9"
+  ],
+  "summary": "编辑器窗口淡入，删除的代码行带红底收起，新增行带绿底逐行展开",
+  "theme_vars": [
+   {
+    "desc": "画面底色",
+    "name": "--kit-bg"
+   },
+   {
+    "desc": "强调蓝（背景网格、光晕）",
+    "name": "--kit-accent"
+   },
+   {
+    "desc": "删除行的颜色",
+    "name": "--kit-del"
+   },
+   {
+    "desc": "新增行的颜色",
+    "name": "--kit-add"
+   },
+   {
+    "desc": "代码字体栈",
+    "name": "--kit-font"
+   }
+  ],
+  "title": "代码差异对比",
+  "use_when": "讲代码改动、重构前后对比、展示一次提交或补丁的内容",
+  "webgl": false,
+  "frame_s": 0.56
+ },
+ {
+  "id": "code-highlight",
+  "title": "代码行高亮扫过",
+  "summary": "深色编辑器窗口浮现，一道蓝色高亮带从左向右扫过目标代码行，其余行同时变暗",
+  "use_when": "讲解代码时把注意力引到某一行，比如关键调用、出错的那一行、新增的逻辑",
+  "native": 5,
+  "ratios": [
+   "16:9"
+  ],
+  "webgl": false,
+  "content_fields": [
+   {
+    "key": "filename",
+    "desc": "标题栏里高亮显示的文件名，如 loadConfig.js"
+   },
+   {
+    "key": "subtitle",
+    "desc": "文件名后面的灰色说明文字"
+   },
+   {
+    "key": "code",
+    "desc": "代码文本，用 \\n 分行，自动做 JS 风格语法着色；建议不超过 12 行，每行不超过约 60 个半角字符"
+   },
+   {
+    "key": "line",
+    "desc": "要高亮的行号（从 1 开始）"
+   }
+  ],
+  "theme_vars": [
+   {
+    "name": "--kit-accent",
+    "desc": "高亮带左边线和光标色"
+   },
+   {
+    "name": "--kit-hl-fill",
+    "desc": "高亮带填充色（半透明）"
+   },
+   {
+    "name": "--kit-bg",
+    "desc": "画面最底层背景色"
+   },
+   {
+    "name": "--kit-editor",
+    "desc": "编辑器面板底色"
+   },
+   {
+    "name": "--kit-font",
+    "desc": "等宽代码字体栈"
+   }
+  ],
+  "notes": "节奏与原作一致：0–0.5s 编辑器淡入并从 0.985 放大到 1；0.45s 起代码淡入；1.1s 起用 0.9s 扫出高亮带，其余行同时降到 45% 不透明度，之后一直停住。原作没有退场，所以这里也不加退场。时长更短时入场按比例压缩。代码用简单的规则着色（关键字、字符串、函数名、参数、常量、注释），配色沿用原来的深色代码主题。代码文字在画面 22%–80% 高度之间，不会进入字幕区。",
+  "frame_s": 0.43
+ },
+ {
+  "id": "code-morph",
+  "content_fields": [
+   {
+    "desc": "标题栏里高亮的文件名，如 refactor.js",
+    "key": "filename"
+   },
+   {
+    "desc": "文件名后面的灰色说明文字",
+    "key": "subtitle"
+   },
+   {
+    "desc": "代码字符串数组，按顺序一步步变形；建议 2～4 段，每段不超过 12 行，每行不超过约 60 个西文字符。每段首行可以写一条中文注释，说明这一版",
+    "key": "states"
+   }
+  ],
+  "native": 7,
+  "notes": "分词和匹配在运行时完成：简易 JS 高亮器按深色主题配色，再用最长公共子序列匹配相同的词，没匹配上的同名词就近配对。坐标在第一帧测量，那时字体已加载完。节奏和原作一致：场景淡入 0.45s，滑动 1.2s，缓动 inOutCubic；删掉的词 0.6s 内淡出，新增的词从 0.54s 起用 0.6s 淡入；停留 1.0s 后进入下一步。原作两段之间的交叉淡化，两边画面其实完全一样，所以改成直接切换，避免叠字。滑动过程中词块会互相穿过，只在这段时间给代码层加 data-qa=\"ignore\"。时长短于 7s 时等比压缩，更长时停在最后一版。states 超过 3 段，总时长会超出 7×k。",
+  "ratios": [
+   "16:9"
+  ],
+  "summary": "编辑器窗口里一段代码分步重构：相同的词滑到新位置，删掉的淡出，新增的淡入",
+  "theme_vars": [
+   {
+    "desc": "代码和标题栏的字体栈（等宽）",
+    "name": "--kit-font"
+   },
+   {
+    "desc": "最底层背景色",
+    "name": "--kit-bg"
+   },
+   {
+    "desc": "顶部径向渐变的亮色",
+    "name": "--kit-bg-mid"
+   },
+   {
+    "desc": "编辑器底色",
+    "name": "--kit-editor-bg"
+   },
+   {
+    "desc": "网格线颜色（rgba）",
+    "name": "--kit-accent"
+   },
+   {
+    "desc": "左上角光晕颜色",
+    "name": "--kit-glow-a"
+   },
+   {
+    "desc": "右下角光晕颜色",
+    "name": "--kit-glow-b"
+   }
+  ],
+  "title": "代码变形",
+  "use_when": "讲代码重构、写法演进、前后对比、API 改版，或编程教学里展示同一段逻辑的不同写法",
+  "webgl": false,
+  "frame_s": 0.41
+ },
+ {
+  "id": "code-typing",
+  "title": "代码打字",
+  "summary": "深色编辑器窗口淡入，带语法高亮的代码逐字显现，光标匀速跟着最新一个字移动",
+  "use_when": "展示一段代码、讲解函数实现、开发者教程或产品技术演示的开场",
+  "native": 5,
+  "ratios": [
+   "16:9"
+  ],
+  "webgl": false,
+  "content_fields": [
+   {
+    "key": "filename",
+    "desc": "标题栏高亮显示的文件名"
+   },
+   {
+    "key": "title",
+    "desc": "文件名后面的灰色说明文字"
+   },
+   {
+    "key": "code",
+    "desc": "代码行数组；每行是若干 [文字, 颜色] 片段，颜色为空时用默认前景色"
+   },
+   {
+    "key": "perChar",
+    "desc": "每个字符的打字间隔（秒），默认 0.028"
+   }
+  ],
+  "theme_vars": [
+   {
+    "name": "--kit-bg",
+    "desc": "画面底色"
+   },
+   {
+    "name": "--kit-editor",
+    "desc": "编辑器底色"
+   },
+   {
+    "name": "--kit-fg",
+    "desc": "代码默认前景色"
+   },
+   {
+    "name": "--kit-accent",
+    "desc": "光标颜色"
+   },
+   {
+    "name": "--kit-muted",
+    "desc": "行号与说明文字颜色"
+   },
+   {
+    "name": "--kit-font",
+    "desc": "等宽字体栈"
+   }
+  ],
+  "notes": "原作用的 JetBrains Mono 字体库里正好有，直接用。光标位置在第一次渲染时才测（这时字体已经加载完），然后按 t 算出当前写到第几个字，在上一个字和这个字的右边缘之间做线性插值，跟原作的匀速滑动一样。原作打完就一直停住、没有退场；这里也保留这个做法，时长更长时就停在完整代码上，时长更短时入场和打字会按比例压缩。代码只占编辑器上半部分，所有文字都在字幕区上方；编辑器边框本身会延伸到画面 87% 左右，那只是装饰性的边框。代码最好不超过 6～7 行、每行 45 个字符以内，中文建议只放在字符串或注释里。",
+  "frame_s": 0.46
+ },
+ {
+  "id": "data-chart",
+  "title": "柱线组合图",
+  "summary": "报刊风格的柱状图加折线图：标题从左往右擦出，网格线渐显，柱子依次长高，折线跟着圆点画出，数值从零开始滚动",
+  "use_when": "讲两组指标随时间的变化与对比，比如营收与转化率、销量与增长率的月度走势",
+  "native": 15,
+  "ratios": [
+   "16:9"
+  ],
+  "webgl": false,
+  "content_fields": [
+   {
+    "key": "headline",
+    "desc": "主标题"
+   },
+   {
+    "key": "subtitle",
+    "desc": "副标题（时间范围、单位）"
+   },
+   {
+    "key": "barName",
+    "desc": "柱状图的图例名"
+   },
+   {
+    "key": "lineName",
+    "desc": "折线的图例名"
+   },
+   {
+    "key": "labels",
+    "desc": "横轴各项名称数组，建议 4～8 项"
+   },
+   {
+    "key": "bars",
+    "desc": "柱状数值数组，与 labels 等长"
+   },
+   {
+    "key": "line",
+    "desc": "折线数值数组，与 labels 等长"
+   },
+   {
+    "key": "barMax",
+    "desc": "柱状纵轴上限"
+   },
+   {
+    "key": "lineMax",
+    "desc": "折线纵轴上限"
+   },
+   {
+    "key": "barPrefix",
+    "desc": "柱状数值前缀，如 ¥"
+   },
+   {
+    "key": "barSuffix",
+    "desc": "柱状数值后缀，如 万"
+   },
+   {
+    "key": "lineSuffix",
+    "desc": "折线数值后缀，如 %"
+   },
+   {
+    "key": "lineDecimals",
+    "desc": "折线数值保留的小数位"
+   },
+   {
+    "key": "source",
+    "desc": "数据来源"
+   }
+  ],
+  "theme_vars": [
+   {
+    "name": "--kit-bg",
+    "desc": "背景色"
+   },
+   {
+    "name": "--kit-ink",
+    "desc": "主文字色"
+   },
+   {
+    "name": "--kit-muted",
+    "desc": "次要文字色"
+   },
+   {
+    "name": "--kit-faint",
+    "desc": "来源文字色"
+   },
+   {
+    "name": "--kit-bar",
+    "desc": "柱子颜色"
+   },
+   {
+    "name": "--kit-accent",
+    "desc": "折线及其数值的颜色"
+   },
+   {
+    "name": "--kit-grid",
+    "desc": "网格线颜色"
+   },
+   {
+    "name": "--kit-serif",
+    "desc": "标题字体"
+   },
+   {
+    "name": "--kit-font",
+    "desc": "正文字体"
+   }
+  ],
+  "notes": "原作整体放大 1.15 倍，会盖住顶部安全边距和底部字幕区。这里改成直接按 1920×1080 排版：图表绘制区和原作缩放后的位置、大小基本一样（约 0.986 倍），标题区收进安全边距，横轴标签和来源说明都在画面 78% 以上。西文字体换成 Newsreader（标题，衬线）和 Archivo（正文，接近原作的 Franklin 风格），中文用 Noto Serif SC 和 Noto Sans CJK SC。原作没有退场，这里也不加，最后一段内容出来后画面一直停住。时长比 15 秒短时，所有入场按比例压缩。",
+  "frame_s": 0.15
+ },
+ {
+  "id": "exploded-stack",
+  "content_fields": [
+   {
+    "desc": "左上角标题，建议不超过 16 字",
+    "key": "title"
+   },
+   {
+    "desc": "顶层名称（最先高亮），建议不超过 10 字",
+    "key": "layer1"
+   },
+   {
+    "desc": "第 2 层名称",
+    "key": "layer2"
+   },
+   {
+    "desc": "第 3 层名称",
+    "key": "layer3"
+   },
+   {
+    "desc": "底层名称（最后高亮）",
+    "key": "layer4"
+   }
+  ],
+  "native": 5,
+  "notes": "渲染环境里加载不到 three.js 模块，所以改成 2D 画布手算正交等轴测投影：相机参数和原作一样，层板位置、引线锚点和标签位置都和原作对得上。侧面明暗用固定色近似原来的光照，圆角边缘做了简化。入场节奏按 k 缩放；时长更长时展开后停留，合拢（约 0.95 秒）放在镜头末尾。层板下沿会伸进字幕区，但所有文字（标签最低约在画面 72%）都在字幕区上方。",
+  "ratios": [
+   "16:9"
+  ],
+  "summary": "等轴测四块层板从一叠中展开，每层依次画出引线、标签并高亮，停留后合拢成一叠",
+  "theme_vars": [
+   {
+    "desc": "高亮色：层板图案、序号、引线圆点在聚焦时变成此色",
+    "name": "--kit-accent"
+   },
+   {
+    "desc": "背景色",
+    "name": "--kit-bg"
+   },
+   {
+    "desc": "标题文字颜色",
+    "name": "--kit-ink"
+   },
+   {
+    "desc": "字体栈",
+    "name": "--kit-font"
+   }
+  ],
+  "title": "分层爆炸图",
+  "use_when": "讲系统架构分层、技术栈、产品结构的层级关系，逐层介绍各部分",
+  "webgl": false,
+  "frame_s": 0.22
+ },
+ {
+  "id": "flowchart",
+  "content_fields": [
+   {
+    "desc": "根节点的问题",
+    "key": "question"
+   },
+   {
+    "desc": "左分支节点文字",
+    "key": "branchA"
+   },
+   {
+    "desc": "右分支节点文字",
+    "key": "branchB"
+   },
+   {
+    "desc": "左连线上的标签",
+    "key": "labelA"
+   },
+   {
+    "desc": "右连线上的标签",
+    "key": "labelB"
+   },
+   {
+    "desc": "第一个叶子节点里，被修改的词前面的文字",
+    "key": "leaf1Prefix"
+   },
+   {
+    "desc": "打错的词，约6个字符（带波浪线）",
+    "key": "leaf1Wrong"
+   },
+   {
+    "desc": "改正后的词，逐字打出",
+    "key": "leaf1Right"
+   },
+   {
+    "desc": "第二个叶子节点",
+    "key": "leaf2"
+   },
+   {
+    "desc": "第三个叶子节点",
+    "key": "leaf3"
+   },
+   {
+    "desc": "第四个叶子节点",
+    "key": "leaf4"
+   },
+   {
+    "desc": "光标旁的名字标签",
+    "key": "cursorTag"
+   },
+   {
+    "desc": "最后弹出的表情",
+    "key": "emoji"
+   }
+  ],
+  "native": 12,
+  "notes": "节奏和原作一致：0–3.65 秒逐层长出，4.45 秒光标进场，5.45 秒点选，6.25 秒开始改字，7.45 秒弹出表情，最后白场淡出，淡出结束后留 1.9 秒白屏。为了避开安全边距和字幕区，整块画布下移了 44px，光标改成从画面右侧、字幕区上方淡入后滑向叶子节点；原作是从右下角屏幕外飞进来。改字的进度由 t 直接算出，任意帧都能直接跳到对应状态。",
+  "ratios": [
+   "16:9"
+  ],
+  "summary": "便签式节点和连线逐层长出，形成决策树；光标点选叶子节点，把错字改正后弹出点赞表情",
+  "theme_vars": [
+   {
+    "desc": "字体栈",
+    "name": "--kit-font"
+   },
+   {
+    "desc": "文字和连线颜色",
+    "name": "--kit-ink"
+   },
+   {
+    "desc": "画布底色",
+    "name": "--kit-bg"
+   },
+   {
+    "desc": "点阵网格颜色",
+    "name": "--kit-dot"
+   },
+   {
+    "desc": "根节点和第四个叶子的颜色",
+    "name": "--kit-yellow"
+   },
+   {
+    "desc": "左分支颜色",
+    "name": "--kit-green"
+   },
+   {
+    "desc": "右分支颜色",
+    "name": "--kit-peach"
+   },
+   {
+    "desc": "叶子1颜色",
+    "name": "--kit-lavender"
+   },
+   {
+    "desc": "叶子2颜色",
+    "name": "--kit-blue"
+   },
+   {
+    "desc": "叶子3颜色",
+    "name": "--kit-pink"
+   },
+   {
+    "desc": "光标名字标签颜色",
+    "name": "--kit-accent"
+   },
+   {
+    "desc": "选中框颜色",
+    "name": "--kit-select"
+   },
+   {
+    "desc": "文字选中高亮",
+    "name": "--kit-highlight"
+   }
+  ],
+  "title": "决策流程图",
+  "use_when": "讲决策路径、分支选择、新手入门建议，或者演示在白板上修改流程",
+  "webgl": false,
+  "frame_s": 0.17
+ },
+ {
+  "id": "glass-hero",
+  "content_fields": [
+   {
+    "desc": "玻璃后面的巨型标题，2～4 个汉字效果最好（最多约 12 个字符，会自动缩小来适配宽度）",
+    "key": "headline"
+   },
+   {
+    "desc": "底部副标题，一句话，24 字以内",
+    "key": "subline"
+   },
+   {
+    "desc": "玻璃形状：lens（扁圆透镜）或 ring（圆环）",
+    "key": "shape"
+   }
+  ],
+  "native": 5,
+  "notes": "运行环境里拿不到三维库文件，所以改成原生 WebGL2 全屏着色器：透镜用椭球解析求交，圆环用距离场步进求交。折射按“入射面折射 + 厚度偏移”近似计算，RGB 三个通道各用一个折射率来做色散，色散强度比原参数略强一些，方便看出分色；反射用三块柔光箱的环境光，加上主光高光，玻璃边缘做了 4 倍超采样。标题画在贴图上，字体加载后重绘，Promise 已放进 SLATE.waits。上升 1.8 秒按 k 压缩，之后一直转动，没有退场。副标题移到底边 78% 处，避开字幕区。主题色在初始化时读取。",
+  "ratios": [
+   "16:9"
+  ],
+  "summary": "一块实心玻璃从巨大标题前升起并持续转动，透过玻璃的文字弯折、分出色彩，副标题随后淡入",
+  "theme_vars": [
+   {
+    "desc": "背景色（也是标题贴图的底色）",
+    "name": "--gh-bg"
+   },
+   {
+    "desc": "标题文字颜色",
+    "name": "--gh-type"
+   },
+   {
+    "desc": "玻璃内部的吸收色调",
+    "name": "--gh-tint"
+   },
+   {
+    "desc": "副标题颜色",
+    "name": "--gh-sub"
+   },
+   {
+    "desc": "标题字体栈",
+    "name": "--kit-font"
+   },
+   {
+    "desc": "副标题字体栈",
+    "name": "--kit-font-caption"
+   }
+  ],
+  "title": "玻璃透镜标题",
+  "use_when": "片头、产品主张或主题大字卡；想表达“清晰、通透、看清细节”这类概念的开场标题",
+  "webgl": true,
+  "frame_s": 1.9
+ },
+ {
+  "id": "halftone-field",
+  "title": "半调光场",
+  "summary": "满屏网点阵列，点的大小和颜色随缓慢流动的噪声场变化，宽阔光带扫过近乎全黑的画面，像巨型 LED 墙",
+  "use_when": "给标题、金句、片头片尾垫一层有动感的暗色背景；科技感、音乐、发布会类氛围镜头",
+  "native": 10,
+  "ratios": [
+   "16:9"
+  ],
+  "webgl": true,
+  "content_fields": [
+   {
+    "key": "frequency",
+    "desc": "光场频率 1~10，越大光带越密（默认 2）"
+   },
+   {
+    "key": "speed",
+    "desc": "流动速度 0~10（默认 5）"
+   },
+   {
+    "key": "cellSize",
+    "desc": "网点格子大小 1~100（默认 54）"
+   },
+   {
+    "key": "gamma",
+    "desc": "中间调压暗程度 1~20，越大画面越黑、只留波峰（默认 12）"
+   },
+   {
+    "key": "paletteBias",
+    "desc": "调色偏移 0~20，整体抬亮网点（默认 2）"
+   },
+   {
+    "key": "quantize",
+    "desc": "是否按 30fps 阶梯跳帧，模拟 LED 墙刷新（默认 false）"
+   }
+  ],
+  "theme_vars": [
+   {
+    "name": "--kit-pal1",
+    "desc": "调色板第 1 档（暗部），默认 #00AAFF"
+   },
+   {
+    "name": "--kit-pal2",
+    "desc": "调色板第 2 档，默认 #C2FF67"
+   },
+   {
+    "name": "--kit-pal3",
+    "desc": "调色板第 3 档，默认 #6600FF"
+   },
+   {
+    "name": "--kit-pal4",
+    "desc": "调色板第 4 档（波峰），默认 #000000"
+   },
+   {
+    "name": "--kit-bg",
+    "desc": "背景色，默认 #000000"
+   }
+  ],
+  "notes": "我把原来的单遍 WebGL 着色器改成了不用 three.js 的普通脚本。画面完全由时间 t 算出，能撑满任意时长，没有入场和退场动画。原模板就没有文字，所以没加载字体。颜色只认 #RGB 或 #RRGGBB 两种十六进制写法，写成别的格式会退回默认色。只提供 16:9，其他比例下舞台会按比例缩放，四周留出空边。",
+  "frame_s": 0.55
+ },
+ {
+  "id": "hw-pipeline",
+  "title": "手绘流程图",
+  "summary": "手绘抖动方框依次描出，框内手写标签淡入，琥珀色弧形箭头连到下一个框，整体轻微抖动",
+  "use_when": "讲流程步骤、工作流、从想法到成果的几个阶段",
+  "native": 7,
+  "ratios": [
+   "16:9"
+  ],
+  "webgl": false,
+  "content_fields": [
+   {
+    "key": "nodes",
+    "desc": "节点标签数组，每项一个字符串，建议 2～4 个，每个 2～4 字"
+   },
+   {
+    "key": "boxW",
+    "desc": "方框宽度 px，默认 320"
+   },
+   {
+    "key": "boxH",
+    "desc": "方框高度 px，默认 170"
+   },
+   {
+    "key": "gap",
+    "desc": "方框间距 px，默认 190"
+   },
+   {
+    "key": "y",
+    "desc": "方框顶边 y（设计坐标 1080 高），默认 455"
+   },
+   {
+    "key": "fontSize",
+    "desc": "标签字号，默认 56"
+   },
+   {
+    "key": "seed",
+    "desc": "手绘抖动的随机种子"
+   },
+   {
+    "key": "boil",
+    "desc": "是否开启逐帧抖动（true/false）"
+   }
+  ],
+  "theme_vars": [
+   {
+    "name": "--kit-ink",
+    "desc": "方框和文字的墨色，默认 #f4f2ec"
+   },
+   {
+    "name": "--kit-accent",
+    "desc": "连接箭头颜色，默认琥珀 #ffb020"
+   },
+   {
+    "name": "--kit-font",
+    "desc": "标签字体栈（手写）"
+   }
+  ],
+  "notes": "透明叠加层，示范页用深色底。节点超过 3 个时请减小 boxW/gap 以免越出安全边距。抖动按 30fps 每 3 帧换一次，只由 t 决定。",
+  "frame_s": 0.55
+ },
+ {
+  "id": "hw-scribble-transition",
+  "content_fields": [
+   {
+    "desc": "横向涂鸦条数，默认 7",
+    "key": "bands"
+   },
+   {
+    "desc": "笔触粗细倍数，默认 1",
+    "key": "strokeScale"
+   },
+   {
+    "desc": "随机抖动种子，默认 17",
+    "key": "seed"
+   }
+  ],
+  "native": 2.2,
+  "notes": "这是透明叠加层，要放在底层画面的硬切点上，让切点落在完全盖住的那段里。2.2 秒时完全盖住的时间约为 0.85～1.42 秒。时长变长时入场节奏不变，中间盖住的时间拉长，退场固定在最后约 0.78 秒；时长变短时入场按比例压缩。画面里没有文字。",
+  "ratios": [
+   "16:9",
+   "9:16",
+   "1:1",
+   "4:5"
+  ],
+  "summary": "粗马克笔横向锯齿笔触逐条涂满画面，实色底板兜底，中段切换底下画面后笔触反向擦除",
+  "theme_vars": [
+   {
+    "desc": "马克笔和实色底板的颜色，默认暖黄 #ffb020",
+    "name": "--kit-accent"
+   }
+  ],
+  "title": "涂鸦笔刷转场",
+  "use_when": "手绘风格视频里两个场景之间的转场遮罩，叠加在硬切点上方",
+  "webgl": false,
+  "frame_s": 0.34
+ },
+ {
+  "id": "hw-text-cloud",
+  "title": "手绘对话气泡",
+  "summary": "手绘云朵对话气泡：先描出轮廓，再淡入纸色底，手写字逐字出现，整体逐格轻微抖动",
+  "use_when": "给画面里的人物或物体配一句吐槽或台词，做手绘风叠加层、漫画式旁白",
+  "native": 6,
+  "ratios": [
+   "16:9"
+  ],
+  "webgl": false,
+  "content_fields": [
+   {
+    "key": "text",
+    "desc": "气泡里的手写台词，8～12 个字最合适"
+   },
+   {
+    "key": "x",
+    "desc": "气泡左上角 x（设计尺寸 1920×1080 下的像素）"
+   },
+   {
+    "key": "y",
+    "desc": "气泡左上角 y"
+   },
+   {
+    "key": "w",
+    "desc": "气泡宽"
+   },
+   {
+    "key": "h",
+    "desc": "气泡高"
+   },
+   {
+    "key": "fontSize",
+    "desc": "字号（px）"
+   },
+   {
+    "key": "tipSide",
+    "desc": "尾巴方向：bottom-left 或 bottom-right"
+   },
+   {
+    "key": "tipLen",
+    "desc": "尾巴长度（px）"
+   },
+   {
+    "key": "seed",
+    "desc": "轮廓抖动的随机种子"
+   },
+   {
+    "key": "boil",
+    "desc": "是否逐格抖动（true/false）"
+   },
+   {
+    "key": "boilAmp",
+    "desc": "抖动位移幅度（px）"
+   },
+   {
+    "key": "boilRot",
+    "desc": "抖动旋转幅度（度）"
+   }
+  ],
+  "theme_vars": [
+   {
+    "name": "--hw-ink",
+    "desc": "气泡纸色填充"
+   },
+   {
+    "name": "--hw-ink-dark",
+    "desc": "轮廓线和文字的墨色"
+   },
+   {
+    "name": "--kit-font",
+    "desc": "手写字体栈"
+   }
+  ],
+  "notes": "透明背景，用作叠加层。西文用 Caveat，中文回退到马善政手写体。尾巴用 tipSide 指向说话的人。入场时间按 k 等比压缩，退场淡出时长为总时长的 6%（限制在 0.25～0.6 秒之间），在结束前 0.05 秒完成，最后 0.02 秒隐藏。",
+  "frame_s": 0.55
+ },
+ {
+  "id": "hw-title",
+  "title": "手写标题",
+  "summary": "手写体标题居中淡入，文字逐词由半透明扫亮，随后画出波浪下划线，整体有逐帧手绘抖动感",
+  "use_when": "片头标题、金句强调、手绘风格的章节标题，叠加在画面或板书上",
+  "native": 6,
+  "ratios": [
+   "16:9"
+  ],
+  "webgl": false,
+  "content_fields": [
+   {
+    "key": "text",
+    "desc": "标题文字，用空格分出扫亮的词组（中文显示时不留空格）"
+   },
+   {
+    "key": "fontSize",
+    "desc": "字号（设计像素，默认 120）"
+   },
+   {
+    "key": "scheme",
+    "desc": "配色：chalk 白字（叠在画面上）或 ink 深色字（浅色板）"
+   },
+   {
+    "key": "seed",
+    "desc": "下划线形状与抖动的随机种子"
+   }
+  ],
+  "theme_vars": [
+   {
+    "name": "--kit-accent",
+    "desc": "下划线颜色，默认暖黄 #ffb020"
+   },
+   {
+    "name": "--kit-font",
+    "desc": "手写字体栈"
+   }
+  ],
+  "notes": "扫亮 0.8–3.2 秒、下划线 3.0 秒起画 0.7 秒，入场时间按 k 压缩，退场贴着结尾。下划线的宽度等字体加载完、量过文字宽度后才生成。抖动是每 3 帧（按 30fps 算）换一次位置，带出手绘那种“沸腾”的感觉。",
+  "frame_s": 0.46
+ },
+ {
+  "id": "logo-outro",
+  "title": "彩块拼标收尾",
+  "summary": "五块彩色图形依次从右侧滑入，拼成标志，弹性放大后回弹，同时泛起光晕；随后标语和网址胶囊依次淡入。",
+  "use_when": "片尾品牌收尾、标志亮相、结尾放标语和网址",
+  "native": 6,
+  "ratios": [
+   "16:9"
+  ],
+  "webgl": false,
+  "content_fields": [
+   {
+    "key": "tagline",
+    "desc": "标志下方的品牌标语，一句话，约 10～14 个字"
+   },
+   {
+    "key": "url",
+    "desc": "胶囊里的网址或账号"
+   }
+  ],
+  "theme_vars": [
+   {
+    "name": "--kit-bg",
+    "desc": "背景色"
+   },
+   {
+    "name": "--kit-c1",
+    "desc": "左上块颜色"
+   },
+   {
+    "name": "--kit-c2",
+    "desc": "右上块颜色"
+   },
+   {
+    "name": "--kit-c3",
+    "desc": "左中块颜色"
+   },
+   {
+    "name": "--kit-c4",
+    "desc": "右中圆形颜色"
+   },
+   {
+    "name": "--kit-c5",
+    "desc": "左下块颜色"
+   },
+   {
+    "name": "--kit-glow",
+    "desc": "光晕中心颜色（带透明度）"
+   },
+   {
+    "name": "--kit-text",
+    "desc": "标语文字颜色"
+   },
+   {
+    "name": "--kit-pill-bg",
+    "desc": "网址胶囊底色"
+   },
+   {
+    "name": "--kit-pill-border",
+    "desc": "网址胶囊描边色"
+   },
+   {
+    "name": "--kit-url",
+    "desc": "网址文字颜色"
+   },
+   {
+    "name": "--kit-font",
+    "desc": "字体栈"
+   }
+  ],
+  "notes": "标志由五个 SVG 图形组成，颜色可以用 --kit-c1~c5 换掉；想换成自己的标志，改 shot.js 里的 path 就行。原作每块的缩放是两段重叠的补间（先弹大、再缩回），这里改成逐帧算：缩回那段从当时的实际缩放值接着走，所以不会跳帧。原作没有退场，入场时间按 k 等比压缩，后面一直停在最终画面。文字整体比原作上移 20px，让网址胶囊的底边保持在画面 78% 以上，不碰到字幕区。",
+  "frame_s": 0.2
+ },
+ {
+  "id": "lt-clean-bar",
+  "title": "白卡下三分之一",
+  "summary": "白色圆角卡片从左向右擦入，左侧橙色竖条向下长出，姓名与身份依次上浮淡入，结尾下沉淡出",
+  "use_when": "播客、访谈中介绍嘉宾或主持人的姓名与身份",
+  "native": 4.8,
+  "ratios": [
+   "16:9"
+  ],
+  "webgl": false,
+  "content_fields": [
+   {
+    "key": "name",
+    "desc": "姓名（大字，建议 2~8 个字）"
+   },
+   {
+    "key": "role",
+    "desc": "身份 / 头衔（小字，可用 · 分隔）"
+   }
+  ],
+  "theme_vars": [
+   {
+    "name": "--kit-accent",
+    "desc": "左侧竖条强调色"
+   },
+   {
+    "name": "--kit-card",
+    "desc": "卡片底色"
+   },
+   {
+    "name": "--kit-name",
+    "desc": "姓名文字色"
+   },
+   {
+    "name": "--kit-role",
+    "desc": "身份文字色"
+   },
+   {
+    "name": "--kit-font",
+    "desc": "字体栈"
+   }
+  ],
+  "notes": "原字体 Montserrat 不在字体库，换成气质接近的几何无衬线 Outfit，中文用 Noto Sans CJK SC。原位置 bottom 110px 会压到字幕区，所以卡片底边上移到 bottom 250px（约画面 77%）。入场时间按 k 压缩；退场固定在结尾前 0.5 秒开始（下沉 18px 并淡出，0.35 秒），之后隐藏。",
+  "frame_s": 0.58
+ },
+ {
+  "id": "lt-kicker-name",
+  "title": "标签姓名字幕条",
+  "summary": "无底卡下三分之一：荧光绿标签从上方落下，粗体姓名弹起，下方绿色底线向右画出，最后依次收回",
+  "use_when": "访谈、播客、纪录片里第一次出现人物时介绍姓名和期数/栏目，叠在实拍画面上",
+  "native": 4.8,
+  "ratios": [
+   "16:9"
+  ],
+  "webgl": false,
+  "content_fields": [
+   {
+    "key": "kicker",
+    "desc": "上方的小标签，比如期数、栏目名，宜短（2～8 个字）"
+   },
+   {
+    "key": "name",
+    "desc": "人物姓名，粗体大字，单行"
+   }
+  ],
+  "theme_vars": [
+   {
+    "name": "--kit-accent",
+    "desc": "标签底色和底线颜色"
+   },
+   {
+    "name": "--kit-kicker-ink",
+    "desc": "标签文字颜色"
+   },
+   {
+    "name": "--kit-ink",
+    "desc": "姓名文字颜色"
+   },
+   {
+    "name": "--kit-font",
+    "desc": "姓名字体"
+   },
+   {
+    "name": "--kit-mono",
+    "desc": "标签等宽字体"
+   }
+  ],
+  "notes": "原版贴底（底边约 89%）会压到字幕区，已上移到底边约 77%。等宽字体用 JetBrains Mono 代替原字体，姓名用 Archivo 900 代替原来的超粗无衬线体。退场在结束前 0.55 秒开始；时长较短时入场按比例压缩。",
+  "frame_s": 0.59
+ },
+ {
+  "id": "lt-mask-reveal",
+  "title": "遮罩扫光字幕条",
+  "summary": "无底卡下三分之一：亮黄竖条从左扫到右，粗体姓名随之擦出，身份行上浮淡入，最后从左向右擦除退场",
+  "use_when": "访谈、播客或实拍画面上介绍嘉宾/主持人身份，需要干净有力又不遮挡画面的署名条",
+  "native": 4.8,
+  "ratios": [
+   "16:9"
+  ],
+  "webgl": false,
+  "content_fields": [
+   {
+    "key": "name",
+    "desc": "人物姓名（粗体大字），建议不超过 8 个字"
+   },
+   {
+    "key": "role",
+    "desc": "身份/头衔说明，可用 · 分隔"
+   }
+  ],
+  "theme_vars": [
+   {
+    "name": "--kit-accent",
+    "desc": "扫光竖条颜色"
+   },
+   {
+    "name": "--kit-name-color",
+    "desc": "姓名颜色"
+   },
+   {
+    "name": "--kit-role-color",
+    "desc": "身份行颜色"
+   },
+   {
+    "name": "--kit-font",
+    "desc": "字体栈"
+   }
+  ],
+  "notes": "原位置贴底（底边约 89%）会压到字幕区，已上移到底边约 77%。原西文字体换成字库里同为几何黑体的 Outfit，中文用 Noto Sans CJK SC。扫光位移在渲染时读取姓名实际宽度，所以换成任何长度的名字都能扫到底。退场固定占最后约 0.55 秒，入场按时长等比压缩。",
+  "frame_s": 0.58
+ },
+ {
+  "id": "mk-background",
+  "title": "极简渐变背景",
+  "summary": "底色上两团柔和的径向色块缓慢漂移，中段整幅画面收成悬浮的圆角卡片，之后再铺回全屏",
+  "use_when": "做演示风格的干净底图，或给文字、图表、视频垫一层柔和渐变背景；也可以拿来展示“全屏收成卡片”的转场",
+  "native": 10,
+  "ratios": [
+   "16:9"
+  ],
+  "webgl": false,
+  "content_fields": [
+   {
+    "key": "scheme",
+    "desc": "配色方案：\"light\" 浅色（粉+青）或 \"dark\" 深色（紫）"
+   },
+   {
+    "key": "animationIn",
+    "desc": "是否播放入场（淡入，色块从放大状态收回）"
+   },
+   {
+    "key": "animationOut",
+    "desc": "是否在结尾淡出"
+   },
+   {
+    "key": "drift",
+    "desc": "色块是否缓慢来回漂移"
+   },
+   {
+    "key": "blob1",
+    "desc": "色块1：{x,y 为占画面宽高的比例, r 为半径 px, opacity}"
+   },
+   {
+    "key": "blob2",
+    "desc": "色块2：同上"
+   },
+   {
+    "key": "barDemo",
+    "desc": "是否演示“全屏 → 圆角卡片 → 全屏”"
+   },
+   {
+    "key": "bar",
+    "desc": "卡片位置和尺寸：{x, y, width, height, roundness}，单位为 1920×1080 设计稿上的 px"
+   },
+   {
+    "key": "contentOpacity",
+    "desc": "卡片层整体不透明度（下面垫着视频时才有意义）"
+   },
+   {
+    "key": "frostBlur",
+    "desc": "毛玻璃模糊半径 px，0 表示关闭（例如设成 24 叠在视频上用）"
+   }
+  ],
+  "theme_vars": [
+   {
+    "name": "--kit-stage",
+    "desc": "浅色时卡片外面的舞台底色"
+   },
+   {
+    "name": "--kit-base",
+    "desc": "浅色时卡片的底色"
+   },
+   {
+    "name": "--kit-blob-1",
+    "desc": "浅色时色块1的颜色"
+   },
+   {
+    "name": "--kit-blob-2",
+    "desc": "浅色时色块2的颜色"
+   },
+   {
+    "name": "--kit-stage-dark",
+    "desc": "深色时的舞台底色"
+   },
+   {
+    "name": "--kit-base-dark",
+    "desc": "深色时的卡片底色"
+   },
+   {
+    "name": "--kit-blob-1-dark",
+    "desc": "深色时色块1的颜色"
+   },
+   {
+    "name": "--kit-blob-2-dark",
+    "desc": "深色时色块2的颜色"
+   },
+   {
+    "name": "--kit-shadow",
+    "desc": "卡片投影"
+   }
+  ],
+  "notes": "纯背景，没有文字，所以不用加载字体。入场时长乘以 k；收成卡片、再铺回全屏的两个时刻按总时长等比放在 38% 和 76% 处；漂移每个来回固定 2.35 秒，往返次数按总时长算，尽量撑满整个镜头。卡片位移用 x/y 变换来做，不改 top/left，这样逐帧截图时不会因像素取整而抖动。淡入淡出和最后隐藏都作用在内层的 root 上，不碰舞台本身的缩放。",
+  "frame_s": 0.64
+ },
+ {
+  "id": "mk-callout-highlight",
+  "title": "逐词扫亮句子",
+  "summary": "一句话淡入上浮，文字从浅灰按词依次变成深色，像跟读一样扫过整句，最后上移淡出",
+  "use_when": "配合旁白强调一句金句或观点，卡拉OK式逐词高亮，适合极简排版的引用句",
+  "native": 8,
+  "ratios": [
+   "16:9"
+  ],
+  "webgl": false,
+  "content_fields": [
+   {
+    "key": "text",
+    "desc": "要逐词高亮的句子；用空格或“/”手动分词，不写分隔符时由浏览器自动分词"
+   },
+   {
+    "key": "x",
+    "desc": "文字块左边缘（设计坐标 px，1920 宽），null 表示水平居中，默认 1030"
+   },
+   {
+    "key": "maxWidth",
+    "desc": "文字块最大宽度 px，默认 700"
+   },
+   {
+    "key": "fontSize",
+    "desc": "字号 px，默认 60"
+   },
+   {
+    "key": "sweepStart",
+    "desc": "扫亮开始的秒数（按原 8 秒设计，会随时长压缩），默认 1.2"
+   }
+  ],
+  "theme_vars": [
+   {
+    "name": "--kit-ink",
+    "desc": "扫亮后的文字颜色，默认 #1d1d1f（深色背景可改 #f5f5f7）"
+   },
+   {
+    "name": "--kit-ink-faint",
+    "desc": "扫亮前的浅色，默认 #bcbcc2（深色背景可改 rgba(245,245,247,0.32)）"
+   },
+   {
+    "name": "--kit-font",
+    "desc": "字体栈"
+   }
+  ],
+  "notes": "透明叠加层。扫亮由一个 0→1 的进度驱动，线性推进；时长变长时扫亮段会拉长，始终在退场前约 1.3 秒结束。颜色混合用 color-mix，主题色可用任意 CSS 颜色写法。文字块垂直居中，不会进入字幕区。",
+  "frame_s": 0.31
+ },
+ {
+  "id": "mk-clone-wall-transition",
+  "title": "文字墙翻转转场",
+  "summary": "画面缩成圆角卡片，露出平铺文字墙；反色层横扫让墙面黑白互换，随后整墙淡出",
+  "use_when": "章节切换、硬切的过渡遮罩；墙完全盖住画面的那段时间里切换下层内容",
+  "native": 2.4,
+  "ratios": [
+   "16:9"
+  ],
+  "webgl": false,
+  "content_fields": [
+   {
+    "key": "word",
+    "desc": "平铺重复的词，建议 2～6 个字"
+   },
+   {
+    "key": "fontSize",
+    "desc": "平铺文字字号（px，设计尺寸 1920×1080 下）"
+   },
+   {
+    "key": "spreadX",
+    "desc": "同一行里词与词的间距 px"
+   },
+   {
+    "key": "spreadY",
+    "desc": "行间距 px"
+   },
+   {
+    "key": "brickOffset",
+    "desc": "隔行错开半个词，像砌砖一样"
+   },
+   {
+    "key": "card",
+    "desc": "是否显示由画面缩成的卡片"
+   },
+   {
+    "key": "cardSrc",
+    "desc": "卡片图片地址（建议放上一镜的静帧），留空就用渐变"
+   },
+   {
+    "key": "driftX",
+    "desc": "停留期间文字墙缓慢平移的距离 px"
+   }
+  ],
+  "theme_vars": [
+   {
+    "name": "--kit-font",
+    "desc": "文字墙字体"
+   },
+   {
+    "name": "--kit-ink",
+    "desc": "墨色（文字）"
+   },
+   {
+    "name": "--kit-paper",
+    "desc": "纸色（墙底色，也是反色层颜色）"
+   },
+   {
+    "name": "--kit-blob-1",
+    "desc": "卡片渐变色 1"
+   },
+   {
+    "name": "--kit-blob-2",
+    "desc": "卡片渐变色 2"
+   },
+   {
+    "name": "--kit-radius-card",
+    "desc": "卡片圆角"
+   },
+   {
+    "name": "--kit-shadow",
+    "desc": "卡片阴影"
+   }
+  ],
+  "notes": "这是透明叠加的转场层：把它跨在两镜的切点上（大约在切点前 0.9 秒开始）。按原设计时长算，约 0.6～1.9 秒时墙完全盖住画面，在这段时间里硬切下层内容。时长变长时，入场按原节奏走，反色后的墙会停留更久，最后 0.5 秒淡出。平铺的词属于装饰性重复，已标 data-qa=\"ignore\"；墙会盖住字幕区，这是遮罩本来的用途。",
+  "frame_s": 0.39
+ },
+ {
+  "id": "mk-line-graph",
+  "title": "极简折线图",
+  "summary": "基线和月份先淡入，一到两条折线依次画出，圆点和数值跟着画线前端弹出，最后出现图例",
+  "use_when": "讲半年或几个周期里的数据走势、两组指标增长对比",
+  "native": 7,
+  "ratios": [
+   "16:9"
+  ],
+  "webgl": false,
+  "content_fields": [
+   {
+    "key": "series",
+    "desc": "数据系列数组（1～2 条），每条 {name 名称, values 数值数组, color 可选颜色}；第一条默认主色，第二条默认副色"
+   },
+   {
+    "key": "xLabels",
+    "desc": "横轴标签，数量与数值个数一致"
+   },
+   {
+    "key": "showValues",
+    "desc": "是否在点上显示数值"
+   }
+  ],
+  "theme_vars": [
+   {
+    "name": "--kit-font",
+    "desc": "字体栈"
+   },
+   {
+    "name": "--kit-ink",
+    "desc": "数值文字色"
+   },
+   {
+    "name": "--kit-ink-dim",
+    "desc": "横轴标签、图例文字色"
+   },
+   {
+    "name": "--kit-accent",
+    "desc": "第一条折线颜色"
+   },
+   {
+    "name": "--kit-accent-2",
+    "desc": "第二条折线颜色"
+   },
+   {
+    "name": "--kit-paper",
+    "desc": "圆点填充色"
+   },
+   {
+    "name": "--kit-axis",
+    "desc": "基线颜色"
+   }
+  ],
+  "notes": "原作是透明叠加层，示范页给了浅灰背景。为避开字幕区，绘图区整体上移 40px（基线在 y=700），图例底边约在 830px，在 78% 线以上。入场时刻按 KIT.fit 的 k 等比压缩，退场是最后 0.5 秒上移淡出。",
+  "frame_s": 0.4
+ },
+ {
+  "id": "mk-placeholder-grid",
+  "title": "圆角媒体网格",
+  "summary": "多格圆角媒体网格依次缩放上浮入场，格内画面缓慢收拢，结尾整体上移淡出",
+  "use_when": "并排展示多张图片或素材占位、对比几个画面、做图集或拼贴版式",
+  "native": 8,
+  "ratios": [
+   "16:9"
+  ],
+  "webgl": false,
+  "content_fields": [
+   {
+    "key": "layout",
+    "desc": "版式：2up 两格并排 / 3up 三格并排 / 4up 2×2 / 3x2 三列两行 / 1+2 左侧大图加右侧两格"
+   },
+   {
+    "key": "cells",
+    "desc": "每格一项 {src, label, insideScale}：src 为图片地址（空则显示渐变占位色块）；label 为占位格中的文字（默认序号）；insideScale 为格内画面缩放（1 为铺满）"
+   },
+   {
+    "key": "margin",
+    "desc": "外边距，px（设计尺寸 1920×1080）"
+   },
+   {
+    "key": "gap",
+    "desc": "格间距，px"
+   },
+   {
+    "key": "radius",
+    "desc": "圆角半径，px"
+   },
+   {
+    "key": "kenBurns",
+    "desc": "是否让格内画面缓慢收拢"
+   },
+   {
+    "key": "stagger",
+    "desc": "各格入场间隔，秒"
+   },
+   {
+    "key": "animationIn",
+    "desc": "是否播放入场"
+   },
+   {
+    "key": "animationOut",
+    "desc": "是否播放退场"
+   }
+  ],
+  "theme_vars": [
+   {
+    "name": "--kit-font",
+    "desc": "占位序号字体"
+   },
+   {
+    "name": "--kit-paper",
+    "desc": "格子底色"
+   },
+   {
+    "name": "--kit-blob-1",
+    "desc": "第1格渐变主色"
+   },
+   {
+    "name": "--kit-blob-1-soft",
+    "desc": "第1格渐变浅色"
+   },
+   {
+    "name": "--kit-blob-2",
+    "desc": "第2格渐变主色"
+   },
+   {
+    "name": "--kit-blob-2-soft",
+    "desc": "第2格渐变浅色"
+   },
+   {
+    "name": "--kit-accent-dark",
+    "desc": "第3格渐变主色"
+   },
+   {
+    "name": "--kit-accent-dark-soft",
+    "desc": "第3格渐变浅色"
+   },
+   {
+    "name": "--kit-well-warm",
+    "desc": "第4格主色"
+   },
+   {
+    "name": "--kit-well-warm-soft",
+    "desc": "第4格浅色"
+   },
+   {
+    "name": "--kit-well-sky",
+    "desc": "第5格主色"
+   },
+   {
+    "name": "--kit-well-sky-soft",
+    "desc": "第5格浅色"
+   },
+   {
+    "name": "--kit-well-rose",
+    "desc": "第6格主色"
+   },
+   {
+    "name": "--kit-well-rose-soft",
+    "desc": "第6格浅色"
+   },
+   {
+    "name": "--kit-well-num",
+    "desc": "占位序号颜色"
+   },
+   {
+    "name": "--kit-shadow",
+    "desc": "格子投影"
+   }
+  ],
+  "notes": "原作是透明叠加层，示范页加了浅色渐变背景。格子本身可能延伸到字幕区，但格内文字都居中，默认版式下文字不会进入字幕区。如果在 3x2/4up 版式里给下排格子写长文字，要留意离字幕区太近。结尾 0.02 秒前网格隐藏，和原作一样做硬切。",
+  "frame_s": 0.53
+ },
+ {
+  "id": "mk-progress-stat",
+  "title": "进度数据卡",
+  "summary": "大号数字从 0 滚动到目标值，下方标签、细进度条同步填充到 value/max，附说明文字",
+  "use_when": "展示单个关键指标及完成进度，如目标达成数、完成率、KPI 进度",
+  "content_fields": [
+   {
+    "key": "value",
+    "desc": "最终数值，数字从 0 滚动到此"
+   },
+   {
+    "key": "suffix",
+    "desc": "数字后缀，如 %、万"
+   },
+   {
+    "key": "label",
+    "desc": "数字下方标签"
+   },
+   {
+    "key": "caption",
+    "desc": "进度条下方说明文字"
+   },
+   {
+    "key": "max",
+    "desc": "进度条满格对应值"
+   },
+   {
+    "key": "scheme",
+    "desc": "light 或 dark 配色"
+   },
+   {
+    "key": "trackWidth",
+    "desc": "进度条宽度 px"
+   },
+   {
+    "key": "x",
+    "desc": "组左边缘 px，null 居中"
+   },
+   {
+    "key": "y",
+    "desc": "组上边缘 px，null 居中"
+   }
+  ],
+  "theme_vars": [
+   {
+    "name": "--kit-font",
+    "desc": "字体栈"
+   },
+   {
+    "name": "--kit-ink",
+    "desc": "浅色方案主文字色"
+   },
+   {
+    "name": "--kit-ink-dim",
+    "desc": "浅色方案说明文字色"
+   },
+   {
+    "name": "--kit-ink-dark",
+    "desc": "深色方案主文字色"
+   },
+   {
+    "name": "--kit-ink-dim-dark",
+    "desc": "深色方案说明文字色"
+   },
+   {
+    "name": "--kit-accent",
+    "desc": "浅色方案进度条颜色"
+   },
+   {
+    "name": "--kit-accent-dark",
+    "desc": "深色方案进度条颜色"
+   }
+  ],
+  "native": 7,
+  "ratios": [
+   "16:9"
+  ],
+  "webgl": false,
+  "notes": "透明背景叠加层，默认放在画面右侧（x=1300, y=250），浅色方案适合亮底，深色背景下把 scheme 设为 dark。位置写在不参与补间的外层，x/y 为 null 时用 CSS 居中，不需要等字体加载完再测量。说明文字较长时注意不要超出右侧安全边距。",
+  "frame_s": 0.27
+ },
+ {
+  "id": "mk-specs-list",
+  "title": "规格清单",
+  "summary": "左对齐的规格/特性清单，各行依次从左滑入，每行下方强调色细线横向扫出，结尾整体上移淡出",
+  "use_when": "列产品规格、设计要点、特性清单，叠在素材画面或浅色底板上",
+  "native": 8,
+  "ratios": [
+   "16:9"
+  ],
+  "webgl": false,
+  "content_fields": [
+   {
+    "key": "rows",
+    "desc": "清单行数组，每项 {label: 项目名, value: 说明，可空}，建议 3～6 行"
+   },
+   {
+    "key": "scheme",
+    "desc": "配色方案：\"light\" 深色字（用在浅色底板上）或 \"dark\" 白字（叠在素材画面上）"
+   },
+   {
+    "key": "underline",
+    "desc": "是否显示每行下方的强调色扫线"
+   },
+   {
+    "key": "lineWidth",
+    "desc": "扫线宽度（px，按 1920 宽的设计稿算）"
+   },
+   {
+    "key": "scrim",
+    "desc": "左侧暗色渐变遮罩的不透明度，0～1，叠在素材上时可提高可读性"
+   },
+   {
+    "key": "x",
+    "desc": "清单左边缘位置（px）"
+   },
+   {
+    "key": "rowGap",
+    "desc": "行间距（px）"
+   },
+   {
+    "key": "stagger",
+    "desc": "各行入场间隔（秒）"
+   }
+  ],
+  "theme_vars": [
+   {
+    "name": "--kit-font",
+    "desc": "字体栈"
+   },
+   {
+    "name": "--kit-ink",
+    "desc": "浅色方案的项目名颜色"
+   },
+   {
+    "name": "--kit-ink-dim",
+    "desc": "浅色方案的说明文字颜色"
+   },
+   {
+    "name": "--kit-ink-dark",
+    "desc": "深色方案的项目名颜色"
+   },
+   {
+    "name": "--kit-ink-dim-dark",
+    "desc": "深色方案的说明文字颜色"
+   },
+   {
+    "name": "--kit-accent",
+    "desc": "浅色方案的扫线颜色"
+   },
+   {
+    "name": "--kit-accent-dark",
+    "desc": "深色方案的扫线颜色"
+   },
+   {
+    "name": "--kit-hairline",
+    "desc": "扫线粗细"
+   }
+  ],
+  "notes": "背景透明，可叠在素材或底板上。行数超过 6 行时，整列可能会伸进字幕区，所以列的位置会先被限制在画面 78% 以上；行数再多就要调小 rowGap。入场时间按 KIT.fit 等比压缩；退场在结尾前 0.5 秒开始，最后 0.02 秒隐藏。",
+  "frame_s": 0.39
+ },
+ {
+  "id": "news-ticker",
+  "content_fields": [
+   {
+    "desc": "左上红色标签主字，如“直播”",
+    "key": "live"
+   },
+   {
+    "desc": "红色标签下方小字，栏目/频道名",
+    "key": "desk"
+   },
+   {
+    "desc": "标题高亮词之前的文字",
+    "key": "headlineBefore"
+   },
+   {
+    "desc": "标题中红色高亮的词",
+    "key": "headlineAccent"
+   },
+   {
+    "desc": "标题高亮词之后的文字",
+    "key": "headlineAfter"
+   },
+   {
+    "desc": "右上角时间胶囊文字",
+    "key": "time"
+   },
+   {
+    "desc": "滚动条左侧标签，如“突发”",
+    "key": "label"
+   },
+   {
+    "desc": "滚动条目数组，每项 {text, metric}，metric 可空，是条目末尾的青色数据块",
+    "key": "items"
+   }
+  ],
+  "native": 7,
+  "notes": "原面板贴底（底边约 93%）会压到字幕区，改为底边 840px（约 78%），整体上移。滚动条按原速度（约 393px/秒）匀速走到镜头结束，条目会自动重复以填满任意时长；滚动文字逐字拆分，只显示完全落在滚动窗口内的字符（切换发生在两端渐隐遮罩下），避免文字越出安全区或与左侧标签重叠。直播点脉冲次数按时长自适应。标题最多约 22 个汉字，过长会被右侧时间胶囊遮挡。",
+  "ratios": [
+   "16:9"
+  ],
+  "summary": "播报风下三分之一面板：红色直播标、标题擦入、扫光掠过，底部新闻条持续滚动后整体下沉退场",
+  "theme_vars": [
+   {
+    "desc": "主红色（标签、分隔点）",
+    "name": "--kit-accent"
+   },
+   {
+    "desc": "标签渐变深红",
+    "name": "--kit-accent-dark"
+   },
+   {
+    "desc": "标题高亮词颜色",
+    "name": "--kit-highlight"
+   },
+   {
+    "desc": "滚动条左侧标签底色",
+    "name": "--kit-label-bg"
+   },
+   {
+    "desc": "数据块底色",
+    "name": "--kit-metric-bg"
+   },
+   {
+    "desc": "数据块文字色",
+    "name": "--kit-metric-fg"
+   },
+   {
+    "desc": "字体栈",
+    "name": "--kit-font"
+   }
+  ],
+  "title": "新闻滚动条",
+  "use_when": "新闻快讯、直播角标、突发消息播报、配合画面滚动多条资讯",
+  "webgl": false,
+  "frame_s": 0.81
+ },
+ {
+  "id": "product-turntable",
+  "title": "产品转台展示",
+  "summary": "影棚展台上的产品匀速转满一圈，首尾无缝衔接；默认是一罐可换标签的饮料，左下角有一行说明文字",
+  "use_when": "展示单个产品外观、包装，需要可循环的 3D 转台镜头，或要放入 GLB/glTF 模型时",
+  "native": 6,
+  "ratios": [
+   "16:9"
+  ],
+  "webgl": true,
+  "content_fields": [
+   {
+    "key": "model_url",
+    "desc": "GLB/glTF 模型地址，留空就用内置的饮料罐"
+   },
+   {
+    "key": "product_name",
+    "desc": "罐身标签上的大字品牌名（10 字以内）"
+   },
+   {
+    "key": "flavor",
+    "desc": "标签上品牌名下方的口味说明"
+   },
+   {
+    "key": "volume",
+    "desc": "标签接缝处的容量小字"
+   },
+   {
+    "key": "caption",
+    "desc": "画面左下方的说明文字"
+   },
+   {
+    "key": "turns",
+    "desc": "整段时长内转几圈（1–4 的整数）"
+   }
+  ],
+  "theme_vars": [
+   {
+    "name": "--kit-bg",
+    "desc": "背景底色"
+   },
+   {
+    "name": "--kit-label",
+    "desc": "罐身标签底色"
+   },
+   {
+    "name": "--kit-ink",
+    "desc": "标签文字和细线的颜色"
+   },
+   {
+    "name": "--kit-caption",
+    "desc": "说明文字颜色"
+   },
+   {
+    "name": "--kit-font",
+    "desc": "字体栈（标签和说明文字共用）"
+   }
+  ],
+  "notes": "旋转只由 t/d 决定，转完整圈数，首尾无缝。原作说明文字贴在底部（底边约 91%），会落进字幕区，所以移到左侧、底边约 77% 的位置。标签字体的颜色由 theme 传入的色值直接画在画布上（只接受 #rrggbb）。模型加载失败时会在控制台报错，并换回内置饮料罐，不会让渲染失败。",
+  "frame_s": 0.89
+ },
+ {
+  "id": "split-flap-board",
+  "content_fields": [
+   {
+    "desc": "显示屏文字，按格居中，超过格数会截断；西文自动转大写",
+    "key": "text"
+   },
+   {
+    "desc": "格数，1～24",
+    "key": "cells"
+   },
+   {
+    "desc": "字牌鼓的顺序（西文/数字），在其中的字符按顺序翻到目标",
+    "key": "alphabet"
+   },
+   {
+    "desc": "中文等不在字牌鼓里的字符翻动时经过的随机字池",
+    "key": "filler"
+   },
+   {
+    "desc": "每翻一张牌的秒数",
+    "key": "flipDuration"
+   },
+   {
+    "desc": "相邻格开始翻动的间隔秒数",
+    "key": "stagger"
+   }
+  ],
+  "native": 3.5,
+  "notes": "西文/数字沿字牌鼓顺序翻动（字母先停、数字和标点后停）；中文字符不在鼓里，按格生成一段固定随机的中文字牌序列再落到目标字。翻牌角度 180·p² 匀加速落下，无缓出。原作无退场，画面停留在最终状态；实际时长短于 3.5 秒时翻牌速度和错开等比压缩。下半牌与翻动叶片是同一字的另一半，已标记 data-qa=\"ignore\"。",
+  "ratios": [
+   "16:9"
+  ],
+  "summary": "机场翻牌式显示屏：每格逐张翻过字牌，依次停在目标字符上，文字以机械连锁翻动的方式出现",
+  "theme_vars": [
+   {
+    "desc": "字牌字体栈",
+    "name": "--kit-font"
+   },
+   {
+    "desc": "字符颜色",
+    "name": "--sf-ink"
+   },
+   {
+    "desc": "背景中心色",
+    "name": "--sf-bg-a"
+   },
+   {
+    "desc": "背景中间色",
+    "name": "--sf-bg-b"
+   },
+   {
+    "desc": "背景边缘色",
+    "name": "--sf-bg-c"
+   },
+   {
+    "desc": "上半牌渐变起色",
+    "name": "--sf-face-a"
+   },
+   {
+    "desc": "上半牌渐变止色",
+    "name": "--sf-face-b"
+   }
+  ],
+  "title": "翻牌显示屏",
+  "use_when": "标题揭晓、航班/车次信息、倒计时开场、复古机械感的文字出场",
+  "webgl": false,
+  "frame_s": 0.34
+ },
+ {
+  "id": "thread-message-stack",
+  "content_fields": [
+   {
+    "desc": "消息数组，每项 {side: \"incoming\"|\"outgoing\", text: 文字, sender?: 发送者名（可选，显示在气泡上方）}",
+    "key": "messages"
+   },
+   {
+    "desc": "相邻两条消息的间隔秒数（原设计 0.86）",
+    "key": "stagger"
+   },
+   {
+    "desc": "最后一条消息出现后至少停留的秒数，用于限制间隔",
+    "key": "hold"
+   }
+  ],
+  "native": 8,
+  "notes": "消息列底边从原来的画面 90% 提到 77%，避开字幕区；被推到顶部渐隐区（约画面 20% 以上）的旧消息会随上推一起快速淡出，然后隐藏，不越出安全边距。消息条数多时间隔会自动压缩，保证最后一条之后还能留出 hold 秒。",
+  "ratios": [
+   "16:9"
+  ],
+  "summary": "暖色虚化背景上，左右两侧的聊天气泡依次弹入，旧消息被逐条往上推",
+  "theme_vars": [
+   {
+    "desc": "发出消息（右侧）气泡底色",
+    "name": "--kit-out-fill"
+   },
+   {
+    "desc": "发出消息文字色",
+    "name": "--kit-out-ink"
+   },
+   {
+    "desc": "收到消息（左侧）气泡底色",
+    "name": "--kit-in-fill"
+   },
+   {
+    "desc": "收到消息文字色",
+    "name": "--kit-in-ink"
+   },
+   {
+    "desc": "背景底色",
+    "name": "--kit-bg"
+   },
+   {
+    "desc": "字体栈",
+    "name": "--kit-font"
+   }
+  ],
+  "title": "消息气泡堆叠",
+  "use_when": "还原聊天对话、客服沟通、社交消息往来的镜头",
+  "webgl": false,
+  "frame_s": 1.08
+ },
+ {
+  "id": "transitions-push",
+  "content_fields": [
+   {
+    "desc": "标题卡上方的小标签",
+    "key": "label"
+   },
+   {
+    "desc": "标题卡主标题",
+    "key": "title"
+   },
+   {
+    "desc": "标题卡副标题（数量说明）",
+    "key": "count"
+   },
+   {
+    "desc": "示例画面 A：{big 大号淡字, tag 小标签}",
+    "key": "sceneA"
+   },
+   {
+    "desc": "示例画面 B：{big, tag}",
+    "key": "sceneB"
+   },
+   {
+    "desc": "4 条转场说明，每条 {name 名称, desc 说明}，依次对应横推、竖推、弹性推、挤压",
+    "key": "items"
+   },
+   {
+    "desc": "收尾卡小标签",
+    "key": "outroLabel"
+   },
+   {
+    "desc": "收尾卡主标题",
+    "key": "outroTitle"
+   }
+  ],
+  "native": 24,
+  "notes": "节奏与原作一致：0–3 秒标题卡，之后每种转场 4.5 秒（第 1.5 秒切换），21 秒收尾卡。时长短于 24 秒时整体等比压缩；时长更长时收尾卡一直停留，到最后 0.4 秒淡出。四组 A/B 画面各用独立 DOM，避免补间互相干扰；旧画面推出后立即隐藏，免得停在画外。标题卡文字比底色早淡出（0.2 秒），画面 A 在第 2.6 秒才显示，避免两层文字叠在一起。说明条改到字幕区上方，左右内边距加大到 96px。",
+  "ratios": [
+   "16:9"
+  ],
+  "summary": "标题卡后依次演示横推、竖推、弹性推、挤压四种推移转场，配编号说明条，最后是收尾卡",
+  "theme_vars": [
+   {
+    "desc": "强调色（标签、编号），默认 #e07a5f",
+    "name": "--kit-accent"
+   },
+   {
+    "desc": "标题卡/收尾卡底色，默认 #0d1b2a",
+    "name": "--kit-card"
+   },
+   {
+    "desc": "画面 A 底色，默认 #1b263b",
+    "name": "--kit-scene-a"
+   },
+   {
+    "desc": "画面 A 小标签颜色，默认 #778da9",
+    "name": "--kit-scene-a-text"
+   },
+   {
+    "desc": "画面 B 底色，默认 #e07a5f",
+    "name": "--kit-scene-b"
+   },
+   {
+    "desc": "字体栈",
+    "name": "--kit-font"
+   }
+  ],
+  "title": "推移转场合集",
+  "use_when": "展示或对比几种推移/滑动转场；做章节间“上一幕推出、下一幕推入”的目录式演示",
+  "webgl": false,
+  "frame_s": 0.14
+ },
+ {
+  "id": "ui-3d-reveal",
+  "content_fields": [
+   {
+    "desc": "工具栏里的文件名",
+    "key": "fileName"
+   },
+   {
+    "desc": "工具栏里的页面名",
+    "key": "pageName"
+   },
+   {
+    "desc": "画框名称（图层面板和画布标签）",
+    "key": "frameName"
+   },
+   {
+    "desc": "画板里的主标题，可用 \\n 换行",
+    "key": "heroTitle"
+   },
+   {
+    "desc": "在创建卡片输入框里逐字打出的文字",
+    "key": "prompt"
+   },
+   {
+    "desc": "输入框占位文字",
+    "key": "placeholder"
+   },
+   {
+    "desc": "选中框下方的尺寸标签",
+    "key": "selLabel"
+   },
+   {
+    "desc": "结尾标语，逐字出现",
+    "key": "tagline"
+   },
+   {
+    "desc": "结尾网址胶囊里的文字",
+    "key": "url"
+   }
+  ],
+  "native": 13,
+  "notes": "原素材只给了结构和样式，动画按“标志描边→填色→界面透视翻入→面板错开→选中并打字→界面退远→标志重建、标语、网址→淡出黑场”重新排了时间线。为避开字幕区，界面整体缩小到 0.92 并上移，底边约在画面 74%。头像不再叠在一起。品牌名换成通用中文示例，画板里的图片标志改成 CSS 渐变方块。入场时间乘 k，黑场用 exitAt(0.8)。",
+  "ratios": [
+   "16:9"
+  ],
+  "summary": "彩色标志描边成形后，设计工具界面带透视从远处翻入，面板依次出现，选中卡片后打字，最后以标志、标语和网址收尾",
+  "theme_vars": [
+   {
+    "desc": "选中框、分享按钮等强调蓝色，默认 #18A0FB",
+    "name": "--kit-accent"
+   },
+   {
+    "desc": "背景底色，默认 #111111",
+    "name": "--kit-bg"
+   },
+   {
+    "desc": "字体栈",
+    "name": "--kit-font"
+   }
+  ],
+  "title": "设计界面立体揭幕",
+  "use_when": "产品/设计工具功能展示、软件界面亮相、App 宣传片开场或收尾",
+  "webgl": false,
+  "frame_s": 0.33
+ },
+ {
+  "id": "weight-wave",
+  "title": "字重波浪",
+  "summary": "一道\"加粗波峰\"沿标题从左扫到右，经过的字从细变到最粗并向前倾斜，扫完一遍再来一遍",
+  "use_when": "动态字体标题、强调一句口号或主题句、开场或章节标题页",
+  "native": 6,
+  "ratios": [
+   "16:9"
+  ],
+  "webgl": false,
+  "content_fields": [
+   {
+    "key": "text",
+    "desc": "标题文字，单行，建议不超过 16 个汉字（也可以是英文，会走可变字体）"
+   },
+   {
+    "key": "weightFrom",
+    "desc": "平时的字重（300–1000）"
+   },
+   {
+    "key": "weightTo",
+    "desc": "波峰处的字重（300–1000）"
+   },
+   {
+    "key": "crestWidth",
+    "desc": "波峰半宽，单位：字符数（1–24）"
+   },
+   {
+    "key": "sweepSpeed",
+    "desc": "扫过速度，每秒扫几遍（0.05–3）"
+   },
+   {
+    "key": "slant",
+    "desc": "波峰处的倾斜角度（-15 到 0，负数表示前倾）"
+   },
+   {
+    "key": "direction",
+    "desc": "方向：ltr 从左到右，rtl 从右到左"
+   }
+  ],
+  "theme_vars": [
+   {
+    "name": "--ww-color",
+    "desc": "文字颜色，默认 #f5f5f7"
+   },
+   {
+    "name": "--ww-bg",
+    "desc": "背景色，默认 #0b0b0d"
+   },
+   {
+    "name": "--kit-font",
+    "desc": "字体栈，默认 Recursive 可变字体 + Noto Sans CJK SC"
+   }
+  ],
+  "notes": "西文字符用随模板附带的 Recursive 可变字体，由 wght/slnt 两个轴驱动，和原作一样平滑。中文字体没有 slnt 轴，所以中文字符改用 font-weight 控制字重（系统中文字体是分档字重时，粗细会一档一档地跳），倾斜用 skewX 模拟。波浪是由时间直接算出来的周期函数，没有入场和退场，任意时长都能撑满；每一遍开头和结尾所有字都回到平时状态，所以循环接缝看不出来。",
+  "frame_s": 0.2
+ }
+]

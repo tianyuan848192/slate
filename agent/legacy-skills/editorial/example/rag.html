@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<link rel="stylesheet" href="/skills/editorial/style.css">
+<script src="/skills/editorial/components.js"></script>
+</head>
+<body>
+<script>
+  // 流程讲解：RAG 四步依次点亮，知识库从旁边接入，最后一步保持强调。7.5 秒；横屏、竖屏都能用
+  const { seg, u: U } = SLATE;
+  const st = ED.stage();
+  const w = st.world;
+  const h = ED.heading(w, { kicker: '原理 · 检索增强生成', text: 'RAG：先查资料，再作答', mark: '再作答' });
+  const A = ED.area(h);
+  const P = A.portrait;
+  // 横屏：四步横排在上半部分，知识库在"检索"正下方；竖屏：四步竖排在左侧，知识库在右侧
+  const fr = P ? { x: A.x, y: A.y, w: A.w * 0.52, h: A.h } : { x: A.x, y: A.y, w: A.w, h: A.h * 0.52 };
+  const f = ED.flow(w, { ...fr, nodeW: P ? A.w * 0.52 : undefined, steps: [
+    { title: '提问', sub: '用户的问题', icon: 'user' },
+    { title: '检索', sub: '找出相关段落', icon: 'search' },
+    { title: '拼接', sub: '把段落放进提示词', icon: 'docs' },
+    { title: '生成', sub: '据此作答并附出处', icon: 'spark', kind: 'solid' },
+  ] });
+  const s2 = f.nodes[1].rect;
+  const kbR = P ? { x: A.x + A.w * 0.66, y: s2.y, w: A.w * 0.34, h: s2.h }
+                : { x: s2.x, y: A.y + A.h * 0.66, w: s2.w, h: U * 13 };
+  const kb = ED.node(w, { ...kbR, title: '知识库', sub: '切片后建向量索引', icon: 'db', kind: 'store' });
+  const kbLink = P ? ED.link(w, { from: kb, to: f.nodes[1], label: '相关段落', labelDy: -U * 2.4 })
+                   : ED.link(w, { from: kb, to: f.nodes[1], label: '取最相关的几段' });
+  const note = P
+    ? ED.callout(w, { x: kbR.x + U * 3, y: kbR.y + kbR.h, tx: kbR.x + U * 3, ty: kbR.y + kbR.h + U * 9, side: 'right', text: '资料随时可更新', sub: '不用重新训练模型' })
+    : ED.callout(w, { x: kbR.x + kbR.w, y: kbR.y + kbR.h / 2, tx: kbR.x + kbR.w + U * 3, ty: kbR.y + kbR.h / 2, text: '资料随时可更新', sub: '不用重新训练模型' });
+
+  const times = [0.9, 1.9, 2.9, 3.9];
+  function render(t) {
+    st.set(t);
+    h.draw(seg(t, 0, 0.9));
+    f.draw(seg(t, 0.3, 1.0));
+    f.set(t, times, { release: 5.0 });
+    // 知识库在"检索"之前出现，连线和检索同时亮起
+    kb.prime(seg(t, 0.4, 1.0));
+    kb.draw(seg(t, 1.5, 2.1, ED.ease.linear));
+    kb.focus(seg(t, 1.6, 1.9) * (1 - seg(t, 2.9, 3.2)));
+    kb.dim(seg(t, 2.9, 3.5) * (1 - seg(t, 5.0, 5.6)));
+    kbLink.prime(seg(t, 0.5, 1.1));
+    const q = seg(t, 1.6, 2.2, ED.ease.move);
+    kbLink.draw(q); kbLink.pulse(q);
+    kbLink.focus(seg(t, 1.6, 1.7) * (1 - seg(t, 2.9, 3.2)));
+    kbLink.dim(seg(t, 2.9, 3.5) * (1 - seg(t, 5.0, 5.6)));
+    note.draw(seg(t, 2.4, 3.3, ED.ease.linear));
+  }
+</script>
+</body>
+</html>

@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<link rel="stylesheet" href="/skills/swiss/style.css">
+<script src="/skills/swiss/components.js"></script>
+</head>
+<body>
+<script>
+  // 竖屏社媒短广告的最后一镜（9:16，1080×1920，7 秒；示例品牌）
+  //   0～2 秒 信号色底板擦出，产品冲出底板上沿升起 → 标题、首发价、行动号召依次落位
+  //   3.2 秒 产品、标题、价格被刀切掉 → 3.5 秒 用户 Logo 在原位升起，口号和网址跟上（落版）；行动号召一直留到片尾
+  //   竖屏网格是 6 栏 × 8 行；字幕在画面 70% 高度，下面是平台按钮区，所以版心下沿就在字幕区上方。
+  //   右边一栏在下半屏会被点赞、评论按钮挡住：文字和按钮只排到第 5 栏。
+  const { u: U } = SLATE;
+  const { lin } = SW;
+  const st = SW.stage({ grid: true });
+  const G = st.G, w = st.world;
+
+  const fo = SW.folio(st.hud, { items: [[0, 'HUSH 2'], [3, '限时首发'], [5, '05 / 05', 'end']] });
+
+  // 第一段：产品 + 标题 + 价格（产品冲出信号色底板的上沿）
+  const py = G.y(0) + G.rh * 0.62, ph = G.y(3) + G.rh + U * 2 - py;
+  const prod = SW.product(w, { x: G.x(0), y: py, w: G.width, h: ph, src: 'hush-cutout.svg', mode: 'cutout', bg: 'signal', over: 0.14, pad: 0.05, zoom: [1, 1.04] });
+  const ttl = SW.title(w, { x: G.x(0), y: G.y(4) + U * 2.4, lines: ['安静，随身'], size: U * 10, weight: 700 });
+  const pr = SW.price(w, { x: G.x(0), y: G.y(5) + U * 2.4, w: G.w(5), label: '首发价', now: '999', suffix: '起', size: U * 15 });
+
+  // 第二段：Logo 落版（用户的 Logo 用 src 引用，原样显示），放在版心中部
+  const lk = SW.lockup(w, { x: G.x(0), y: G.y(2) + U * 2, src: 'hush-logo.svg', h: U * 13, tagline: '听见安静本身', url: 'hush.example', w: G.w(5), tagSize: U * 6.4 });
+
+  // 行动号召：整镜都在，只排 5 栏，避开右侧平台按钮
+  const go = SW.cta(w, { x: G.x(0), y: G.y(7) - U * 1.5, w: G.w(5), h: U * 10, text: '立即抢购', sub: '点击下方链接 · 限量 1000 台' });
+
+  function render(t) {
+    st.set(t);
+    fo.draw(lin(t, 0, 0.6));
+    prod.draw(lin(t, 0, 1.1));
+    prod.push(lin(t, 0, 3.4));
+    ttl.draw(lin(t, 0.5, 1.3));
+    pr.draw(lin(t, 0.8, 1.4));
+    pr.reveal(lin(t, 0.9, 2.0));
+    go.draw(lin(t, 1.2, 2.0));
+    go.pulse(t, 2.0);
+    // 刀切：从上往下依次删掉
+    prod.cut(lin(t, 3.2, 3.8));
+    ttl.cut(lin(t, 3.3, 3.9));
+    pr.cut(lin(t, 3.4, 4.0));
+    lk.draw(lin(t, 3.5, 4.7));
+  }
+</script>
+</body>
+</html>

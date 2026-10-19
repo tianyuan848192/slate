@@ -1,0 +1,12 @@
+<!doctype html><html><head><meta charset="utf-8">
+<script>window.READY = false;</script>
+<script type="importmap">{"imports":{"three":"/node_modules/three/build/three.module.js","three/addons/":"/node_modules/three/examples/jsm/"}}</script>
+<style>html,body{margin:0;background:#e8e4dc} #main{position:absolute;inset:0}</style></head>
+<body><div id="main"></div>
+<script src="/skills/kit-motion/kit.js"></script>
+<script type="module">
+  import "/skills/kit-shots/product-turntable/shot.js";
+  const tl = SLATE.timeline().add(KIT.shots["product-turntable"](document.getElementById("main"), { dur: SLATE.duration }), 0);
+  window.render = t => tl.at(t);
+  window.READY = true;
+</script></body></html>

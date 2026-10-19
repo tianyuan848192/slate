@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<link rel="stylesheet" href="/skills/vertical/style.css">
+<script src="/skills/vertical/components.js"></script>
+</head>
+<body>
+<div id="stage"></div>
+<script>
+  // 竖屏示例（9:16，7 秒）：降噪耳机信息流广告
+  //   0～1.2 秒 钩子（问题）→ 1.2～3 秒 反差（声波变平）→ 3～5 秒 两个卖点快切 → 最后 2 秒行动号召
+  const { u: U, width: W, height: H } = SLATE;  // U = 短边的 1%
+  const root = document.getElementById('stage');
+  const sA = VT.screen(root), sB = VT.screen(root), sC = VT.screen(root), sD = VT.screen(root), sE = VT.screen(root);
+  const starts = [0, 1.2, 3.0, 4.0, 5.0];
+
+  // 跨屏的声波：前 1.2 秒很吵，戴上耳机后变成一条平线
+  const wave = VT.wave(root, { y: H * 0.47, h: U * 28 });
+
+  // A：钩子——一个扎心的问题
+  const tagA = VT.sticker(sA, { text: '85 分贝', icon: 'wave', x: W * 0.7, y: H * 0.15, rot: 6, bg: VT.C.coral, color: '#fff', delay: 0.25 });
+  const hookA = VT.hook(sA, { lines: ['地铁里', '吵到崩溃？'], mark: '崩溃', y: H * 0.2 });
+
+  // B：反差——一秒安静
+  const tagB = VT.sticker(sB, { text: '戴上 Aero 2', icon: 'headphones', x: W / 2, y: H * 0.17, rot: -3, bg: VT.C.indigo, color: '#fff' });
+  const hookB = VT.hook(sB, { lines: ['一秒变安静'], mark: '安静', y: H * 0.23, gap: 0 });
+
+  // C、D：卖点快切，一屏一个数字
+  const cardC = VT.card(sC, { icon: 'mute', value: '-45dB', label: '深度降噪', bg: VT.C.indigo });
+  const cardD = VT.card(sD, { icon: 'battery', value: '40 小时', label: '超长续航', bg: VT.C.coral });
+
+  // E：行动号召（最后 2 秒）
+  const nameE = VT.hook(sE, { lines: ['Aero 2'], y: H * 0.11, size: U * 15 });
+  const prodE = VT.badge(sE, { icon: 'headphones', y: H * 0.36, delay: 0.05 });
+  const tagE = VT.sticker(sE, { text: '限时 7 折', x: W * 0.7, y: H * 0.44, rot: -6, size: U * 6, delay: 0.2 });
+  const btn = VT.cta(sE, { text: '立即抢购', y: H * 0.535, delay: 0.3 });
+
+  const bar = VT.progress(root, { marks: starts });
+  const cut = VT.cuts([sA, sB, sC, sD, sE], starts, { style: ['cut', 'punch', 'whip', 'whip', 'punch'] });
+
+  function render(t) {
+    cut.set(t);
+    const [a, b, c, d, e] = starts.map((_, i) => cut.local(t, i));
+    tagA.set(a); hookA.set(a);
+    tagB.set(b); hookB.set(b);
+    cardC.set(c); cardD.set(d);
+    nameE.set(e); prodE.set(e); tagE.set(e); btn.set(e);
+    wave.set(t, 1 - SLATE.seg(t, 1.25, 1.85, SLATE.ease.inOut) * 0.96, t < starts[2] ? 1 : 0);
+    bar.set(t);
+  }
+</script>
+</body>
+</html>

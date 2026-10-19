@@ -1,0 +1,888 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Slate｜讲解片与广告片生成</title>
+<link rel="stylesheet" href="styles.css">
+<!-- 3D 预览用的 three.js 放在本站 vendor/ 下；模型代码里的 import 'three' 也按这里解析。要在所有模块脚本之前 -->
+<script type="importmap">
+{"imports": {"three": "./vendor/three/build/three.module.js", "three/addons/": "./vendor/three/examples/jsm/"}}
+</script>
+</head>
+<body>
+
+<!-- 图标 -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <symbol id="i-clap" viewBox="0 0 24 24"><path d="M4 10h16v9a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1v-9Z"/><path d="m4 10-.7-3.3a1 1 0 0 1 .8-1.2L17.6 3a1 1 0 0 1 1.2.8l.5 2.4L4 10Z"/><path d="m8.5 4.6 2 4M13.4 3.8l2 4"/></symbol>
+    <symbol id="i-film" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M7.5 4v16M16.5 4v16M3 9h4.5M3 15h4.5M16.5 9H21M16.5 15H21"/></symbol>
+    <symbol id="i-layers" viewBox="0 0 24 24"><path d="M12 3 3 8l9 5 9-5-9-5Z"/><path d="m3 12.5 9 5 9-5"/><path d="m3 17 9 5 9-5" opacity=".55"/></symbol>
+    <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+    <symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="6.5"/><path d="m20 20-4.2-4.2"/></symbol>
+    <symbol id="i-upload" viewBox="0 0 24 24"><path d="M12 16V4M7 9l5-5 5 5M5 20h14"/></symbol>
+    <symbol id="i-link" viewBox="0 0 24 24"><path d="M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1"/><path d="M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1"/></symbol>
+    <symbol id="i-doc" viewBox="0 0 24 24"><path d="M14 3H6a1 1 0 0 0-1 1v16a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V8l-5-5Z"/><path d="M14 3v5h5M8.5 13h7M8.5 16.5h5"/></symbol>
+    <symbol id="i-globe" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.5 2.6 3.8 5.6 3.8 9s-1.3 6.4-3.8 9c-2.5-2.6-3.8-5.6-3.8-9S9.5 5.6 12 3Z"/></symbol>
+    <symbol id="i-check" viewBox="0 0 24 24"><path d="m5 12.5 4.5 4.5L19 7.5"/></symbol>
+    <symbol id="i-chev" viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></symbol>
+    <symbol id="i-back" viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></symbol>
+    <symbol id="i-play" viewBox="0 0 24 24"><path d="M8 5.5v13l11-6.5-11-6.5Z" fill="currentColor" stroke="none"/></symbol>
+    <symbol id="i-pause" viewBox="0 0 24 24"><path d="M8.5 5.5v13M15.5 5.5v13" stroke-width="2.6"/></symbol>
+    <symbol id="i-download" viewBox="0 0 24 24"><path d="M12 4v11M7 10.5l5 5 5-5M5 20h14"/></symbol>
+    <symbol id="i-send" viewBox="0 0 24 24"><path d="M4.5 12 20 4.5 15 20l-3.2-6.6L4.5 12Z"/><path d="m11.8 13.4 3.7-3.7"/></symbol>
+    <symbol id="i-x" viewBox="0 0 24 24"><path d="M6.5 6.5l11 11M17.5 6.5l-11 11"/></symbol>
+    <symbol id="i-grip" viewBox="0 0 24 24"><g fill="currentColor" stroke="none"><circle cx="9" cy="6" r="1.4"/><circle cx="15" cy="6" r="1.4"/><circle cx="9" cy="12" r="1.4"/><circle cx="15" cy="12" r="1.4"/><circle cx="9" cy="18" r="1.4"/><circle cx="15" cy="18" r="1.4"/></g></symbol>
+    <symbol id="i-image" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="9" cy="10" r="1.6"/><path d="m21 16-5-5-9 8"/></symbol>
+    <symbol id="i-expand" viewBox="0 0 24 24"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></symbol>
+    <symbol id="i-frame" viewBox="0 0 24 24"><rect x="3.5" y="5.5" width="17" height="13" rx="1"/><rect x="6.5" y="8" width="11" height="8" rx=".5" stroke-dasharray="2 2"/></symbol>
+    <symbol id="i-alert" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7.5v5.5M12 16.5v.01" stroke-width="2.2"/></symbol>
+    <symbol id="i-chart" viewBox="0 0 24 24"><path d="M4 20h16"/><path d="M7.5 16.5V12M12 16.5V6.5M16.5 16.5V9.5" stroke-width="2.4"/></symbol>
+    <symbol id="i-quote" viewBox="0 0 24 24"><path d="M10 7H5.5v5H9c0 2.6-1.2 4.1-3.5 4.6M19 7h-4.5v5H18c0 2.6-1.2 4.1-3.5 4.6"/></symbol>
+    <symbol id="i-cube" viewBox="0 0 24 24"><path d="M12 3 4 7.5v9L12 21l8-4.5v-9L12 3Z"/><path d="M4 7.5 12 12l8-4.5M12 12v9"/></symbol>
+    <symbol id="i-archive" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="5" rx="1"/><path d="M5 9v10a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V9M10 13h4"/></symbol>
+    <symbol id="i-rotate" viewBox="0 0 24 24"><path d="M19.5 12a7.5 7.5 0 1 1-2.2-5.3"/><path d="M19.5 4v4.5H15"/></symbol>
+    <symbol id="i-reset" viewBox="0 0 24 24"><path d="M4 9V5a1 1 0 0 1 1-1h4M15 4h4a1 1 0 0 1 1 1v4M20 15v4a1 1 0 0 1-1 1h-4M9 20H5a1 1 0 0 1-1-1v-4"/><circle cx="12" cy="12" r="3"/></symbol>
+    <symbol id="i-edit" viewBox="0 0 24 24"><path d="M4 20h4L19 9a2.1 2.1 0 0 0-3-3L5 17v3Z"/><path d="m14 7 3 3"/></symbol>
+    <symbol id="i-explode" viewBox="0 0 24 24"><path d="M12 2.5 6.5 5.5 12 8.5l5.5-3L12 2.5Z"/><path d="M4 10v5.6l6 3.4v-5.6L4 10ZM20 10v5.6L14 19v-5.6l6-3.4Z"/></symbol>
+    <symbol id="i-print3d" viewBox="0 0 24 24"><rect x="3.5" y="3.5" width="17" height="17" rx="1.5"/><path d="M3.5 7.5h17M10 7.5v2.5l2 2 2-2V7.5M8.5 17h7v-2.5h-7V17ZM6 17h12"/></symbol>
+    <symbol id="i-trash" viewBox="0 0 24 24"><path d="M4 7h16M9 7V4.5h6V7M6.5 7l1 12.5h9l1-12.5M10 11v5M14 11v5"/></symbol>
+    <symbol id="i-text" viewBox="0 0 24 24"><path d="M5 5h14M5 9.5h14M5 14h9M5 18.5h6"/></symbol>
+    <symbol id="i-av" viewBox="0 0 24 24"><rect x="3" y="5" width="13" height="14" rx="2"/><path d="m16 10 5-3v10l-5-3"/><path d="M7 15v-2M9.5 15v-6M12 15v-4" stroke-width="1.6"/></symbol>
+    <symbol id="i-flow" viewBox="0 0 24 24"><rect x="3" y="4" width="7" height="5" rx="1.2"/><rect x="3" y="15" width="7" height="5" rx="1.2"/><rect x="14" y="9.5" width="7" height="5" rx="1.2"/><path d="M10 6.5c3 0 2 5.5 4 5.5M10 17.5c3 0 2-5.5 4-5.5"/></symbol>
+    <symbol id="i-free" viewBox="0 0 24 24"><path d="M4 20h4L19 9a2.1 2.1 0 0 0-3-3L5 17v3Z"/><path d="M13 20h7"/></symbol>
+    <symbol id="i-fit" viewBox="0 0 24 24"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></symbol>
+    <symbol id="i-minus" viewBox="0 0 24 24"><path d="M5 12h14"/></symbol>
+    <symbol id="i-save" viewBox="0 0 24 24"><path d="M5 4h11l3 3v12a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V4Z"/><path d="M8 4v5h7V4M8 20v-6h8v6"/></symbol>
+    <symbol id="i-chat" viewBox="0 0 24 24"><path d="M5 5h14a1 1 0 0 1 1 1v9a1 1 0 0 1-1 1h-8l-4.5 3.5V16H5a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1Z"/></symbol>
+    <symbol id="i-lock" viewBox="0 0 24 24"><rect x="5" y="11" width="14" height="9" rx="1.5"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></symbol>
+  </defs>
+</svg>
+
+<!-- 配置加载失败时的提示 -->
+<div class="boot-error" id="boot-error" hidden>
+  <div class="wordmark">Slate</div>
+  <p id="boot-error-text">页面配置加载失败，请刷新重试。</p>
+  <button type="button" class="btn primary" id="boot-reload">刷新</button>
+</div>
+
+<!-- ========== 登录 ========== -->
+<section class="login" id="view-login" hidden>
+  <div class="login-stage">
+    <div class="wordmark">Slate</div>
+    <p class="login-pitch">交给它参考资料、参考图和链接。Agent 会读资料、写分镜、写动画代码，渲染出一支可以直接发布的 MP4。</p>
+    <ul class="login-reel" id="login-reel" aria-label="画风示例"></ul>
+  </div>
+  <div class="login-side">
+    <form class="login-form" id="login-form" novalidate>
+      <h1>登录 Slate</h1>
+      <label class="field">
+        <span class="field-label">工作邮箱</span>
+        <input type="email" id="login-email" name="email" autocomplete="username" placeholder="name@company.com" required>
+      </label>
+      <label class="field">
+        <span class="field-label">密码</span>
+        <input type="password" id="login-pw" name="password" autocomplete="current-password" required>
+      </label>
+      <p class="form-error" id="login-error" role="alert" hidden></p>
+      <button class="btn primary block-btn" type="submit" id="login-submit">登录</button>
+      <div class="or"><span>或</span></div>
+      <button class="btn ghost block-btn" type="button" id="sso-btn">使用企业账号登录</button>
+      <p class="login-foot"><a href="#login" id="forgot-link">忘记密码</a><a href="#login" id="trial-link">申请试用</a></p>
+      <p class="mock-hint" id="mock-hint" hidden>本地 mock 模式：不连接 Cognito，任意邮箱和密码都能登录。</p>
+    </form>
+
+    <form class="login-form" id="newpw-form" novalidate hidden>
+      <h1>设置新密码</h1>
+      <p class="login-lead">这是你第一次登录。为了账号安全，请先设置一个新密码，以后用新密码登录。</p>
+      <label class="field">
+        <span class="field-label">新密码</span>
+        <input type="password" id="newpw-1" autocomplete="new-password" required>
+      </label>
+      <p class="field-hint">至少 8 位，需要同时包含大写字母、小写字母、数字和符号。</p>
+      <label class="field">
+        <span class="field-label">再输入一次</span>
+        <input type="password" id="newpw-2" autocomplete="new-password" required>
+      </label>
+      <p class="form-error" id="newpw-error" role="alert" hidden></p>
+      <button class="btn primary block-btn" type="submit" id="newpw-submit">设置并登录</button>
+      <p class="login-foot"><a href="#login" id="newpw-back">返回登录</a></p>
+    </form>
+  </div>
+</section>
+
+<!-- ========== 应用外壳 ========== -->
+<div class="shell" id="shell" hidden>
+  <nav class="rail" aria-label="主导航">
+    <a class="rail-logo" href="#compose" aria-label="Slate 首页">S</a>
+    <a class="rail-item" href="#compose" data-route="compose flows flow"><svg><use href="#i-clap"/></svg><span>新建</span></a>
+    <a class="rail-item" href="#projects" data-route="projects run"><svg><use href="#i-film"/></svg><span>任务</span></a>
+    <a class="rail-item" href="#library" data-route="library"><svg><use href="#i-archive"/></svg><span>素材库</span></a>
+    <a class="rail-item" href="#skills" data-route="skills"><svg><use href="#i-layers"/></svg><span>Skills</span></a>
+    <a class="rail-item" href="#usage" data-route="usage"><svg><use href="#i-chart"/></svg><span>用量</span></a>
+    <div class="rail-spacer"></div>
+    <button type="button" class="rail-avatar" id="avatar" title="退出登录">·</button>
+  </nav>
+
+  <main class="stage" id="stage">
+
+    <!-- 本月 Credit 额度：所有页面顶部都显示；用到 80% 和 100% 时变成提示条 -->
+    <div class="credit-strip" id="credit-strip" hidden>
+      <p class="credit-warn" id="credit-warn" role="status" hidden><svg aria-hidden="true"><use href="#i-alert"/></svg><span></span></p>
+      <a class="credit-meter" id="credit-meter" href="#usage" title="查看用量">
+        <span>本月已用</span><b id="cm-val"></b><span>Credit</span>
+        <span class="cm-track" id="cm-track" role="progressbar" aria-label="本月额度已用" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><i></i></span>
+      </a>
+    </div>
+
+    <!-- ========== 新建：视频 / 3D 图片 ========== -->
+    <section class="view" id="view-compose" data-view="compose">
+      <!-- 新建方式：自由模式（就是这一页）/ 工作流模式（画板，#flows）。docs/workflow-mode-design.md -->
+      <nav class="seg entry" aria-label="新建方式">
+        <a class="opt is-on" href="#compose" aria-current="page"><svg aria-hidden="true"><use href="#i-free"/></svg>自由模式</a>
+        <a class="opt" href="#flows"><svg aria-hidden="true"><use href="#i-flow"/></svg>工作流模式</a>
+      </nav>
+      <div class="seg product" role="radiogroup" aria-label="要做什么" id="product">
+        <label class="opt"><input type="radio" name="product" value="video" checked><svg aria-hidden="true"><use href="#i-film"/></svg>视频</label>
+        <label class="opt"><input type="radio" name="product" value="model3d"><svg aria-hidden="true"><use href="#i-cube"/></svg>3D 图片</label>
+      </div>
+      <header class="page-head">
+        <h1 id="compose-h">新建视频</h1>
+        <p id="compose-lead">用一段话说清楚想做什么。Agent 会自己查资料、写稿、定画风、写动画代码，最后渲染成 MP4。</p>
+      </header>
+
+      <div class="compose-grid">
+        <form class="compose-main" id="compose-form">
+          <div class="mode" role="radiogroup" aria-label="创建方式">
+            <label class="opt mode-opt"><input type="radio" name="mode" value="quick" checked>
+              <b>快速模式</b><small>写一段描述，剩下的全交给 Agent</small></label>
+            <label class="opt mode-opt"><input type="radio" name="mode" value="advanced">
+              <b>高级模式</b><small>可以指定画风、规格和分镜确认</small></label>
+          </div>
+
+          <!-- 描述块：描述 + 资料（联网搜索、强制引用、添加资料：上传文件、从素材库选、添加链接），快速模式和高级模式都有 -->
+          <section class="prompt" id="prompt">
+            <div class="prompt-head">
+              <label class="prompt-label" for="f-desc" id="l-desc">想做一支什么样的片子</label>
+              <span class="count" id="desc-count">0 / 4,000 字</span>
+            </div>
+            <textarea id="f-desc" rows="6" maxlength="4000" placeholder="讲什么、给谁看、想让观众记住什么。例如：给第一次接触大模型的产品经理讲清楚 RAG，语气轻松，一分钟左右。"></textarea>
+            <div class="prompt-bar" role="group" aria-label="资料">
+              <button type="button" class="pill-toggle" role="switch" aria-checked="true" data-default="true" id="sw-web">
+                <svg><use href="#i-globe"/></svg><span>联网搜索</span><em></em>
+              </button>
+              <button type="button" class="pill-toggle" role="switch" aria-checked="false" data-default="false" id="sw-strict" aria-describedby="strict-hint" disabled>
+                <svg><use href="#i-quote"/></svg><span>强制引用</span><em></em>
+              </button>
+              <p class="strict-hint" id="strict-hint"></p>
+              <div class="rf-add">
+                <button type="button" class="pill-add" id="rf-add-btn" aria-haspopup="menu" aria-expanded="false" aria-controls="rf-menu"><svg><use href="#i-plus"/></svg>添加资料<svg class="chev"><use href="#i-chev"/></svg></button>
+                <div class="rf-menu" id="rf-menu" role="menu" aria-label="添加资料" hidden>
+                  <button type="button" role="menuitem" tabindex="-1" data-rf-add="file"><svg><use href="#i-upload"/></svg><span><b>上传文件</b><small>本机的 pdf、docx、md、txt、csv、xlsx，每个不超过 1 MB</small></span></button>
+                  <button type="button" role="menuitem" tabindex="-1" data-rf-add="image"><svg><use href="#i-image"/></svg><span><b>上传图片</b><small>产品照、截图、Logo，png、jpg、webp，每张不超过 10 MB，最多 8 张；每张都要写一句描述</small></span></button>
+                  <button type="button" role="menuitem" tabindex="-1" data-rf-add="library" aria-haspopup="dialog"><svg><use href="#i-archive"/></svg><span><b>从素材库选</b><small>以前上传过的文件和图片、做好的 3D 图片</small></span></button>
+                  <button type="button" role="menuitem" tabindex="-1" data-rf-add="link"><svg><use href="#i-link"/></svg><span><b>添加链接</b><small>博客、在线文档，最多 5 个，开工前抓取正文</small></span></button>
+                </div>
+                <input type="file" id="rf-file-input" multiple accept=".pdf,.docx,.md,.txt,.csv,.xlsx" hidden>
+                <input type="file" id="rf-img-input" multiple accept=".png,.jpg,.jpeg,.webp,image/png,image/jpeg,image/webp" hidden>
+              </div>
+            </div>
+
+            <div class="rf-editor" id="rf-link-editor" hidden>
+              <div class="rf-editor-head"><b>添加链接</b><span class="count" id="rf-link-count"></span></div>
+              <div class="url-add">
+                <label class="sr-only" for="rf-link-input">链接地址</label>
+                <input id="rf-link-input" type="url" placeholder="博客或在线文档的网址，粘贴后按回车">
+                <button type="button" class="btn primary" id="rf-link-ok">添加</button>
+              </div>
+              <p class="rf-msg" id="rf-link-msg" role="alert" hidden></p>
+              <div class="rf-editor-bar">
+                <span class="rf-editor-hint">要登录才能看的页面抓不到正文，可以存成文件上传，或者把要用的部分写进描述。</span>
+                <button type="button" class="btn ghost small" id="rf-link-done">完成</button>
+              </div>
+            </div>
+
+            <p class="rf-msg" id="rf-msg" role="alert" hidden></p>
+            <!-- 添加的资料排在一个列表里：上传的文件、素材库里的文件、链接，还有素材库里的 3D 图片 -->
+            <p class="rf-sum" id="rf-sum" hidden></p>
+            <ul class="rf-list" id="rf-list" aria-label="已添加的资料"></ul>
+          </section>
+          <div class="examples" id="examples">
+            <span>试试这些</span>
+            <button type="button" data-example="给第一次接触大模型应用的产品经理讲清楚检索增强生成（RAG）：为什么需要它、检索和生成各做什么、和微调有什么不同。语气轻松，结尾给一句好记的话。" data-title="RAG 是怎么工作的">给产品经理讲清楚 RAG</button>
+            <button type="button" data-example="Aero 2 降噪耳机的 15 秒竖屏信息流广告，主打通勤地铁里一键安静，前 3 秒要抓住人。" data-title="Aero 2：一键安静">15 秒耳机竖屏广告</button>
+            <button type="button" data-example="面向开发者讲清楚 Amazon Bedrock AgentCore 的组成：Runtime、Memory、Gateway、Code Interpreter 各管什么，怎么串起来跑一个 Agent。" data-title="AgentCore 是什么">AgentCore 架构讲解</button>
+            <button type="button" data-example="季度复盘会的开场片，用数据讲第三季度用户增长的三个关键原因，节奏要稳。" data-title="第三季度用户增长">季度增长数据开场片</button>
+          </div>
+
+          <!-- 写作方法：剧本怎么组织。和画风互相独立，快速模式和高级模式都能选；下拉框里的写作方法来自 GET /api/skills 的 genres，按分组排 -->
+          <section class="genre" id="genre">
+            <label class="genre-legend" for="f-genre">写作方法</label>
+            <p class="genre-hint" id="genre-hint">决定剧本怎么组织：叙事结构、开场和节奏。画风只管画面，两者可以自由搭配。</p>
+            <select id="f-genre" aria-describedby="genre-hint"><option value="">交给 Agent 判断</option></select>
+            <p class="genre-desc" id="genre-desc" aria-live="polite"></p>
+          </section>
+
+          <section class="adv" id="adv" aria-labelledby="adv-h" hidden>
+            <div class="adv-head">
+              <h2 id="adv-h">高级选项</h2>
+              <p>都是可选的。没勾选的项目，Agent 会根据描述自己判断。</p>
+            </div>
+            <div class="adv-list">
+
+              <section class="adv-item">
+                <label class="adv-toggle"><input type="checkbox" id="c-skills"><span class="box" aria-hidden="true"></span>
+                  <span class="adv-title"><b>画风 Skills</b><small class="off">不勾选时，Agent 按内容从仓库里挑画风</small><small class="on">按你挑的主画风定配色、字体、节奏和动画做法</small></span></label>
+                <div class="adv-body">
+                  <p class="block-hint" id="style-pair-hint">写作方法决定剧本怎么组织，画风决定画面长什么样，可以自由搭配。</p>
+                  <p class="block-hint">最多选两个：第一个是主画风，决定全片的配色、字体和字幕；第二个是插入画风，只用在中间一段"片中片"里，可以不选。拖动可以调整顺序。</p>
+                  <ol class="skill-stack" id="skill-stack"></ol>
+                  <button type="button" class="btn ghost" id="open-picker"><svg><use href="#i-plus"/></svg>从仓库添加</button>
+                </div>
+              </section>
+
+              <section class="adv-item">
+                <label class="adv-toggle"><input type="checkbox" id="c-spec"><span class="box" aria-hidden="true"></span>
+                  <span class="adv-title"><b>规格与声音</b><small class="off">不勾选时，Agent 按内容和用途决定画幅、时长和配音</small><small class="on">按你选的画幅、时长、清晰度和声音来做</small></span></label>
+                <div class="adv-body spec">
+                  <div class="spec-row">
+                    <span class="spec-label" id="l-ratio">画幅</span>
+                    <div class="seg" role="radiogroup" aria-labelledby="l-ratio">
+                      <label class="opt"><input type="radio" name="ratio" value="16:9" checked><i class="ar" style="--w:22px;--h:12.4px"></i>16:9 横屏</label>
+                      <label class="opt"><input type="radio" name="ratio" value="9:16"><i class="ar" style="--w:10px;--h:17.8px"></i>9:16 竖屏</label>
+                      <label class="opt"><input type="radio" name="ratio" value="1:1"><i class="ar" style="--w:15px;--h:15px"></i>1:1</label>
+                      <label class="opt"><input type="radio" name="ratio" value="4:5"><i class="ar" style="--w:13px;--h:16.25px"></i>4:5</label>
+                    </div>
+                  </div>
+                  <div class="spec-row">
+                    <span class="spec-label" id="l-dur">时长</span>
+                    <div class="seg" role="radiogroup" aria-labelledby="l-dur">
+                      <label class="opt"><input type="radio" name="dur" value="15" data-eta="4">15 秒</label>
+                      <label class="opt"><input type="radio" name="dur" value="30" data-eta="6">30 秒</label>
+                      <label class="opt"><input type="radio" name="dur" value="60" data-eta="8" checked>60 秒</label>
+                      <label class="opt"><input type="radio" name="dur" value="90" data-eta="11">90 秒</label>
+                      <label class="opt"><input type="radio" name="dur" value="180" data-eta="18">3 分钟</label>
+                      <label class="opt"><input type="radio" name="dur" value="custom">自定义</label>
+                    </div>
+                    <div class="dur-custom" id="dur-custom" hidden>
+                      <input type="number" id="f-dur-min" min="0" max="600" step="1" value="10" aria-label="分钟"><span>分</span>
+                      <input type="number" id="f-dur-sec" min="0" max="59" step="1" value="0" aria-label="秒"><span>秒</span>
+                      <small class="dim" id="dur-hint"></small>
+                    </div>
+                  </div>
+                  <div class="spec-row">
+                    <span class="spec-label" id="l-res">清晰度</span>
+                    <div class="spec-pair">
+                      <div class="seg" role="radiogroup" aria-labelledby="l-res">
+                        <label class="opt"><input type="radio" name="res" value="720p">720p</label>
+                        <label class="opt"><input type="radio" name="res" value="1080p" checked>1080p</label>
+                      </div>
+                      <div class="seg" role="radiogroup" aria-label="帧率">
+                        <label class="opt"><input type="radio" name="fps" value="30" checked>30 帧</label>
+                        <label class="opt"><input type="radio" name="fps" value="60">60 帧</label>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="spec-row">
+                    <span class="spec-label">声音</span>
+                    <div class="sound">
+                      <div class="sound-item">
+                        <button type="button" class="switch" role="switch" aria-checked="true" data-default="true" id="sw-voice" aria-labelledby="l-voice"></button>
+                        <span id="l-voice">AI 配音</span>
+                        <select id="voice" aria-label="配音音色"><option value="auto">由 Agent 按内容挑选</option></select>
+                        <button type="button" class="icon-btn" id="voice-play" aria-label="试听这个音色" title="试听" disabled><svg><use href="#i-play"/></svg></button>
+                        <span class="voice-desc" id="voice-desc"></span>
+                      </div>
+                      <div class="sound-item">
+                        <button type="button" class="switch" role="switch" aria-checked="true" data-default="true" id="sw-sub" aria-labelledby="l-sub"></button>
+                        <span id="l-sub">字幕</span>
+                      </div>
+                      <div class="sound-item">
+                        <button type="button" class="switch" role="switch" aria-checked="false" data-default="false" id="sw-bgm" aria-labelledby="l-bgm"></button>
+                        <span id="l-bgm">背景音乐</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </section>
+
+              <section class="adv-item">
+                <label class="adv-toggle"><input type="checkbox" id="c-board"><span class="box" aria-hidden="true"></span>
+                  <span class="adv-title"><b>生成前确认分镜</b><small class="off">不勾选时，Agent 一口气做完，中途不停下</small><small class="on">写完分镜先停下来，等你确认再渲染</small></span></label>
+              </section>
+
+            </div>
+          </section>
+        </form>
+
+        <!-- 3D 图片：一段描述，加 0～4 张同一物体不同角度的照片 -->
+        <form class="compose-main" id="m3d-form" hidden>
+          <section class="prompt" id="m3d-prompt">
+            <div class="prompt-head">
+              <label class="prompt-label" for="m3d-desc">要做一个什么样的物体</label>
+              <span class="count" id="m3d-count">0 字</span>
+            </div>
+            <textarea id="m3d-desc" rows="5" maxlength="2000" placeholder="外形、颜色、材质和细节，越具体越像。例如：薄荷绿双铃闹钟，复古金属质感，表盘是罗马数字。"></textarea>
+            <div class="prompt-bar" role="group" aria-label="联网">
+              <button type="button" class="pill-toggle" role="switch" aria-checked="true" data-default="true" id="sw-web3d" aria-describedby="web3d-hint">
+                <svg><use href="#i-globe"/></svg><span>联网搜索</span><em></em>
+              </button>
+              <p class="strict-hint" id="web3d-hint"></p>
+            </div>
+            <div class="prompt-bar" role="group" aria-label="拆解">
+              <button type="button" class="pill-toggle" role="switch" aria-checked="false" data-default="false" id="sw-explode" aria-describedby="explode-hint">
+                <svg><use href="#i-explode"/></svg><span>做拆解</span><em></em>
+              </button>
+              <p class="strict-hint" id="explode-hint"></p>
+            </div>
+          </section>
+          <div class="examples" id="m3d-examples">
+            <span>试试这些</span>
+            <button type="button" data-example="薄荷绿双铃闹钟，复古金属质感，表盘是罗马数字，顶上有一个镀铬提手和两只铃铛。">复古双铃闹钟</button>
+            <button type="button" data-example="80 年代木纹台式收音机，正面左边是布面喇叭，右边是调频刻度盘和两个旋钮，顶上有提手和一根拉杆天线。">木纹收音机</button>
+            <button type="button" data-example="哑光黑色头戴式降噪耳机，椭圆形耳罩，头梁内侧有灰色软垫，右耳罩外侧有一个圆形触控区。">头戴式耳机</button>
+            <button type="button" data-example="细嘴手冲咖啡壶，拉丝不锈钢壶身，黑色木质手柄，壶盖上有一个小圆钮。">手冲咖啡壶</button>
+          </div>
+          <section class="photos" id="photos" aria-labelledby="photos-h">
+            <div class="prompt-head">
+              <h2 class="prompt-label" id="photos-h">参考照片</h2>
+              <span class="count" id="photos-count"></span>
+            </div>
+            <p class="photos-hint" id="photos-hint">角度越全越像（正面、侧面、背面、斜侧）；只有一张时看不到的面靠推测；不传图时 Agent 会先按描述画一张示意图再建模。</p>
+            <ul class="ph-grid" id="ph-grid" aria-label="已添加的照片">
+              <li class="ph-add" id="ph-add-li"><button type="button" class="ph-add-btn" id="ph-add" aria-describedby="photos-hint"><svg aria-hidden="true"><use href="#i-plus"/></svg><b>添加照片</b><small>png、jpg、webp，每张不超过 10 MB，可以拖进来</small></button></li>
+            </ul>
+            <p class="rf-msg" id="ph-msg" role="alert" hidden></p>
+            <input type="file" id="ph-input" multiple accept=".png,.jpg,.jpeg,.webp" hidden>
+          </section>
+        </form>
+
+        <aside class="slate-col" aria-label="任务概览">
+          <div class="slate" id="slate">
+            <div class="clapper" aria-hidden="true">
+              <div class="stick top"></div>
+              <div class="stick base"></div>
+            </div>
+            <div class="slate-board">
+              <div class="slate-title"><span class="k" id="s-title-k">片名（暂定，Agent 会再拟）</span><span class="v" id="s-title"></span></div>
+              <dl class="slate-grid" id="s-video">
+                <div class="l"><dt>模式</dt><dd id="s-mode"></dd></div>
+                <div class="r"><dt>写作方法</dt><dd id="s-genre"></dd></div>
+                <div class="wide"><dt>资料</dt><dd id="s-refs"></dd></div>
+                <div class="wide"><dt>画风</dt><dd id="s-skills"></dd></div>
+                <div class="wide"><dt>规格</dt><dd id="s-spec"></dd></div>
+                <div class="l"><dt>分镜确认</dt><dd id="s-board"></dd></div>
+                <div class="r"><dt>预计用时</dt><dd id="s-eta"></dd></div>
+              </dl>
+              <dl class="slate-grid" id="s-m3d" hidden>
+                <div class="l"><dt>类型</dt><dd>3D 图片</dd></div>
+                <div class="r"><dt>照片</dt><dd id="s3-photos"></dd></div>
+                <div class="wide"><dt>联网</dt><dd id="s3-web"></dd></div>
+                <div class="wide"><dt>拆解</dt><dd id="s3-explode"></dd></div>
+                <div class="wide"><dt>产出</dt><dd id="s3-out"></dd></div>
+                <div class="l"><dt>修改</dt><dd>用对话改</dd></div>
+                <div class="r"><dt>预计用时</dt><dd id="s3-eta"></dd></div>
+              </dl>
+              <div class="slate-foot"><span id="s-date"></span><span>第 1 版</span></div>
+            </div>
+          </div>
+          <button type="button" class="btn primary big" id="start-btn">开始生成</button>
+          <p class="slate-note" id="slate-note"></p>
+          <p class="slate-note quota" id="quota-note" hidden></p>
+        </aside>
+      </div>
+    </section>
+
+    <!-- ========== 工作流模式：首页（新建、最近的画板、我的工作流） ========== -->
+    <section class="view" id="view-flows" data-view="flows">
+      <nav class="seg entry" aria-label="新建方式">
+        <a class="opt" href="#compose"><svg aria-hidden="true"><use href="#i-free"/></svg>自由模式</a>
+        <a class="opt is-on" href="#flows" aria-current="page"><svg aria-hidden="true"><use href="#i-flow"/></svg>工作流模式</a>
+      </nav>
+      <header class="page-head">
+        <h1>工作流模式</h1>
+        <p>把出片拆成三个节点：<b>文字</b>（资料、剧本、分镜）、<b>图片</b>（3D 图片）、<b>音画</b>（配音和画面一起出）。每个节点单独运行，也能单独和 Agent 聊天修改，满意了再往下走。</p>
+      </header>
+      <h2 class="wf-h2">新建</h2>
+      <ul class="wf-cards" id="wf-tpls"></ul>
+      <section id="wf-recent-box" hidden>
+        <h2 class="wf-h2">最近运行的画板 <span class="count" id="wf-recent-n"></span></h2>
+        <p class="wf-lead">运行过节点的画板会自动保存，可以接着改。任务本身也在"任务"页里。</p>
+        <ul class="wf-cards" id="wf-recent"></ul>
+      </section>
+      <h2 class="wf-h2">我的工作流 <span class="count" id="wf-my-n"></span></h2>
+      <p class="wf-lead" id="wf-my-empty" hidden>还没有保存过工作流。在画板里点"保存"，下次换描述和资料就能接着用。</p>
+      <ul class="wf-cards" id="wf-my"></ul>
+      <p class="wf-lead" id="wf-msg" role="alert" hidden></p>
+    </section>
+
+    <!-- ========== 工作流模式：画板 ========== -->
+    <section class="view wf-editor" id="view-flow" data-view="flow" aria-label="工作流画板">
+      <header class="wf-top">
+        <a class="btn ghost small" href="#flows"><svg><use href="#i-back"/></svg>工作流</a>
+        <label class="sr-only" for="wf-name">工作流名称</label>
+        <input id="wf-name" class="wf-name" maxlength="40" placeholder="未命名工作流">
+        <span class="wf-saved" id="wf-saved"></span>
+        <span class="wf-top-sp"></span>
+        <button type="button" class="btn ghost small" id="wf-saveas">另存为</button>
+        <button type="button" class="btn primary small" id="wf-save"><svg><use href="#i-save"/></svg>保存为工作流</button>
+      </header>
+      <div class="wf-canvas" id="wf-canvas" tabindex="0" aria-label="画板：拖动空白处移动，Ctrl 加滚轮缩放">
+        <div class="wf-world" id="wf-world">
+          <svg class="wf-edges" id="wf-edges" aria-hidden="true"></svg>
+          <div id="wf-nodes"></div>
+        </div>
+        <div class="wf-palette" role="toolbar" aria-label="添加节点">
+          <p class="wf-pal-h">添加节点</p>
+          <button type="button" class="wf-pal-item" data-add="text"><span class="ni ni-text"><svg><use href="#i-text"/></svg></span><span><b>文字</b><small>资料、剧本、分镜</small></span><em data-count="text"></em></button>
+          <button type="button" class="wf-pal-item" data-add="image"><span class="ni ni-image"><svg><use href="#i-cube"/></svg></span><span><b>图片</b><small>3D 图片，最多 3 个</small></span><em data-count="image"></em></button>
+          <button type="button" class="wf-pal-item" data-add="av"><span class="ni ni-av"><svg><use href="#i-av"/></svg></span><span><b>音画</b><small>配音和画面一起出</small></span><em data-count="av"></em></button>
+          <p class="wf-pal-tip">点一下加到画板中间，或者拖到想放的位置。从节点右边的圆点拖到音画节点上就是连线。</p>
+        </div>
+        <div class="wf-zoom" role="group" aria-label="缩放">
+          <button type="button" class="icon-btn" id="wf-z-out" aria-label="缩小"><svg><use href="#i-minus"/></svg></button>
+          <button type="button" class="wf-zoom-val" id="wf-z-val" title="回到 100%">100%</button>
+          <button type="button" class="icon-btn" id="wf-z-in" aria-label="放大"><svg><use href="#i-plus"/></svg></button>
+          <button type="button" class="icon-btn" id="wf-z-fit" aria-label="显示全部节点" title="显示全部节点"><svg><use href="#i-fit"/></svg></button>
+        </div>
+        <p class="wf-hint">拖动空白处移动画板 · 滚轮上下移动 · Ctrl 加滚轮或双指捏合缩放 · 选中后按 Delete 删除</p>
+        <p class="wf-loading" id="wf-loading" hidden>正在打开画板…</p>
+      </div>
+      <aside class="wf-panel" id="wf-panel" aria-labelledby="pn-title" hidden>
+        <header class="pn-head">
+          <span class="ni" id="pn-icon"></span>
+          <div class="pn-title-box"><h2 id="pn-title"></h2><p id="pn-sub"></p></div>
+          <a class="icon-btn" id="pn-open" href="#" title="在任务页打开" aria-label="在任务页打开" hidden><svg><use href="#i-expand"/></svg></a>
+          <button type="button" class="icon-btn" id="pn-del" aria-label="删除节点" title="删除节点"><svg><use href="#i-trash"/></svg></button>
+          <button type="button" class="icon-btn" id="pn-close" aria-label="关闭面板"><svg><use href="#i-x"/></svg></button>
+        </header>
+        <div class="seg pn-tabs" role="tablist" aria-label="节点面板" id="pn-tabs">
+          <button type="button" role="tab" data-tab="cfg" aria-selected="true">设置</button>
+          <button type="button" role="tab" data-tab="out" aria-selected="false">产出</button>
+          <button type="button" role="tab" data-tab="chat" aria-selected="false">对话<span id="pn-chat-n"></span></button>
+        </div>
+        <div class="pn-body" id="pn-body"></div>
+        <footer class="pn-foot" id="pn-foot"></footer>
+      </aside>
+    </section>
+
+    <!-- ========== 生成过程 ========== -->
+    <section class="view run" id="view-run" data-view="run">
+      <header class="run-head">
+        <a class="back" href="#projects"><svg><use href="#i-back"/></svg>任务</a>
+        <div class="run-title">
+          <h1 id="run-title">加载中…</h1>
+          <div class="run-meta" id="run-meta"></div>
+        </div>
+        <div class="run-actions">
+          <label class="version" id="version-wrap" hidden>
+            <span class="sr-only">版本</span>
+            <select id="version-select"></select>
+          </label>
+          <a class="btn ghost" id="run-flow" href="#flows" hidden><svg><use href="#i-flow"/></svg><span>在画板里打开</span></a>
+          <span class="status-pill" id="run-status"><i></i><span>加载中</span></span>
+          <button type="button" class="btn ghost" id="print-btn" aria-haspopup="dialog" hidden><svg><use href="#i-print3d"/></svg><span>导出 3D 打印文件</span></button>
+          <button type="button" class="btn primary" id="dl-btn" disabled><svg><use href="#i-download"/></svg><span>下载 MP4</span></button>
+        </div>
+      </header>
+
+      <div class="run-alert" id="run-alert" role="status" hidden></div>
+
+      <div class="run-grid">
+        <aside class="process" aria-labelledby="h-process">
+          <div class="pane-head"><h2 id="h-process">生成过程</h2><span class="elapsed" id="elapsed"></span></div>
+          <ol class="steps" id="steps"></ol>
+          <section class="settings-box" id="settings-box" aria-labelledby="h-settings" hidden>
+            <div class="pane-head"><h2 id="h-settings">你的设置</h2></div>
+            <dl class="settings" id="settings"></dl>
+          </section>
+          <section class="usage-box" id="usage-box" aria-labelledby="h-usage" hidden>
+            <div class="pane-head">
+              <h2 id="h-usage">用量</h2>
+              <button type="button" class="link-btn" id="usage-detail">明细</button>
+            </div>
+            <p class="usage-total"><b id="usage-total">0.00</b><span>Credit</span><em class="usage-pending" id="usage-pending" title="任务进行中或刚结束，用量大约 1 分钟后入账" hidden>统计中</em></p>
+            <ul class="usage-turns" id="usage-turns"></ul>
+          </section>
+        </aside>
+
+        <div class="center" id="run-video">
+          <div class="monitor">
+            <div class="screen" id="screen">
+              <video id="player" playsinline preload="metadata" hidden></video>
+              <div class="screen-empty" id="screen-empty">
+                <svg aria-hidden="true"><use href="#i-film"/></svg>
+                <b id="empty-title">还没有画面</b>
+                <p id="empty-text"></p>
+              </div>
+              <div class="safe" aria-hidden="true"></div>
+              <span class="screen-tag" id="screen-tag" hidden></span>
+            </div>
+            <div class="transport">
+              <button type="button" class="play" id="play-btn" aria-label="播放" disabled><svg><use href="#i-play"/></svg></button>
+              <span class="tc" id="tc-now">00:00</span>
+              <div class="scrub" id="scrub" aria-hidden="true"></div>
+              <span class="tc dim" id="tc-total">00:00</span>
+              <button type="button" class="tool" id="safe-btn" aria-pressed="false" title="显示字幕安全框"><svg><use href="#i-frame"/></svg><span class="sr-only">安全框</span></button>
+              <button type="button" class="tool" id="fs-btn" title="全屏"><svg><use href="#i-expand"/></svg><span class="sr-only">全屏</span></button>
+            </div>
+          </div>
+
+          <div class="board">
+            <div class="pane-head"><h2>分镜</h2><span>点镜头跳到对应位置，也可以直接在右侧让 Agent 改某一镜</span></div>
+            <ol class="strip" id="strip"></ol>
+            <p class="strip-empty" id="strip-empty">Agent 写完分镜后，镜头会出现在这里。渲染好一个，显示一个。</p>
+          </div>
+        </div>
+
+        <!-- 3D 图片的成品：可以拖动旋转、拆开的预览，多角度图和对比图，拆解图，素材卡（只出图片和文件，没有视频） -->
+        <div class="center" id="run-m3d" hidden>
+          <div class="monitor">
+            <div class="screen m3d-screen">
+              <div class="v3-host" id="m3d-viewer"></div>
+              <div class="screen-empty" id="m3d-empty">
+                <svg aria-hidden="true"><use href="#i-cube"/></svg>
+                <b id="m3d-empty-title">还没有模型</b>
+                <p id="m3d-empty-text"></p>
+              </div>
+            </div>
+          </div>
+          <section class="board" aria-labelledby="h-views">
+            <div class="pane-head"><h2 id="h-views">多角度图</h2><span>点图片看大图</span></div>
+            <ul class="views" id="m3d-views"></ul>
+            <div class="m3d-media" id="m3d-media"></div>
+            <p class="strip-empty" id="m3d-views-empty">导出后，0°、90°、180°、270° 和 35° 斜侧五张图会出现在这里；有参考照片时还有一张对比图。</p>
+          </section>
+          <section class="board" id="m3d-ex-box" aria-labelledby="h-explode" hidden>
+            <div class="pane-head"><h2 id="h-explode">拆解</h2><span>在上面的 3D 预览里用「拆开」滑杆一步步看</span></div>
+            <div class="m3d-media ex-media" id="m3d-ex"></div>
+          </section>
+          <section class="board" aria-labelledby="h-asset">
+            <div class="pane-head"><h2 id="h-asset">素材卡</h2><button type="button" class="link-btn" id="asset-edit" hidden>改名和标签</button></div>
+            <div class="asset" id="asset"></div>
+          </section>
+        </div>
+
+        <aside class="inspector">
+          <div class="tabs" role="tablist" aria-label="任务面板">
+            <button role="tab" aria-selected="true" aria-controls="tab-chat" id="t-chat">修改</button>
+            <button role="tab" aria-selected="false" aria-controls="tab-script" id="t-script" tabindex="-1">分镜脚本</button>
+            <button role="tab" aria-selected="false" aria-controls="tab-files" id="t-files" tabindex="-1">文件</button>
+          </div>
+
+          <div class="tab-panel chat" role="tabpanel" id="tab-chat" aria-labelledby="t-chat">
+            <div class="msgs" id="msgs" aria-live="polite"></div>
+            <form class="ask" id="ask-form">
+              <div class="ask-scope" id="ask-scope">
+                <span class="chip" id="scope-chip">全片</span>
+                <span class="ask-hint">在下方分镜条点选镜头，可以只改那一镜</span>
+              </div>
+              <label class="sr-only" for="ask-input">告诉 Agent 要改什么</label>
+              <textarea id="ask-input" rows="3" maxlength="2000" placeholder="告诉 Agent 要改什么，比如：节奏再快一点，结尾停留 2 秒"></textarea>
+              <div class="ask-bar">
+                <span class="ask-reason" id="ask-reason"></span>
+                <button type="submit" class="btn primary small" id="ask-send"><svg><use href="#i-send"/></svg>发送</button>
+              </div>
+            </form>
+          </div>
+
+          <div class="tab-panel" role="tabpanel" id="tab-script" aria-labelledby="t-script" hidden>
+            <div class="confirm-box" id="confirm-box" hidden>
+              <p><b id="confirm-title">分镜写好了，等你确认</b><span id="confirm-text">检查每一镜的旁白和画面，文字可以直接改。确认后 Agent 才开始写动画、渲染。</span></p>
+              <span class="confirm-edits" id="confirm-edits"></span>
+              <button type="button" class="btn primary" id="confirm-btn">确认分镜，开始生成</button>
+            </div>
+            <ol class="script" id="script"></ol>
+            <p class="panel-empty" id="script-empty">Agent 写完分镜后，每一镜的旁白和画面描述会显示在这里。</p>
+          </div>
+
+          <div class="tab-panel" role="tabpanel" id="tab-files" aria-labelledby="t-files" hidden>
+            <ul class="files" id="files"></ul>
+            <p class="panel-empty" id="files-empty" hidden></p>
+          </div>
+        </aside>
+      </div>
+    </section>
+
+    <!-- ========== 任务列表 ========== -->
+    <section class="view" id="view-projects" data-view="projects">
+      <header class="page-head row">
+        <div>
+          <h1>任务</h1>
+          <p>你创建的视频和 3D 图片都在这里。进行中的任务关掉页面也会继续跑。</p>
+        </div>
+        <a class="btn primary" href="#compose"><svg><use href="#i-plus"/></svg>新建</a>
+      </header>
+      <div class="filters">
+        <div class="seg tabs-seg" role="tablist" aria-label="按状态筛选" id="proj-filter">
+          <button role="tab" aria-selected="true" data-f="all">全部 <span></span></button>
+          <button role="tab" aria-selected="false" data-f="active">进行中 <span></span></button>
+          <button role="tab" aria-selected="false" data-f="done">已完成 <span></span></button>
+          <button role="tab" aria-selected="false" data-f="failed">失败 <span></span></button>
+        </div>
+        <label class="search"><svg><use href="#i-search"/></svg><span class="sr-only">搜索任务</span><input id="proj-q" type="search" placeholder="搜索名称"></label>
+      </div>
+      <div class="table-wrap">
+        <table class="proj-table">
+          <thead><tr><th scope="col">任务</th><th scope="col">类型</th><th scope="col">规格</th><th scope="col">状态</th><th scope="col" class="p-cr">用量</th><th scope="col">更新</th></tr></thead>
+          <tbody id="proj-body"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- ========== 素材库 ========== -->
+    <section class="view" id="view-library" data-view="library">
+      <header class="page-head">
+        <h1>素材库</h1>
+        <p>做好的视频、3D 图片，以及上传过的图片和参考资料都会自动进到这里。新建视频时，3D 图片、图片和文件可以直接选用。</p>
+      </header>
+      <div class="filters">
+        <div class="seg tabs-seg" role="tablist" aria-label="素材类别" id="lib-tabs">
+          <button role="tab" aria-selected="true" aria-controls="lib-panel" id="lib-t-video" data-kind="video">视频</button>
+          <button role="tab" aria-selected="false" aria-controls="lib-panel" id="lib-t-model3d" data-kind="model3d" tabindex="-1">3D 图片</button>
+          <button role="tab" aria-selected="false" aria-controls="lib-panel" id="lib-t-image" data-kind="image" tabindex="-1">图片</button>
+          <button role="tab" aria-selected="false" aria-controls="lib-panel" id="lib-t-file" data-kind="file" tabindex="-1">文件</button>
+        </div>
+        <label class="search"><svg><use href="#i-search"/></svg><span class="sr-only">搜索素材</span><input id="lib-q" type="search" placeholder="搜索名称或标签"></label>
+      </div>
+      <div class="mat-panel" id="lib-panel" role="tabpanel" aria-labelledby="lib-t-video">
+        <ul class="mat-grid" id="lib-grid"></ul>
+        <p class="empty" id="lib-empty" hidden></p>
+      </div>
+    </section>
+
+    <!-- ========== Skills 仓库 ========== -->
+    <section class="view" id="view-skills" data-view="skills">
+      <header class="page-head">
+        <h1>Skills 仓库</h1>
+        <p>一支片子由两件事决定：写作方法决定剧本怎么组织，画风决定画面长什么样。两者是两回事，新建视频时各选各的，可以自由搭配。都来自 Slate 官方库。</p>
+      </header>
+
+      <!-- 写作方法：做片手册里的剧本组织方式，只列文字说明，不做成画风卡片 -->
+      <section class="lib" aria-labelledby="h-genres" hidden>
+        <div class="lib-head">
+          <h2 id="h-genres">写作方法</h2>
+          <p>决定叙事结构、开场和节奏。新建视频时在描述下面选一种，不选就由 Agent 按描述判断。</p>
+        </div>
+        <div class="genre-lib" id="genre-lib"></div>
+      </section>
+
+      <section class="lib" aria-labelledby="h-styles">
+        <div class="lib-head">
+          <h2 id="h-styles">画风</h2>
+          <p>决定配色、字体、镜头节奏、转场，以及动画怎么做。任何写作方法都能配任何画风，比如「知识科普」配像素游戏画风。</p>
+        </div>
+        <div class="filters">
+          <div class="cat-chips" id="skill-cats" role="group" aria-label="用途"></div>
+          <label class="search"><svg><use href="#i-search"/></svg><span class="sr-only">搜索画风</span><input id="skill-q" type="search" placeholder="搜索画风"></label>
+        </div>
+        <ul class="contact" id="contact"></ul>
+        <p class="empty" id="skill-empty" hidden>没有符合条件的 Skill。换个关键词试试。</p>
+      </section>
+    </section>
+
+    <!-- ========== 用量 ========== -->
+    <section class="view" id="view-usage" data-view="usage">
+      <header class="page-head">
+        <h1>用量</h1>
+        <p>按 Credit 统计模型调用的用量。额度按北京时间的自然月计算，每月 1 日重新开始；用量大约 1 分钟后入账。</p>
+      </header>
+      <section class="usage-month" id="usage-month" aria-label="本月额度"></section>
+      <div class="filters usage-filters">
+        <div class="seg" role="group" aria-label="快捷日期" id="usage-presets">
+          <button type="button" data-preset="month" aria-pressed="true">本月</button>
+          <button type="button" data-preset="last" aria-pressed="false">上月</button>
+          <button type="button" data-preset="7" aria-pressed="false">近 7 天</button>
+          <button type="button" data-preset="30" aria-pressed="false">近 30 天</button>
+        </div>
+        <div class="date-range">
+          <label><span class="sr-only">开始日期</span><input type="date" id="usage-from"></label>
+          <span aria-hidden="true">至</span>
+          <label><span class="sr-only">结束日期</span><input type="date" id="usage-to"></label>
+        </div>
+      </div>
+      <div class="usage-body" id="usage-body">
+        <section class="usage-card" aria-labelledby="h-usage-days">
+          <div class="pane-head"><h2 id="h-usage-days">每日用量</h2><span id="usage-range-total"></span></div>
+          <div class="day-chart" id="usage-chart"></div>
+        </section>
+        <div class="table-wrap">
+          <table class="proj-table usage-tasks">
+            <caption class="sr-only">所选日期范围内各任务的用量</caption>
+            <thead><tr><th scope="col">视频</th><th scope="col">状态</th><th scope="col">创建时间</th><th scope="col" class="p-cr">Credit</th></tr></thead>
+            <tbody id="usage-tasks"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<!-- ========== Skill 详情抽屉 ========== -->
+<div class="scrim" id="scrim" hidden></div>
+<aside class="drawer" id="drawer" role="dialog" aria-modal="true" aria-labelledby="d-name" hidden>
+  <button type="button" class="icon-btn drawer-x" id="drawer-x" aria-label="关闭"><svg><use href="#i-x"/></svg></button>
+  <div class="d-preview" id="d-preview"></div>
+  <div class="d-body">
+    <div class="d-title"><h2 id="d-name"></h2><span class="src-tag" id="d-cat"></span><span class="beta-tag" id="d-beta" hidden>内测</span></div>
+    <p class="d-beta-note" id="d-beta-note" hidden></p>
+    <p class="d-desc" id="d-desc"></p>
+    <dl class="d-meta" id="d-meta"></dl>
+    <h3>画风说明</h3>
+    <ul class="d-highlights" id="d-highlights"></ul>
+    <h3>常搭配的写作方法</h3>
+    <ul class="d-genres" id="d-genres"></ul>
+    <p class="d-note">写作方法和画风可以自由搭配，这里列的只是常见组合。</p>
+  </div>
+  <div class="d-actions">
+    <button type="button" class="btn primary" id="d-use">用在新视频里</button>
+  </div>
+</aside>
+
+<!-- ========== 选 Skill 弹窗 ========== -->
+<div class="modal" id="picker" role="dialog" aria-modal="true" aria-labelledby="picker-h" hidden>
+  <div class="modal-card">
+    <header><h2 id="picker-h">选择 Skills</h2><button type="button" class="icon-btn" data-close aria-label="关闭"><svg><use href="#i-x"/></svg></button></header>
+    <p class="pick-hint" id="pick-hint" hidden></p>
+    <ul class="pick-list" id="pick-list"></ul>
+    <footer><span id="pick-count"></span><button type="button" class="btn primary" id="pick-done">完成</button></footer>
+  </div>
+</div>
+
+<!-- ========== 任务用量明细弹窗 ========== -->
+<div class="modal" id="usage-modal" role="dialog" aria-modal="true" aria-labelledby="usage-h" hidden>
+  <div class="modal-card wide">
+    <header><h2 id="usage-h">用量明细</h2><button type="button" class="icon-btn" data-close aria-label="关闭"><svg><use href="#i-x"/></svg></button></header>
+    <div class="usage-scroll" id="usage-body-modal"></div>
+    <footer><span id="usage-sum"></span><button type="button" class="btn ghost small" id="usage-csv" disabled><svg><use href="#i-download"/></svg>导出 CSV</button></footer>
+  </div>
+</div>
+
+<!-- ========== 工作流：保存为我的工作流 ========== -->
+<div class="modal" id="wf-save-modal" role="dialog" aria-modal="true" aria-labelledby="wf-save-h" hidden>
+  <form class="modal-card narrow" id="wf-save-form" novalidate>
+    <header><h2 id="wf-save-h">保存为我的工作流</h2><button type="button" class="icon-btn" data-close aria-label="关闭"><svg><use href="#i-x"/></svg></button></header>
+    <div class="modal-body">
+      <p class="block-hint">会存下节点、连线和每个节点的设置（写作方法、画风、配音、时长、画幅等），不存剧本、3D 图片和成片这些产出，也不存上传的照片。</p>
+      <label class="field"><span class="field-label">名称</span><input id="wf-save-name" maxlength="40" required></label>
+    </div>
+    <footer><span></span><span class="modal-btns"><button type="button" class="btn ghost" data-close>取消</button><button type="submit" class="btn primary">保存</button></span></footer>
+  </form>
+</div>
+
+<!-- ========== 从素材库选择（新建视频）：3D 图片和文件，视频不在这里 ========== -->
+<div class="modal" id="lp" role="dialog" aria-modal="true" aria-labelledby="lp-h" hidden>
+  <div class="modal-card">
+    <header><h2 id="lp-h">从素材库选择</h2><button type="button" class="icon-btn" data-close aria-label="关闭"><svg><use href="#i-x"/></svg></button></header>
+    <div class="lp-bar">
+      <div class="seg tabs-seg" role="tablist" aria-label="素材类别" id="lp-tabs">
+        <button role="tab" aria-selected="true" aria-controls="lp-list" id="lp-t-model3d" data-kind="model3d">3D 图片 <span></span></button>
+        <button role="tab" aria-selected="false" aria-controls="lp-list" id="lp-t-image" data-kind="image" tabindex="-1">图片 <span></span></button>
+        <button role="tab" aria-selected="false" aria-controls="lp-list" id="lp-t-file" data-kind="file" tabindex="-1">文件 <span></span></button>
+      </div>
+      <label class="search"><svg><use href="#i-search"/></svg><span class="sr-only">搜索素材</span><input id="lp-q" type="search" placeholder="搜索名称或标签"></label>
+    </div>
+    <p class="pick-hint" id="lp-hint"></p>
+    <ul class="pick-list" id="lp-list" role="tabpanel" aria-labelledby="lp-t-model3d"></ul>
+    <footer><span id="lp-count" aria-live="polite"></span><button type="button" class="btn primary" id="lp-done">完成</button></footer>
+  </div>
+</div>
+
+<!-- ========== 素材库：预览（视频播放、3D 预览） ========== -->
+<div class="modal" id="mat-modal" role="dialog" aria-modal="true" aria-labelledby="mat-h" hidden>
+  <div class="modal-card wide">
+    <header>
+      <div class="mat-title"><h2 id="mat-h"></h2><em class="ex-tag" id="mat-ex" hidden>可拆解</em><ul class="mat-tags" id="mat-tags"></ul></div>
+      <div class="mat-head-acts">
+        <button type="button" class="btn ghost small" data-act="edit"><svg><use href="#i-edit"/></svg>改名和标签</button>
+        <button type="button" class="btn ghost small" data-act="remove"><svg><use href="#i-trash"/></svg>从素材库移除</button>
+        <button type="button" class="icon-btn" data-close aria-label="关闭"><svg><use href="#i-x"/></svg></button>
+      </div>
+    </header>
+    <div class="mat-view" id="mat-body"></div>
+    <footer id="mat-foot"></footer>
+  </div>
+</div>
+
+<!-- ========== 素材库：改名和标签 ========== -->
+<div class="modal" id="mat-edit" role="dialog" aria-modal="true" aria-labelledby="mat-edit-h" hidden>
+  <form class="modal-card narrow" id="mat-edit-form" novalidate>
+    <header><h2 id="mat-edit-h">改名和标签</h2><button type="button" class="icon-btn" data-close aria-label="关闭"><svg><use href="#i-x"/></svg></button></header>
+    <div class="modal-body">
+      <label class="field"><span class="field-label">名称</span><input id="mat-name" type="text" maxlength="60" required></label>
+      <label class="field" id="mat-desc-field" hidden><span class="field-label">描述</span><textarea id="mat-desc" rows="3" maxlength="200" placeholder="这是什么、想在片子里怎么用"></textarea></label>
+      <label class="field"><span class="field-label">标签</span><input id="mat-tags-input" type="text" placeholder="用逗号或空格分开，比如：闹钟，复古" aria-describedby="mat-tags-hint"></label>
+      <p class="field-hint" id="mat-tags-hint">最多 10 个，每个不超过 20 字。搜索时会按名称和标签找。</p>
+      <p class="form-error" id="mat-edit-err" role="alert" hidden></p>
+    </div>
+    <footer><span></span><span class="modal-btns"><button type="button" class="btn ghost" data-close>取消</button><button type="submit" class="btn primary" id="mat-edit-ok">保存</button></span></footer>
+  </form>
+</div>
+
+<!-- ========== 素材库：确认移除 ========== -->
+<div class="modal" id="mat-del" role="alertdialog" aria-modal="true" aria-labelledby="mat-del-h" aria-describedby="mat-del-text" hidden>
+  <div class="modal-card narrow">
+    <header><h2 id="mat-del-h"></h2><button type="button" class="icon-btn" data-close aria-label="关闭"><svg><use href="#i-x"/></svg></button></header>
+    <p class="modal-body" id="mat-del-text"></p>
+    <footer><span></span><span class="modal-btns"><button type="button" class="btn ghost" data-close>取消</button><button type="button" class="btn danger" id="mat-del-ok"></button></span></footer>
+  </div>
+</div>
+
+<!-- ========== 导出 3D 打印文件（生成页和素材库共用，docs/library-3d-design.md 第六节）：排在素材库预览后面，叠在它上面 ========== -->
+<div class="modal" id="print-modal" role="dialog" aria-modal="true" aria-labelledby="print-h" aria-describedby="print-sub" hidden>
+  <form class="modal-card" id="print-form" novalidate>
+    <header>
+      <div class="print-title"><h2 id="print-h">导出 3D 打印文件</h2><p id="print-sub"></p></div>
+      <button type="button" class="icon-btn" data-close aria-label="关闭"><svg><use href="#i-x"/></svg></button>
+    </header>
+    <div class="modal-body print-body" id="pr-set">
+      <fieldset class="pr-fields" id="pr-fields">
+        <div class="pr-row">
+          <label class="field"><span class="field-label">机型</span>
+            <select id="pr-printer">
+              <option value="a1mini">A1 mini（180×180×180）</option>
+              <option value="a1" selected>A1 · P1 · X1 · P2S（256×256×256）</option>
+              <option value="h2d">H2D（350×320×325）</option>
+              <option value="h2s">H2S（340×320×340）</option>
+            </select>
+          </label>
+          <label class="field"><span class="field-label">高度（毫米）</span><input id="pr-height" type="number" min="10" max="256" step="1" value="120" inputmode="decimal" aria-describedby="pr-height-hint"></label>
+        </div>
+        <p class="field-hint" id="pr-height-hint"></p>
+        <fieldset>
+          <legend class="field-label">出法</legend>
+          <div class="pr-opts">
+            <label class="opt pr-opt"><input type="radio" name="pr-mode" value="whole"><b>整体</b><span>一个物体，保持装配位置，多色</span></label>
+            <label class="opt pr-opt"><input type="radio" name="pr-mode" value="parts"><b>零件分开</b><span>每个零件一个物体，打完拼装</span></label>
+          </div>
+        </fieldset>
+        <label class="field"><span class="field-label">颜色数</span>
+          <select id="pr-colors" aria-describedby="pr-colors-hint"><option value="1">1 色</option><option value="4" selected>4 色</option><option value="8">8 色</option><option value="16">16 色</option></select>
+          <span class="field-hint" id="pr-colors-hint"></span>
+        </label>
+        <fieldset>
+          <legend class="field-label">格式</legend>
+          <div class="pr-opts">
+            <label class="opt pr-opt"><input type="radio" name="pr-format" value="3mf" checked><b>3MF<em>推荐</em></b><span>Bambu Studio 2.5 以上可以把颜色对应到 AMS 耗材</span></label>
+            <label class="opt pr-opt"><input type="radio" name="pr-format" value="stl"><b>STL</b><span>单色；零件分开时打包成 zip</span></label>
+          </div>
+        </fieldset>
+      </fieldset>
+      <p class="form-error" id="pr-err" role="alert" hidden></p>
+      <p class="pr-busy" id="pr-busy" role="status" hidden><span class="v3-spin" aria-hidden="true"></span><span>正在生成打印文件，通常要 10 到 30 秒，先别关掉这个窗口。</span></p>
+    </div>
+    <div class="modal-body print-body" id="pr-done" hidden></div>
+    <footer>
+      <span class="pr-note" id="pr-note">按拓竹 Bambu Studio 的机型生成</span>
+      <span class="modal-btns" id="pr-btns-set"><button type="button" class="btn ghost" data-close>取消</button><button type="submit" class="btn primary" id="pr-ok">生成打印文件</button></span>
+      <span class="modal-btns" id="pr-btns-done" hidden><button type="button" class="btn ghost" id="pr-again">换个设置再导出</button><button type="button" class="btn ghost" data-close>完成</button></span>
+    </footer>
+  </form>
+</div>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script type="module" src="js/app.js"></script>
+</body>
+</html>

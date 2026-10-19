@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<link rel="stylesheet" href="/skills/collage/style.css">
+<script src="/skills/collage/components.js"></script>
+</head>
+<body>
+<script>
+  // 收尾：开场那张卫星云图回来了（回扣开头的问题），三条结论纸条依次贴上，红线把它们连到云图上；
+  // 镜头从云图慢慢拉远（拉远 = 揭晓全貌），最后停在整面"证据墙"上。最后一镜不做退场
+  const { seg, u: U, width: W, height: H } = SLATE;
+  const st = CL.stage({ paper: 'cream', cam: [[0, U * 59.3, U * 49.1, 1.07], [5.5, W / 2, H / 2, 1.0], [7.5, W / 2, H / 2, 1.0]] });
+  const w = st.world;
+  const h = CL.heading(st.hud, { kicker: '划重点', text: '记住这三点', align: 'center' });
+
+  const photo = CL.cutout(w, { x: U * 30.6, y: U * 26.9, w: U * 48.1, h: U * 40.7, art: 'storm', rotate: -3, seed: 31 });
+  const pin = CL.pin(w, { x: U * 75.7, y: U * 29.8 });
+  const memo = CL.note(w, { x: U * 54.6, y: U * 74.5, text: '这就是答案', anchor: 'middle', rotate: -4 });
+
+  const lines = ['暖海是燃料', '偏向力让它旋转', '上岸断了燃料就减弱'];
+  const size = U * 5, sx = U * 93.5;
+  const rows = lines.map((s, i) => {
+    const y = U * (38.9 + i * 13.4);
+    return {
+      badge: CL.badge(w, { x: sx - U * 4.8, y: y - size * 0.36, text: String(i + 1), size: U * 3.2 }),
+      strip: CL.strip(w, { x: sx, y, text: s, size, tone: i % 2 ? 'newsprint' : 'white', rotate: [-1.5, 1, -0.6][i], from: 'right', seed: 60 + i }),
+      line: CL.thread(w, { points: [[U * 75.7, U * 29.8], [sx - U * 7, y - size * 0.36]], sag: U * 2 }),
+    };
+  });
+
+  function render(t) {
+    const T = CL.step(t);
+    st.set(t);
+    h.draw(seg(T, 0.2, 1.1));
+    photo.draw(seg(T, 0.3, 0.8));
+    pin.draw(seg(T, 0.8, 1.0));
+    rows.forEach((r, i) => {
+      const a = 1.2 + i * 0.9;
+      r.badge.draw(seg(T, a, a + 0.3));
+      r.strip.draw(seg(T, a + 0.1, a + 0.6));
+      r.line.draw(seg(T, a + 0.6, a + 1.1, SLATE.ease.inOut));
+    });
+    memo.draw(seg(T, 4.3, 5.0, SLATE.ease.linear));
+  }
+</script>
+</body>
+</html>

@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<link rel="stylesheet" href="/skills/arena/style.css">
+<script src="/skills/arena/components.js"></script>
+</head>
+<body>
+<script>
+  // 领域热力图：越强越亮，每个领域的冠军加金框（示例数据；null 显示"未公布"）
+  const { seg, u: U, width: W, height: H, safe } = SLATE;
+  const st = NA.stage({ floor: false });
+  const w = st.world;
+  const rows = ['A', 'B', 'C', 'D', 'E'].map((k, i) => ({ id: k, name: '模型 ' + k, color: NA.C.series[i] }));
+  const cols = ['数学', '代码', '推理', '中文', '长文本', '多模态'];
+  const values = [[92, 72, 90, 84, 80, 75], [88, 79, 85, 80, 70, 82], [86, 64, 80, 90, 85, null], [90, 74, 88, 83, 92, 70], [80, 66, 75, 77, 72, 68]];
+  const t1 = NA.heading(w, { text: '各领域谁最强' });
+  const y0 = t1.bottom + U * 3, y1 = SLATE.captionZone.y - U * 3;
+  const pn = NA.panel(w, { x: safe.x + U * 2, y: y0, w: safe.w - U * 4, h: y1 - y0, title: '领域 × 选手' });
+  const hm = NA.heatmap(w, { x: safe.x + U * 5, y: y0 + U * 3, w: safe.w - U * 10, h: y1 - y0 - U * 5, rows, cols, values, min: 60, max: 95 });
+  const src = NA.source(st.hud, { text: '示例数据，仅演示版式' });
+
+  function render(t) {
+    st.set(t);
+    t1.draw(seg(t, 0.1, 0.9));
+    pn.set(t, seg(t, 0.3, 1));
+    hm.draw(seg(t, 0.7, 2.9));
+    hm.best(seg(t, 3.2, 4.4));
+    src.draw(seg(t, 1, 1.5));
+  }
+</script>
+</body>
+</html>

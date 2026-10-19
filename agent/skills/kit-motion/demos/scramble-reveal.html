@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="zh">
+<head>
+<meta charset="UTF-8" />
+<link rel="stylesheet" href="/assets/fonts/lib/jetbrains-mono.css" />
+<link rel="stylesheet" href="/assets/fonts/lib/noto-serif-sc.css" />
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body { width: 100%; height: 100%; overflow: hidden; }
+  body {
+    background: radial-gradient(ellipse at 50% 44%, #171a20 0%, #0b0c0e 72%);
+    font-family: "JetBrains Mono", "Noto Serif SC", monospace;
+    color: #f8fafc;
+  }
+  #wrap {
+    position: absolute; left: 0; right: 0; top: 18%; height: 54%;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .shell {
+    --accent: #c5a3ff;
+    display: flex; align-items: center; justify-content: center;
+    max-width: 86vw;
+    border: 2px solid color-mix(in srgb, var(--accent) 58%, #475569);
+    border-radius: 2.4vmin;
+    background: color-mix(in srgb, #0b1016 92%, var(--accent));
+    box-shadow: 0 4vmin 10vmin rgba(0,0,0,.42), inset 0 0 4vmin color-mix(in srgb, var(--accent) 7%, transparent);
+  }
+  .prefix {
+    flex: 0 0 auto; font-weight: 700; line-height: 1; opacity: .78;
+    color: color-mix(in srgb, var(--accent) 78%, #fff);
+  }
+  .text {
+    display: block; font-weight: 800; line-height: 1.15; letter-spacing: .055em;
+    color: var(--accent); white-space: pre;
+    text-shadow: 0 0 3vmin color-mix(in srgb, var(--accent) 34%, transparent);
+  }
+</style>
+</head>
+<body>
+<div id="wrap">
+  <div class="shell" id="shell">
+    <span class="prefix" aria-hidden="true">&gt;_</span>
+    <span class="text" id="title">信号解码 SEEK SAFE</span>
+  </div>
+</div>
+<script src="/skills/kit-motion/kit.js"></script>
+<script src="/skills/kit-motion/scramble-reveal.js"></script>
+<script>
+  const u = SLATE.u;
+  const shell = document.getElementById("shell");
+  const title = document.getElementById("title");
+  title.style.fontSize = (8 * u) + "px";
+  shell.querySelector(".prefix").style.fontSize = (8 * 0.74 * u) + "px";
+  shell.querySelector(".prefix").style.marginRight = (2.4 * u) + "px";
+  shell.style.padding = (5 * u) + "px " + (6 * u) + "px";
+  shell.style.opacity = 0;
+
+  SLATE.waits = SLATE.waits || [];
+  SLATE.waits.push(document.fonts.load('800 60px "JetBrains Mono"'));
+  SLATE.waits.push(document.fonts.load('700 60px "Noto Serif SC"', '信号解码数据码流'));
+
+  const tl = SLATE.timeline();
+  const total = SLATE.duration || 3;
+  const at = 0.2, dur = 1.65;
+  KIT.motions.scrambleReveal(tl, title, {
+    at, dur, move: shell,
+    hold: Math.max(0, total - at - dur)
+  });
+  window.render = t => tl.at(t);
+</script>
+</body>
+</html>

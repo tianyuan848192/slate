@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<link rel="stylesheet" href="/skills/editorial/style.css">
+<script src="/skills/editorial/components.js"></script>
+</head>
+<body>
+<script>
+  // 数据图：复利和单利的 30 年曲线。线从左往右画，笔头带实时数值；第 10 年和第 30 年各一条注释。8 秒
+  // 数字是按公式算出来的示例：本金 10 万元，年化 7%，按年复利（单利每年只按本金计息）
+  const { seg, u: U } = SLATE;
+  const st = ED.stage();
+  const w = st.world;
+  const h = ED.heading(w, { kicker: '数据 · 示例计算', text: '复利：时间越长，差距越大', mark: '差距越大' });
+  const A = ED.area(h, { gap: 2 });
+  const years = Array.from({ length: 31 }, (_, i) => i);
+  const comp = years.map(n => 10 * Math.pow(1.07, n)), simple = years.map(n => 10 * (1 + 0.07 * n));
+  const ch = ED.line(w, { ...A, xs: years, digits: 1, unit: '万', max: 80, yTicks: 4,
+    xTicks: [0, 5, 10, 15, 20, 25, 30], xFormat: v => (v ? v + ' 年' : '起点'),
+    between: [0, 1], series: [{ name: '复利', values: comp, runner: true }, { name: '单利', values: simple }] });
+  // 两条注释都放在曲线上方的留白里；两条线之间的浅色带就是"多出来的钱"
+  const p10 = ch.pt(10, 0), p30 = ch.pt(30, 0);
+  const n1 = ED.callout(w, { x: p10[0], y: p10[1] - U * 1.4, tx: p10[0], ty: ch.py(48), text: '前 10 年差距还不明显', sub: '复利 19.7 万 · 单利 17.0 万' });
+  const n2 = ED.callout(w, { x: p30[0], y: p30[1], tx: p30[0] - U * 1.6, ty: p30[1], side: 'left', text: '30 年后多出 45.1 万' });
+  const src = ED.source(st.hud, { text: '示例计算：本金 10 万元，年化 7%，按年复利，不计税费' });
+
+  function render(t) {
+    st.set(t);
+    h.draw(seg(t, 0, 0.9));
+    ch.axes(seg(t, 0.4, 1.0));
+    ch.draw(seg(t, 0.9, 4.0, ED.ease.move));
+    ch.mark(10, 0, seg(t, 2.2, 2.6));
+    n1.draw(seg(t, 2.3, 3.2, ED.ease.linear));
+    n2.draw(seg(t, 4.0, 4.8, ED.ease.linear));
+    src.draw(seg(t, 0.8, 1.3));
+  }
+</script>
+</body>
+</html>

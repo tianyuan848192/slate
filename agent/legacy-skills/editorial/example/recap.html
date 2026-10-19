@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<link rel="stylesheet" href="/skills/editorial/style.css">
+<script src="/skills/editorial/components.js"></script>
+</head>
+<body>
+<script>
+  // 收尾总结：居中标题卡 → 强调色发丝线扫过（镜内换页）→ 三条要点逐条出现。8 秒；横屏、竖屏都能用
+  const { seg, u: U, width: W, height: H } = SLATE;
+  const st = ED.stage();
+  const F = ED.frame();
+  const pageA = ED.layer(st.world), pageB = ED.layer(st.world);
+  // 第一页：居中的大数字标题卡
+  const cy = (F.top + F.bottom) / 2;
+  const big = ED.number(pageA, { x: W / 2, y: cy + U * 6, value: 3, unit: '句话', size: U * 24, label: '收尾', sub: '要点回顾' });
+  const rule = ED.link(pageA, { points: [[W / 2 - U * 12, cy + U * 15], [W / 2 + U * 12, cy + U * 15]], arrow: 'none' });
+  // 第二页：总结卡
+  const h = ED.heading(pageB, { kicker: '收尾 · 检索增强生成', text: '三句话记住 RAG' });
+  const A = ED.area(h, { gap: 4 });
+  const rw = Math.min(A.w, U * 120);
+  const rc = ED.recap(pageB, { x: A.cx - rw / 2, y: A.y, w: rw, items: [
+    { title: '先检索', sub: '从知识库里找出相关段落' },
+    { title: '再拼接', sub: '把段落和问题一起交给模型' },
+    { title: '后生成', sub: '回答附出处，方便核对' },
+  ] });
+  const sw = ED.swap(pageA, pageB, { at: 2.8, dur: 0.7 });
+
+  function render(t) {
+    st.set(t);
+    sw.set(t);
+    big.draw(seg(t, 0, 1.0, ED.ease.linear));
+    rule.draw(seg(t, 0.5, 1.2, ED.ease.move));
+    h.draw(seg(t, 3.0, 3.8));
+    rc.draw(seg(t, 3.2, 4.4, ED.ease.linear));
+    // 最后一条（后生成）是这一片的落点：其余两条略微压暗
+    rc.focus(2, seg(t, 5.6, 6.1) * 0.6);
+  }
+</script>
+</body>
+</html>

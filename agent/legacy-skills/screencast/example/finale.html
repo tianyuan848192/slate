@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<link rel="stylesheet" href="/skills/screencast/style.css">
+<script src="/skills/screencast/components.js"></script>
+</head>
+<body>
+<script>
+  // 收尾行动号召（约 7 秒）：产品标记 + 名称 + 一句话 → 行动按钮弹出 → 光标移上去、点击、扫光 → 网址；
+  // 两侧漂浮前面几镜出现过的界面碎片（指标卡、趋势图、通知、清单），把整片串起来。碎片是示意界面，右上角标"示意界面"
+  // 做片时：名称、网址、按钮文字换成用户给的；用户上传了 Logo 就用 SC.logo({ img: '/input/文件名' })
+  const { seg, u: U, width: W, height: H, noise } = SLATE;
+  const st = SC.stage({ wall: 'mist', drift: 0.006 });
+  const tag = SC.mark(st.hud, { text: '示意界面' });
+
+  // 中间的主信息：放进 world，跟着镜头缓推
+  const lg = SC.logo(st.world, { x: W / 2, y: H * 0.345, size: U * 8.5, name: '示例工作台', nameSize: U * 5 });
+  const slogan = SC.text(st.world, { x: 0, y: lg.bottom + U * 2.2, text: '让每一份报表自己长出来', size: U * 3.2, weight: 500, color: SC.C.ink2 });
+  slogan.el.style.left = (W / 2 - slogan.el.offsetWidth / 2) + 'px';
+  const cta = SC.button(st.world, { x: 0, y: slogan.bottom + U * 4, label: '免费试用 14 天', icon: 'arrow', size: U * 2.4 });
+  cta.el.style.left = (W / 2 - cta.el.offsetWidth / 2) + 'px';
+  const url = SC.text(st.world, { x: 0, y: slogan.bottom + U * 4 + U * 6 + U * 2.4, text: '访问 example.com 立即开始', size: U * 2.2, color: SC.C.muted });
+  url.el.style.left = (W / 2 - url.el.offsetWidth / 2) + 'px';
+
+  // 两侧的界面碎片（浅色界面配色要放在 sc-ui 容器里）
+  const ui = SC.group(st.world, { x: 0, y: 0, w: W, h: H, cls: 'sc-ui' });
+  const lx = SLATE.safe.x + U * 6, rx = W - SLATE.safe.x - U * 6;
+  const frag = [
+    SC.kpi(ui, { x: lx, y: H * 0.24, w: U * 26, h: U * 13, label: '复购率', value: 32.4, digits: 1, unit: '%', delta: '↑ 12.4%', spark: [3, 4, 3.6, 5, 4.6, 6, 5.8, 7] }),
+    SC.card(ui, { x: lx + U * 4, y: H * 0.51, w: U * 30, h: U * 18, title: '销售趋势' }),
+    SC.toast(ui, { x: rx - U * 30, y: H * 0.26, w: U * 30, title: '已发布', text: '报名链接已复制' }),
+    SC.card(ui, { x: rx - U * 32, y: H * 0.47, w: U * 30, h: U * 17, title: '本周自动完成' }),
+  ];
+  const mini = SC.chart(frag[1], { kind: 'area', x: U * 0.6, y: U * 4.8, w: U * 28.8, h: U * 12.4, data: [3, 3.4, 3.1, 4, 3.8, 4.6, 4.4, 5.2, 5, 5.9], axis: false, max: 6.5 });
+  const ck = SC.checklist(frag[3], { x: U * 1.8, y: U * 5, w: U * 26, gap: U * 3.8, items: ['生成周报', '异常提醒', '分享看板'] });
+
+  const cur = SC.cursor(st, { keys: [
+    { t: 2.3, at: [W * 0.66, H * 0.72] },
+    { t: 3.0, at: { el: cta.el, fx: 0.72, fy: 0.62 }, click: true },
+    { t: 4.3, at: [W * 0.62, H * 0.68] },   // 点完移开，露出按钮上的字
+  ] });
+
+  function render(t) {
+    st.set(t);
+    tag.draw(seg(t, 0.6, 1.1));
+    lg.draw(seg(t, 0.1, 1.0));
+    slogan.draw(seg(t, 0.7, 1.4));
+    cta.draw(SC.pop(t, 1.5));
+    cta.hover(seg(t, 2.75, 3.0) * (1 - seg(t, 4.0, 4.3)));
+    cta.press(SC.pulse(t, cur.clicks[0]));
+    cta.sheen(seg(t, 3.25, 4.0, SLATE.ease.inOut));
+    url.draw(seg(t, 1.9, 2.5));
+    // 碎片：依次升起，之后各自轻微漂浮（能量很小，不抢中间的主信息）
+    frag.forEach((f, i) => {
+      const p = seg(t, 0.35 + i * 0.12, 1.15 + i * 0.12);
+      if (f.set) f.set(t, 0.35 + i * 0.12); else f.draw(p);
+      const host = f.el;
+      host.style.translate = `0px ${(noise(i + 3, t * 0.35) * U * 0.8).toFixed(2)}px`;
+      host.style.opacity = (Math.min(1, p * 1.6) * 0.92).toFixed(3);
+    });
+    mini.draw(seg(t, 0.8, 1.9));
+    ck.draw(seg(t, 0.9, 1.6));
+    [0, 1, 2].forEach(i => ck.check(i, seg(t, 1.6 + i * 0.35, 1.9 + i * 0.35)));
+    cur.set(t);
+  }
+</script>
+</body>
+</html>

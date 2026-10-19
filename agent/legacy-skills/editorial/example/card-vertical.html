@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<link rel="stylesheet" href="/skills/editorial/style.css">
+<script src="/skills/editorial/components.js"></script>
+</head>
+<body>
+<script>
+  // 竖屏知识卡片（9:16，按 1080×1920 设计）：定义卡 → 占比环 → 大数字，三段从上往下依次出现，左边对齐同一条线。8 秒
+  const { seg, u: U } = SLATE;
+  const st = ED.stage();
+  const w = st.world;
+  const F = ED.frame();
+  const card = ED.define(w, { x: F.x, y: F.top, w: F.w, kicker: '知识卡片 · 效率方法', term: '番茄工作法', en: 'POMODORO TECHNIQUE',
+    def: '专注 25 分钟，休息 5 分钟，一轮接一轮。' });
+  // 中段：一轮 30 分钟里专注和休息的比例
+  const r = U * 15, cy = card.bottom + U * 6 + r;
+  const ring = ED.ring(w, { cx: F.x + r + U * 1, cy, r, thick: U * 2.6, center: 25, unit: '分钟', label: '一轮 30 分钟',
+    parts: [{ label: '专注', value: 25, note: '25 分钟' }, { label: '休息', value: 5, note: '5 分钟' }],
+    legend: { x: F.x + r * 2 + U * 9, y: cy - U * 1.5 } });
+  // 下段：左边大数字，右边一条小流程（四轮专注 → 长休）
+  const by = cy + r + U * 22;
+  const num = ED.number(w, { x: F.x, y: by, value: 4, unit: '轮', anchor: 'start', size: U * 14, label: '长休间隔' });
+  const sq = U * 7, gap = U * 1.6, x0 = F.x + U * 27, my = by - U * 5;
+  const rounds = [1, 2, 3, 4].map(i => ED.node(w, { x: x0 + (i - 1) * (sq + gap), y: my - sq / 2, w: sq, h: sq, title: String(i), kind: 'accent', align: 'center', r: U * 0.4 }));
+  const lb = ED.node(w, { x: x0 + 4 * sq + 3 * gap + U * 6.5, y: my - U * 6.5, w: U * 19, h: U * 13, title: '长休', sub: '15～30 分钟', kind: 'solid', align: 'center' });
+  const arrow = ED.link(w, { from: rounds[3], to: lb });
+  const src = ED.source(st.hud, { text: '方法由 Francesco Cirillo 在 1980 年代末提出' });
+
+  function render(t) {
+    st.set(t);
+    card.draw(seg(t, 0, 1.5, ED.ease.linear));
+    ring.draw(seg(t, 1.9, 3.3));
+    num.draw(seg(t, 3.0, 4.0, ED.ease.linear));
+    rounds.forEach((n, i) => n.draw(seg(t, 3.2 + i * 0.15, 3.7 + i * 0.15, ED.ease.linear)));
+    arrow.draw(seg(t, 3.8, 4.2, ED.ease.move));
+    lb.draw(seg(t, 4.0, 4.6, ED.ease.linear));
+    src.draw(seg(t, 1.2, 1.7));
+  }
+</script>
+</body>
+</html>

@@ -1,0 +1,63 @@
+/* 瑞士网格：浅灰页面、黑字、唯一信号色；12 栏网格，齐左，大面积留白。
+ * 拉丁字母和数字用 Inter（SIL OFL 1.1，镜像里的 /assets/fonts/ 提供），中文回落到 Noto Sans CJK SC。
+ * unicode-range 只覆盖拉丁字母、数字和常用符号：中文标点（引号、省略号、破折号）仍然用中文字体的全角字形。 */
+@font-face {
+  font-family: "Inter";
+  src: url(/assets/fonts/Inter-Variable.woff2) format("woff2");
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: block;
+  unicode-range: U+0020-007E, U+00A0-00FF, U+0131, U+0152-0153, U+02C6, U+02DA, U+02DC, U+2013, U+2022, U+2032-2033,
+    U+20AC, U+2116, U+2122, U+2190-2193, U+2212, U+2215, U+2248, U+2260, U+2264-2265;
+}
+:root {
+  --sw-u: 10.8px;                /* components.js 会改成 SLATE.u */
+  --sw-page: #EAE9E5;
+  --sw-paper: #FFFFFF;
+  --sw-ink: #111111;
+  --sw-grey: #5F5E5A;
+  --sw-signal: #E30613;
+  --sw-font: "Inter", "Noto Sans CJK SC", "Noto Sans SC", sans-serif;
+  /* 字幕：直角黑底白字，像海报上的一条说明 */
+  --slate-caption-bg: #111111;
+  --slate-caption-color: #FFFFFF;
+  --slate-caption-font: "Inter", "Noto Sans CJK SC", "Noto Sans SC", sans-serif;
+  --slate-caption-weight: 500;
+}
+html, body { background: var(--sw-page); color: var(--sw-ink); font-family: var(--sw-font); }
+.slate-caption { border-radius: 0; letter-spacing: 0.02em; }
+
+/* 舞台：root 铺满；world 跟镜头动；hud 固定在屏幕上 */
+.sw-root, .sw-world, .sw-hud, .sw-layer { position: absolute; left: 0; top: 0; width: 100%; height: 100%; }
+.sw-root { overflow: hidden; background: var(--sw-page); font-family: var(--sw-font); font-kerning: normal;
+  -webkit-font-smoothing: antialiased; text-rendering: geometricPrecision; }
+.sw-world { transform-origin: 0 0; }
+.sw-svg { position: absolute; left: 0; top: 0; overflow: visible; pointer-events: none; }
+
+/* 文字：外层 .sw-t 只负责排版和自检（字是透明的），看得见的字在 .sw-mask 里，从裁切框里升起 */
+.sw-t { position: absolute; color: transparent; white-space: pre; margin: 0; padding: 0;
+  font-feature-settings: "kern" 1; font-variant-numeric: lining-nums; }
+.sw-t.sw-wrap { white-space: normal; word-break: break-all; }
+.sw-mask { position: absolute; left: -0.12em; right: -0.12em; top: -0.16em; bottom: -0.16em; overflow: hidden; visibility: visible; }
+.sw-in { position: absolute; left: 0.12em; right: 0.12em; top: 0.16em; transform-origin: 50% 50%; white-space: inherit; }
+.sw-in .sw-hi { color: var(--sw-signal); }
+.sw-knife { position: absolute; left: -0.08em; top: 50%; visibility: visible; }
+
+/* 数字翻牌：每一位是一个裁切窗（宽度等于目标数字），里面一条 0～9 的竖排数字 */
+.sw-num { position: absolute; white-space: pre; color: transparent; font-variant-numeric: lining-nums proportional-nums; }
+
+/* 用 overflow 裁切（不用 clip-path：裁切框里的内容在动时，clip-path 的栅格缓存会让渲染结果随渲染顺序变化）；
+   overflow 会把基线移到框底，components.js 用 vertical-align 补回来 */
+.sw-col { position: relative; display: inline-block; overflow: hidden; }
+.sw-strip { position: absolute; left: 0; right: 0; top: 0; display: flex; flex-direction: column; }
+.sw-strip > span, .sw-col-sizer { display: block; text-align: center; }
+.sw-col-sizer { visibility: hidden; }
+
+/* 色块、图框 */
+.sw-g, .sw-block, .sw-frame { position: absolute; }
+.sw-g { left: 0; top: 0; }
+.sw-frame { overflow: hidden; }
+.sw-frame img { position: absolute; display: block; max-width: none; }
+.sw-photo { left: 0; top: 0; width: 100%; height: 100%; object-fit: cover; }
+.sw-cutout { object-fit: contain; }
+.sw-ph { position: absolute; inset: 0; }

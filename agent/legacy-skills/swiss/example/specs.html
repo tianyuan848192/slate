@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<link rel="stylesheet" href="/skills/swiss/style.css">
+<script src="/skills/swiss/components.js"></script>
+</head>
+<body>
+<script>
+  // 规格参数（16:9，8 秒；示例数据）：左边 5 栏放带背景的产品照片，右边 6 栏是规格表
+  //   0.2 秒 照片从左往右揭示，之后缓慢推近 → 0.4 秒 页面标题 → 1.1～3.6 秒 六行参数逐行入场，数字翻牌
+  //   → 4.1 秒 "重量"一行变成信号色，旧值 265 被刀切掉，新值从 265 翻到 238 → 6.2 秒 信号色移到"降噪深度"
+  const { u: U } = SLATE;
+  const { lin } = SW;
+  const st = SW.stage({ grid: true });
+  const G = st.G, w = st.world;
+
+  const fo = SW.folio(st.hud, { items: [[0, 'HUSH 2'], [3, '头戴式降噪耳机'], [6, '规格'], [11, '03 / 05', 'end']] });
+  // 带背景的照片用 mode: 'photo'：铺满图框，pos 对准主体
+  const photo = SW.product(w, { ...G.box(0, 5, 0, 6), src: 'hush-photo.jpg', mode: 'photo', from: 'left', pos: '50% 45%', zoom: [1.02, 1.08] });
+  const hd = SW.heading(w, { x: G.x(6), w: G.w(6), index: '03', kicker: '规格参数', text: '每一克都算过' });
+  const sp = SW.specs(w, { x: G.x(6), y: hd.bottom + U * 1, w: G.w(6), rowH: U * 7.6, size: U * 5, rows: [
+    { k: '重量', v: '238', unit: 'g', note: '较上一代轻 27 g', was: '265', from: '265' },
+    { k: '续航', v: '40', unit: '小时', note: '开启降噪' },
+    { k: '降噪深度', v: '48', unit: 'dB', note: '实验室数据' },
+    { k: '充电', v: '5', unit: '分钟', note: '可听 4 小时' },
+    { k: '蓝牙', v: '5.4', note: '两台设备同时连接' },
+    { k: '驱动单元', v: '40', unit: 'mm', note: '复合振膜' },
+  ] });
+  const fn = SW.footnote(st.hud, { text: '示例数据，以实际产品为准', anchor: 'end' });
+
+  function render(t) {
+    st.set(t);
+    fo.draw(lin(t, 0, 0.6));
+    photo.draw(lin(t, 0.2, 1.3));
+    photo.push(lin(t, 0.2, 8));
+    hd.draw(lin(t, 0.4, 1.3));
+    sp.draw(lin(t, 1.1, 3.6));
+    sp.rows[0].swap(lin(t, 4.3, 5.4));
+    // 信号色：先给"重量"，6.2 秒移到"降噪深度"
+    if (t < 6.2) sp.focus(0, lin(t, 4.1, 4.6)); else sp.focus(2, lin(t, 6.2, 6.7));
+    fn.draw(lin(t, 3.6, 4.2));
+  }
+</script>
+</body>
+</html>

@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<link rel="stylesheet" href="/skills/screencast/style.css">
+<script src="/skills/screencast/components.js"></script>
+</head>
+<body>
+<script>
+  // 用户上传了截图（约 8 秒）：旧版 / 新版截图装进浏览器外框 → 分隔线扫过做前后对比 → 推近新版的"导出报表"按钮 → 聚光灯 + 标注 → 光标点一下
+  // 做片时把 src 换成 /input/文件名；按钮的位置先用 slate-look 看图，换算成占整张图的比例（这里是 x 86%、y 11%、宽 12%、高 4%）
+  // 用的是真截图，所以不标"示意"；强调色取截图里的品牌色，标注和截图是一个颜色
+  const { seg, u: U, width: W } = SLATE;
+  const st = SC.stage({ wall: 'mist', accent: '#0F8F7E' });
+  // 外框的内容区按截图比例（2400 × 1500 = 1.6）来算，截图正好铺满不裁切
+  const a = SC.area(), barH = U * 4.4;
+  let fh = a.h, fw = (fh - barH) * 1.6;
+  if (fw > a.w) { fw = a.w; fh = fw / 1.6 + barH; }
+  const fr = SC.frame(st.world, { kind: 'browser', x: W / 2 - fw / 2, y: a.y + (a.h - fh) / 2, w: fw, h: fh, url: 'projects.example.com' });
+  const cmp = SC.compare(fr, { labels: ['旧版', '新版'] });
+  SC.shot(cmp.a, { src: 'shot-old.png' });
+  const shotNew = SC.shot(cmp.b, { src: 'shot-new.png' });
+  const exportBtn = shotNew.region(0.8625, 0.112, 0.1167, 0.0427);
+
+  // 推近到按钮：上限 2 倍（这张截图 2400 像素宽，shotNew.maxZoom() 约 2，再大就糊）；bound 让推近后满屏都是截图
+  st.camera([{ t: 3.55, at: exportBtn, zoom: 'fit', max: 2 }], { bound: fr });
+  const spot = SC.spotlight(st, { at: exportBtn, pad: U * 0.9, radius: U * 0.6 });
+  const note = SC.callout(st, { at: exportBtn, side: 'bottom', text: '导出在右上角', tone: 'light', gap: U * 6 });
+  const cur = SC.cursor(st, { keys: [
+    { t: 4.9, at: shotNew.point(0.66, 0.3) },
+    { t: 5.7, at: shotNew.point(0.9, 0.135), click: true },
+    { t: 6.6, at: shotNew.point(0.716, 0.42) },   // 点完移到两张卡片之间的空隙，不挡字
+  ] });
+
+  function render(t) {
+    st.set(t);
+    fr.draw(SC.pop(t, 0.1));
+    // 标签“旧版”“新版”各自至少可见 1.9 秒（2 个字 ÷ 4.5 + 1.5），推近前收起
+    cmp.set(t, seg(t, 0.8, 3.0, SLATE.ease.linear), seg(t, 0.2, 0.5) * (1 - seg(t, 3.45, 3.7)));
+    spot.set(t, seg(t, 4.2, 4.6));
+    note.set(t, seg(t, 4.35, 5.1));
+    cur.set(t);
+  }
+</script>
+</body>
+</html>

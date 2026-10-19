@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Slate 管理端</title>
+<link rel="stylesheet" href="admin.css">
+</head>
+<body>
+<!-- 管理端：独立部署（自己的 CloudFront、API 和 Lambda），只有 admin 组的账号能用。设计稿原型在 docs/admin-design/prototype/ -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="i-home" viewBox="0 0 24 24"><path d="M4 11.5 12 5l8 6.5V19a1 1 0 0 1-1 1h-4.5v-5h-5v5H5a1 1 0 0 1-1-1v-7.5Z"/></symbol>
+  <symbol id="i-users" viewBox="0 0 24 24"><circle cx="9" cy="8.5" r="3.2"/><path d="M3.5 19c.6-3 2.8-4.8 5.5-4.8s4.9 1.8 5.5 4.8"/><circle cx="16.5" cy="9.5" r="2.6"/><path d="M15.5 14.4c2.4.1 4.3 1.6 4.9 4.1"/></symbol>
+  <symbol id="i-wand" viewBox="0 0 24 24"><path d="m4 20 11-11"/><path d="m13 7 4 4"/><path d="M17 3v3M15.5 4.5h3M20 9v2M19 10h2M10 3v1.6M9.2 3.8h1.6"/></symbol>
+  <symbol id="i-key" viewBox="0 0 24 24"><circle cx="8" cy="14" r="4"/><path d="m11 11 8.5-8.5M16 6l2.5 2.5M14 8l2 2"/></symbol>
+  <symbol id="i-coin" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M14.8 9.2a3 3 0 0 0-2.8-1.7c-1.6 0-2.8.9-2.8 2.1 0 2.9 5.8 1.6 5.8 4.6 0 1.2-1.3 2.2-3 2.2a3.2 3.2 0 0 1-3-1.8M12 6v1.5M12 16.5V18"/></symbol>
+  <symbol id="i-log" viewBox="0 0 24 24"><path d="M6 3.5h9l3 3V20a.5.5 0 0 1-.5.5h-11A.5.5 0 0 1 6 20V3.5Z"/><path d="M9 10h6M9 13.5h6M9 17h4"/></symbol>
+  <symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="6.5"/><path d="m20 20-4.2-4.2"/></symbol>
+  <symbol id="i-back" viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></symbol>
+  <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+  <symbol id="i-upload" viewBox="0 0 24 24"><path d="M12 16V4M7 9l5-5 5 5M5 20h14"/></symbol>
+  <symbol id="i-check" viewBox="0 0 24 24"><path d="m5 12.5 4.5 4.5L19 7.5"/></symbol>
+  <symbol id="i-x" viewBox="0 0 24 24"><path d="M6.5 6.5l11 11M17.5 6.5l-11 11"/></symbol>
+  <symbol id="i-alert" viewBox="0 0 24 24"><path d="M12 4 2.8 19.5h18.4L12 4Z"/><path d="M12 10v4.5M12 17.2v.1"/></symbol>
+  <symbol id="i-dot" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4" fill="currentColor" stroke="none"/></symbol>
+  <symbol id="i-play" viewBox="0 0 24 24"><path d="M8 5.5v13l11-6.5-11-6.5Z" fill="currentColor" stroke="none"/></symbol>
+  <symbol id="i-refresh" viewBox="0 0 24 24"><path d="M19.5 12a7.5 7.5 0 1 1-2.2-5.3"/><path d="M19.5 4.5v4h-4"/></symbol>
+  <symbol id="i-file" viewBox="0 0 24 24"><path d="M14 3H6a1 1 0 0 0-1 1v16a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V8l-5-5Z"/><path d="M14 3v5h5"/></symbol>
+  <symbol id="i-up" viewBox="0 0 24 24"><path d="m6 15 6-6 6 6"/></symbol>
+  <symbol id="i-down" viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></symbol>
+  <symbol id="i-film" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M7.5 4v16M16.5 4v16M3 9h4.5M3 15h4.5M16.5 9H21M16.5 15H21"/></symbol>
+  <symbol id="i-chart" viewBox="0 0 24 24"><path d="M4 20h16"/><path d="M7.5 16.5V12M12 16.5V6.5M16.5 16.5V9.5" stroke-width="2.4"/></symbol>
+  <symbol id="i-download" viewBox="0 0 24 24"><path d="M12 4v12M7 11l5 5 5-5M5 20h14"/></symbol>
+  <symbol id="i-lock" viewBox="0 0 24 24"><rect x="5" y="10.5" width="14" height="9.5" rx="1.5"/><path d="M8 10.5V8a4 4 0 0 1 8 0v2.5"/></symbol>
+</svg>
+
+<div class="login" id="login" hidden>
+  <form class="login-card" id="login-form" autocomplete="on">
+    <div class="side-brand" style="padding:0 0 6px"><span class="logo">S</span><div><b style="color:var(--ink)">Slate 管理端</b><small>只有管理员账号能登录</small></div></div>
+    <label class="field"><span>邮箱</span><input class="inp" name="email" type="email" autocomplete="username" required></label>
+    <label class="field"><span>密码</span><input class="inp" name="password" type="password" autocomplete="current-password" required></label>
+    <p class="form-err" id="login-err" hidden></p>
+    <button class="btn primary" type="submit">登录</button>
+  </form>
+  <form class="login-card" id="newpw-form" hidden>
+    <h3>首次登录，请设置新密码</h3>
+    <label class="field"><span>新密码</span><input class="inp" name="pw" type="password" autocomplete="new-password" required minlength="8"><small>至少 8 位，同时包含大写字母、小写字母和数字</small></label>
+    <p class="form-err" id="newpw-err" hidden></p>
+    <button class="btn primary" type="submit">设置并登录</button>
+  </form>
+</div>
+<div class="shell" id="shell" hidden>
+  <nav class="side" aria-label="管理端导航">
+    <div class="side-brand"><span class="logo">S</span><div><b>Slate</b><small>管理端</small></div></div>
+    <a class="side-item" href="#users" data-route="users user"><svg><use href="#i-users"/></svg>用户</a>
+    <a class="side-item" href="#styles" data-route="styles style style-new"><svg><use href="#i-wand"/></svg>Skill 创建</a>
+    <a class="side-item" href="#usage" data-route="usage"><svg><use href="#i-chart"/></svg>用量</a>
+    <a class="side-item" href="#keys" data-route="keys"><svg><use href="#i-key"/></svg>模型与密钥</a>
+    <a class="side-item" href="#billing" data-route="billing"><svg><use href="#i-coin"/></svg>计费设置</a>
+    <a class="side-item" href="#audit" data-route="audit"><svg><use href="#i-log"/></svg>操作日志</a>
+    <div class="side-spacer"></div>
+    <div class="side-me"><span class="avatar">管</span><div><b id="me-email"></b><small>管理员 · <button type="button" class="linkish" id="logout">退出</button></small></div></div>
+  </nav>
+  <div class="main">
+    <header class="topbar">
+      <div class="crumbs" id="crumbs"></div>
+
+    </header>
+    <main id="page" tabindex="-1"></main>
+  </div>
+</div>
+
+<div class="modal-bg" id="modal-bg" hidden><div class="modal" role="dialog" aria-modal="true" id="modal"></div></div>
+<div class="toast" id="toast" role="status" hidden></div>
+<script type="module" src="js/app.js"></script>
+</body>
+</html>

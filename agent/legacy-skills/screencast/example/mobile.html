@@ -1,0 +1,106 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<link rel="stylesheet" href="/skills/screencast/style.css">
+<script src="/skills/screencast/components.js"></script>
+</head>
+<body>
+<script>
+  // 移动端功能（约 7 秒）：横屏左字右机，竖屏上字下机。手机里：审批列表 → 点开一条（触点）→ 详情页滑入 → 点"同意" → 状态变化 + 底部通知
+  // 左侧卖点逐条出现，和手机里的动作对齐。示意界面，右上角标"示意界面"
+  const { seg, u: U, width: W, height: H, safe } = SLATE;
+  const vert = H > W;
+  const st = SC.stage({ wall: 'dawn', drift: 0.006 });
+  const tag = SC.mark(st.hud, { text: '示意界面' });
+  const area = SC.area({ top: tag.bottom });
+  let hd, pts = null, ph;
+  if (vert) {
+    hd = SC.heading(st.hud, { kicker: '移动端', text: '审批，随手就批', y: tag.bottom });
+    const a2 = SC.area({ top: hd.bottom });
+    const pH = a2.h, pW = pH / 2.05;
+    ph = { x: W / 2 - pW / 2, y: a2.y, w: pW, h: pH };
+  } else {
+    const pH = area.h, pW = pH / 2.05;
+    ph = { x: W * 0.64 - pW / 2, y: area.y, w: pW, h: pH };
+    const lx = safe.x + U * 16, lw = ph.x - lx - U * 6;
+    hd = SC.heading(st.hud, { kicker: '移动端', text: '审批，随手就批', align: 'left', x: lx, w: lw, y: 0, size: U * 6 });
+    pts = SC.points(st.hud, { x: lx, y: hd.bottom + U * 1.5, w: lw, items: ['消息直达手机', '详情一屏看完', '一键同意或退回'], size: U * 3 });
+    // 左栏整块（标题 + 卖点）和手机上下居中对齐
+    const y0 = area.y + area.h / 2 - pts.bottom / 2;
+    hd.el.style.top = y0 + 'px'; pts.el.style.top = (y0 + hd.bottom + U * 1.5) + 'px';
+  }
+  const fr = SC.frame(st.world, { kind: 'phone', ...ph, time: '10:08' });
+  const bw = fr.bw, bh = fr.bh, px = U * 2;
+
+  // 列表页
+  const pL = SC.group(fr);
+  SC.text(pL, { x: px, y: U * 1.6, text: '待我审批', size: U * 2.6, weight: 700, color: 'var(--ui-ink)' }).draw(1);
+  SC.chip(pL, { text: '3 条', tone: 'accent', x: px + U * 12.4, y: U * 2.2 });
+  SC.field(pL, { x: px, y: U * 6.4, w: bw - px * 2, h: U * 4, icon: 'search', placeholder: '搜索申请人或单号', size: U * 1.45 });
+  const items = [['采购申请', '张敏 · 市场部', '¥12,800', 0], ['请假申请', '李想 · 研发部', '2 天', 1], ['报销申请', '王磊 · 销售部', '¥1,260', 2]];
+  const rows = items.map(([a, b, c, i], k) => {
+    const cd = SC.card(pL, { x: px, y: U * (12.4 + k * 10.6), w: bw - px * 2, h: U * 9.4 });
+    SC.avatar(cd, { x: U * 1.6, y: U * 1.6, size: U * 3.6, text: Array.from(b)[0], i });
+    SC.text(cd, { x: U * 6.4, y: U * 1.4, text: a, size: U * 1.7, weight: 700, color: 'var(--ui-ink)' }).draw(1);
+    SC.text(cd, { x: U * 6.4, y: U * 4.2, text: b, size: U * 1.35, color: 'var(--ui-muted)' }).draw(1);
+    const amt = SC.text(cd, { x: 0, y: U * 1.4, text: c, size: U * 1.7, weight: 700, color: 'var(--ui-ink)' });
+    amt.el.style.left = (bw - px * 2 - U * 1.6 - amt.el.offsetWidth) + 'px'; amt.draw(1);
+    SC.chip(cd, { text: '待审批', tone: 'warn', x: U * 6.4, y: U * 6.4 });
+    return cd;
+  });
+  const tabs = SC.group(pL, { x: 0, y: bh - U * 6.4, w: bw, h: U * 6.4 });
+  Object.assign(tabs.el.style, { borderTop: '1px solid var(--ui-line)', background: 'var(--ui-panel)', display: 'flex', justifyContent: 'space-around', alignItems: 'center', color: 'var(--ui-muted)' });
+  ['home', 'inbox', 'users', 'settings'].forEach((n, i) => { const ic = SC.icon(n, U * 2.4, i === 1 ? SC.C.accent : null); tabs.el.append(ic); });
+
+  // 详情页
+  const pD = SC.group(fr);
+  Object.assign(pD.el.style, { background: 'var(--ui-bg)' });
+  const nav = SC.group(pD, { x: 0, y: 0, w: bw, h: U * 5 });
+  Object.assign(nav.el.style, { display: 'flex', alignItems: 'center', gap: U * 0.8 + 'px', paddingLeft: px + 'px', color: 'var(--ui-ink)', fontSize: U * 1.8 + 'px', fontWeight: 700 });
+  nav.el.append(SC.icon('back', U * 2.2)); nav.el.append(Object.assign(document.createElement('span'), { textContent: '采购申请' }));
+  const head = SC.card(pD, { x: px, y: U * 5.6, w: bw - px * 2, h: U * 12 });
+  SC.text(head, { x: U * 1.8, y: U * 1.6, text: '申请金额', size: U * 1.35, color: 'var(--ui-muted)' }).draw(1);
+  SC.text(head, { x: U * 1.8, y: U * 4, text: '¥12,800', size: U * 3.6, weight: 700, color: 'var(--ui-ink)' }).draw(1);
+  const chW = SC.chip(head, { text: '待审批', tone: 'warn', x: U * 1.8, y: U * 8.8 });
+  const chOK = SC.chip(head, { text: '已同意', tone: 'success', x: U * 1.8, y: U * 8.8 });
+  const info = SC.card(pD, { x: px, y: U * 18.8, w: bw - px * 2, h: U * 19 });
+  [['申请人', '张敏'], ['部门', '市场部'], ['用途', '新品发布会物料'], ['提交时间', '10 月 12 日 09:41']].forEach(([k, v], i) => {
+    SC.text(info, { x: U * 1.8, y: U * (1.8 + i * 4.2), text: k, size: U * 1.4, color: 'var(--ui-muted)' }).draw(1);
+    SC.text(info, { x: U * 9.6, y: U * (1.8 + i * 4.2), text: v, size: U * 1.4, weight: 500, color: 'var(--ui-ink)' }).draw(1);
+  });
+  const flow = SC.checklist(pD, { x: px + U * 1.2, y: U * 40.4, w: bw - px * 2, gap: U * 3.6, items: ['已提交', '部门负责人（你）', '财务复核'] });
+  const bh2 = U * 4.8, by = bh - bh2 - U * 1.6, half = (bw - px * 2 - U * 1.2) / 2;
+  SC.button(pD, { x: px, y: by, w: half, h: bh2, label: '退回', kind: 'secondary' });
+  const agree = SC.button(pD, { x: px + half + U * 1.2, y: by, w: half, h: bh2, label: '同意' });
+  const ok = SC.toast(fr, { x: px, y: U * 0.6, w: bw - px * 2, title: '已同意', text: '已通知张敏' });   // 顶部横幅，不挡审批进度
+
+  // 触点：只在点按前后出现
+  const tap = SC.cursor(st, { kind: 'touch', keys: [
+    { t: 0, at: { el: rows[0].el, fx: 0.42, fy: 0.5 } },
+    { t: 1.6, at: { el: rows[0].el, fx: 0.42, fy: 0.5 }, click: true },
+    { t: 3.7, at: { el: agree.el, fx: 0.5, fy: 0.55 }, click: true },
+  ] });
+  const [c0, c1] = tap.clicks;
+
+  function render(t) {
+    st.set(t);
+    tag.draw(seg(t, 0.6, 1.1));
+    fr.draw(SC.pop(t, 0.1));
+    hd.draw(seg(t, 0.2, 1.2));
+    if (pts) { pts.draw(0, seg(t, 0.9, 1.5)); pts.draw(1, seg(t, 2.2, 2.8)); pts.draw(2, seg(t, 3.85, 4.45)); }
+    rows.forEach((r, i) => { r.draw(seg(t, 0.45 + i * 0.12, 1.05 + i * 0.12)); });
+    rows[0].el.style.background = SC.pulse(t, c0, 0.35) > 0 ? 'var(--ui-hover)' : 'var(--ui-panel)';   // 按下时卡片变灰
+    SC.swap(pL, pD, seg(t, c0 + 0.15, c0 + 0.6));
+    flow.draw(seg(t, 2.1, 2.7));
+    flow.check(0, 1);
+    flow.check(1, seg(t, c1 + 0.1, c1 + 0.5));
+    agree.press(SC.pulse(t, c1));
+    const done = seg(t, c1 + 0.15, c1 + 0.4);
+    chW.style.opacity = 1 - done; chOK.style.opacity = done;
+    ok.set(t, c1 + 0.3);
+    tap.set(t);
+  }
+</script>
+</body>
+</html>

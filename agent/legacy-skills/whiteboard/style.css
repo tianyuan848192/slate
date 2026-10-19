@@ -1,0 +1,16 @@
+/* 白板手绘讲解：配色、字体和基础版式 */
+:root {
+  --wb-bg: #FBFAF7;
+  --wb-ink: #2B2B2B;
+  --wb-blue: #1F3A93;
+  --wb-red: #D64545;
+  --wb-yellow: #F2B33D;
+  --wb-muted: #9AA0A6;
+  --slate-caption-bg: rgba(31, 58, 147, .92);
+  --slate-caption-font: "Noto Sans CJK SC", "Noto Sans SC", sans-serif;
+}
+html, body { background: var(--wb-bg); color: var(--wb-ink); font-family: "Noto Sans CJK SC", "Noto Sans SC", sans-serif; }
+.wb-canvas { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
+.wb-canvas text { font-family: "Noto Sans CJK SC", "Noto Sans SC", sans-serif; fill: var(--wb-ink); }
+.wb-title { position: absolute; left: 7%; top: 8%; color: var(--wb-blue); font-weight: 700; letter-spacing: .02em; }
+.wb-note { position: absolute; color: var(--wb-ink); font-weight: 500; line-height: 1.4; }

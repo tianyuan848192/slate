@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<title>行动号召收尾</title>
+<link rel="stylesheet" href="/assets/fonts/lib/noto-serif-sc.css" />
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { width: 100%; height: 100%; overflow: hidden; background: #0b0c0e; }
+  #root {
+    position: absolute; inset: 0; overflow: hidden;
+    background: radial-gradient(ellipse at 50% 44%, #1a1d24 0%, #0b0c0e 70%);
+    color: #f8fafc;
+    font-family: "Noto Serif SC", serif;
+  }
+  .area {
+    position: absolute; left: 5%; right: 5%; top: 5%; bottom: 22%;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .lockup { display: flex; flex-direction: column; align-items: center; text-align: center; }
+  .action {
+    font-weight: 900; line-height: 1.1; letter-spacing: 0.02em;
+    opacity: 0;
+  }
+  .btn {
+    display: inline-block; border-radius: 999px;
+    background: #a78bfa; color: #120b24; font-weight: 700; line-height: 1;
+    white-space: nowrap;
+    box-shadow: 0 var(--sh1) var(--sh2) color-mix(in srgb, #a78bfa 30%, transparent);
+    opacity: 0;
+  }
+  .micro { color: #aeb7c5; font-weight: 500; line-height: 1.25; letter-spacing: 0.04em; opacity: 0; }
+</style>
+</head>
+<body>
+<div id="root">
+  <div class="area">
+    <div class="lockup" id="lockup">
+      <h2 class="action">开始做你的下一支视频</h2>
+      <div class="btn">立即免费试用</div>
+      <p class="micro">无需绑定信用卡</p>
+    </div>
+  </div>
+</div>
+<script src="/skills/kit-motion/kit.js"></script>
+<script src="/skills/kit-motion/cta-lockup.js"></script>
+<script>
+  const u = SLATE.u;
+  const root = document.getElementById('root');
+  const action = root.querySelector('.action');
+  const btn = root.querySelector('.btn');
+  const micro = root.querySelector('.micro');
+  action.style.fontSize = (9 * u) + 'px';
+  action.style.marginBottom = (6 * u) + 'px';
+  btn.style.fontSize = (5 * u) + 'px';
+  btn.style.padding = (3 * u) + 'px ' + (7 * u) + 'px';
+  btn.style.marginBottom = (3.8 * u) + 'px';
+  btn.style.setProperty('--sh1', (2.2 * u) + 'px');
+  btn.style.setProperty('--sh2', (6 * u) + 'px');
+  micro.style.fontSize = (4 * u) + 'px';
+
+  SLATE.waits = SLATE.waits || [];
+  SLATE.waits.push(document.fonts.load('900 60px "Noto Serif SC"'));
+  SLATE.waits.push(document.fonts.load('700 60px "Noto Serif SC"'));
+  SLATE.waits.push(document.fonts.load('500 60px "Noto Serif SC"'));
+
+  const tl = SLATE.timeline();
+  KIT.motions.ctaLockup(tl, root.querySelector('#lockup'), { at: 0.2, dur: Math.max(1, (SLATE.duration || 4) - 0.2) });
+  window.render = t => tl.at(t);
+</script>
+</body>
+</html>

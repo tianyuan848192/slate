@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<link rel="stylesheet" href="/assets/fonts/lib/noto-serif-sc.css" />
+<link rel="stylesheet" href="/assets/fonts/lib/inter.css" />
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body { width: 100%; height: 100%; overflow: hidden; background: #0b0c0e; }
+  #root { position: absolute; inset: 0; background: #0b0c0e; }
+  .cam { position: absolute; inset: 0; overflow: hidden; }
+  .world {
+    position: absolute; inset: 0; overflow: hidden;
+    --kit-accent: #8b5cf6;
+    color: #f8fafc;
+    font-family: "Noto Serif SC", serif;
+    background:
+      radial-gradient(circle at 50% 52%, color-mix(in srgb, #8b5cf6 19%, transparent), transparent 27%),
+      linear-gradient(145deg, #151b26, #0b0c0e 72%);
+  }
+  .headline {
+    position: absolute; z-index: 1; top: 10%; left: 9%;
+    font-size: 110px; font-weight: 700; line-height: 1.05; letter-spacing: 0.02em; white-space: nowrap;
+  }
+  .card {
+    position: absolute; z-index: 1; overflow: hidden;
+    border: 2px solid rgba(59, 69, 88, 0.8); border-radius: 40px;
+    background: rgba(27, 34, 48, 0.92);
+    box-shadow: 0 24px 60px rgba(11, 12, 14, 0.55), inset 0 1px 0 rgba(248, 250, 252, 0.09);
+  }
+  .detail { top: 30%; left: 9%; width: 55%; height: 46%; padding: 48px 56px; }
+  .label { color: #a7b0c0; font-size: 44px; font-weight: 700; line-height: 1; letter-spacing: 0.1em; }
+  .chip {
+    position: absolute; top: 141px; left: 787px; width: 400px; height: 150px;
+    margin-left: -400px;
+    display: grid; place-items: center;
+    border: 2px solid color-mix(in srgb, #8b5cf6 72%, #f8fafc); border-radius: 28px;
+    background: color-mix(in srgb, #8b5cf6 22%, #1b2230);
+    box-shadow: 0 20px 48px color-mix(in srgb, #8b5cf6 28%, transparent);
+    font-family: Inter, sans-serif; font-size: 110px; font-weight: 800; letter-spacing: -0.04em; line-height: 1;
+  }
+  .context { position: absolute; bottom: 48px; left: 56px; color: #a7b0c0; font-size: 44px; line-height: 1.25; }
+  .support { left: 69%; width: 22%; height: 21%; padding: 32px 40px; display: flex; flex-direction: column; justify-content: space-between; }
+  .sa { top: 30%; } .sb { top: 55%; }
+  .value { font-family: Inter, sans-serif; font-size: 80px; font-weight: 800; line-height: 0.9; letter-spacing: -0.04em; }
+  .row { display: flex; align-items: baseline; justify-content: space-between; }
+  .rule { width: 100%; height: 6px; border-radius: 99px; background: color-mix(in srgb, #8b5cf6 72%, #334155); }
+</style>
+</head>
+<body>
+<div id="root"></div>
+<script src="/skills/kit-motion/kit.js"></script>
+<script src="/skills/kit-motion/pull-back-reveal.js"></script>
+<script>
+  SLATE.waits = SLATE.waits || [];
+  SLATE.waits.push(document.fonts.load('700 110px "Noto Serif SC"'), document.fonts.load('800 110px "Inter"'));
+
+  const root = document.getElementById('root');
+  const stage = KIT.stage(root, 1920, 1080);
+  stage.innerHTML = `
+    <div class="cam">
+      <div class="world">
+        <div class="headline">增长正在持续复利</div>
+        <section class="card detail">
+          <div class="label">净增长</div>
+          <div class="chip">+428%</div>
+          <div class="context">覆盖全部活跃团队</div>
+        </section>
+        <section class="card support sa">
+          <div class="row"><div class="label">留存率</div><div class="value">94%</div></div>
+          <div class="rule"></div>
+        </section>
+        <section class="card support sb">
+          <div class="row"><div class="label">团队数</div><div class="value">48</div></div>
+          <div class="rule"></div>
+        </section>
+      </div>
+    </div>`;
+
+  const world = stage.querySelector('.world');
+  const tl = SLATE.timeline();
+  KIT.motions.pullBackReveal(tl, world, {
+    at: 0, dur: 2.4,
+    focus: world.querySelector('.chip'),
+    context: world.querySelectorAll('.headline, .label, .context, .value'),
+    hold: Math.max(0, (SLATE.duration || 4.5) - 2.4)
+  });
+  window.render = t => tl.at(t);
+</script>
+</body>
+</html>

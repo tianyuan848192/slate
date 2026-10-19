@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<link rel="stylesheet" href="/skills/editorial/style.css">
+<script src="/skills/editorial/components.js"></script>
+</head>
+<body>
+<script>
+  // 左右对比：冷萃和热萃逐行展开，旁白讲到哪一格就强调哪一格。7.5 秒；横屏、竖屏都能用
+  const { seg, u: U } = SLATE;
+  const st = ED.stage();
+  const w = st.world;
+  const h = ED.heading(w, { kicker: '对比 · 咖啡萃取', text: '冷萃和热萃，差在哪' });
+  const A = ED.area(h, { gap: 4 });
+  const cw = Math.min(A.w, U * 128);
+  const cmp = ED.compare(w, { x: A.cx - cw / 2, y: A.y, w: cw, h: A.h, accent: 'left',
+    left: { title: '冷萃', en: 'COLD BREW', icon: 'snow' },
+    right: { title: '热萃', en: 'HOT BREW', icon: 'flame' },
+    rows: [
+      { label: '水温', a: '4～20°C', b: '90～96°C', va: 0.12, vb: 0.94 },
+      { label: '萃取时间', a: '12～24 小时', b: '2～4 分钟' },
+      { label: '风味', a: '酸度低、更顺滑', b: '香气足、酸度明显' },
+      { label: '喝法', a: '提前做好，冷藏', b: '现冲现喝' },
+    ] });
+  const src = ED.source(st.hud, { text: '常见冲煮参数，配方不同会有差异；水温条按 0～100°C 画' });
+
+  function render(t) {
+    st.set(t);
+    h.draw(seg(t, 0, 0.9));
+    cmp.draw(seg(t, 0.4, 1.3, ED.ease.linear));
+    cmp.set(t, [1.1, 1.9, 2.7, 3.5]);
+    // 强调跟着旁白走：时间 → 风味（同一时刻只强调一格）
+    cmp.focus(1, 'a', seg(t, 2.2, 2.5) * (1 - seg(t, 4.2, 4.5)));
+    cmp.focus(2, 'a', seg(t, 4.4, 4.7));
+    src.draw(seg(t, 1.0, 1.5));
+  }
+</script>
+</body>
+</html>

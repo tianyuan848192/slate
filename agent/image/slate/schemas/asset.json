@@ -1,0 +1,28 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "3D 素材卡：3D 图片任务的成品说明（成品页和素材库展示；视频任务引用这个 3D 图片时，做片 Agent 按它来用模型）",
+  "type": "object",
+  "required": ["name", "tags", "summary", "factory", "size", "parts"],
+  "additionalProperties": false,
+  "properties": {
+    "name": {"type": "string", "minLength": 1, "maxLength": 40, "description": "中文名，比如「薄荷绿双铃闹钟」"},
+    "tags": {"type": "array", "maxItems": 12, "items": {"type": "string", "maxLength": 20}},
+    "summary": {"type": "string", "maxLength": 300, "description": "一句话说明外观"},
+    "factory": {"type": "string", "pattern": "^create[A-Za-z0-9]*Model$", "description": "model.js 导出的工厂函数名"},
+    "size": {"type": "array", "minItems": 3, "maxItems": 3, "items": {"type": "number"}, "description": "包围盒宽、高、深（模型单位）"},
+    "units": {"type": "string", "maxLength": 20, "description": "模型单位，比如 m、dm 或「相对值」"},
+    "forward": {"type": "string", "enum": ["+Z"]},
+    "up": {"type": "string", "enum": ["+Y"]},
+    "parts": {"type": "array", "maxItems": 40, "description": "可以单独动画的零件，id 是 sculptRuntime.nodes 的键", "items": {
+      "type": "object", "required": ["id", "name"], "additionalProperties": false,
+      "properties": {
+        "id": {"type": "string", "pattern": "^[a-z0-9][a-z0-9-]{0,40}$"},
+        "name": {"type": "string", "maxLength": 30},
+        "note": {"type": "string", "maxLength": 200, "description": "怎么动：绕哪个轴转、往哪个方向移、轴心在哪"}
+      }}},
+    "recommendedShots": {"type": "array", "maxItems": 8, "items": {"type": "string", "maxLength": 120}},
+    "confidence": {"type": "object", "additionalProperties": {"type": "string", "enum": ["高", "中", "低"]}},
+    "limits": {"type": "array", "maxItems": 10, "items": {"type": "string", "maxLength": 200},
+               "description": "和参考不一致、或者看不到只能推测的地方"}
+  }
+}

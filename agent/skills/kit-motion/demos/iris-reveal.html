@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<link rel="stylesheet" href="/assets/fonts/lib/noto-serif-sc.css">
+<style>
+  html, body { margin: 0; width: 100%; height: 100%; overflow: hidden; background: #080b14; }
+  #scene { position: absolute; inset: 0; font-family: "Noto Serif SC", serif; }
+  .panel { position: absolute; inset: 0; }
+  .before { background: #182033; background-image: linear-gradient(rgba(59,72,99,.4) 2px, transparent 2px), linear-gradient(90deg, rgba(59,72,99,.4) 2px, transparent 2px); background-size: 5vw 5vw; }
+  .after { background: linear-gradient(135deg, #1f4a63 0%, #182033 58%, #2a3d6b 100%); }
+  .card { position: absolute; top: 16%; width: 40%; height: 56%; box-sizing: border-box;
+          border-radius: 2.2vmin; display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 3vmin; }
+  .before .card { left: 8%; background: #141b2c; border: 0.3vmin solid #3b4863; color: #94a3b8; }
+  .after .card { left: 52%; background: #10324a; border: 0.3vmin solid #38bdf8; color: #f8fafc; box-shadow: 0 3vmin 8vmin rgba(0,0,0,.45); }
+  .tag { font-weight: 700; letter-spacing: .2em; }
+  .title { font-weight: 700; line-height: 1.1; }
+  .sub { opacity: .85; }
+  .after .tag { color: #38bdf8; }
+</style>
+</head>
+<body>
+<div id="scene">
+  <section class="panel before">
+    <div class="card"><div class="tag">旧版</div><div class="title">城市夜行</div><div class="sub">灰暗、拥挤、难找</div></div>
+  </section>
+  <section class="panel after">
+    <div class="card"><div class="tag">新版</div><div class="title">城市晨光</div><div class="sub">清晰明亮，一眼就到</div></div>
+  </section>
+</div>
+<script src="/skills/kit-motion/kit.js"></script>
+<script src="/skills/kit-motion/iris-reveal.js"></script>
+<script>
+  const u = SLATE.u;
+  document.querySelectorAll('.tag').forEach(e => e.style.fontSize = (4 * u) + 'px');
+  document.querySelectorAll('.title').forEach(e => e.style.fontSize = (10 * u) + 'px');
+  document.querySelectorAll('.sub').forEach(e => e.style.fontSize = (4 * u) + 'px');
+  SLATE.waits = SLATE.waits || [];
+  SLATE.waits.push(document.fonts.load('700 80px "Noto Serif SC"'));
+  const root = document.getElementById('scene');
+  const tl = SLATE.timeline();
+  KIT.motions.irisReveal(tl, root.querySelector('.after'), {
+    at: 0, openAt: 0.6, x: 32, y: 40, accent: '#38bdf8',
+    before: root.querySelector('.before')
+  });
+  window.render = t => tl.at(t);
+</script>
+</body>
+</html>

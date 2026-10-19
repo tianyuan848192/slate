@@ -1,0 +1,13 @@
+{
+ "_说明": "第一批（试点）导入的素材。shots 是镜头模板（来源的 blocks），motions 是动作（来源的 components）。",
+ "shots": ["bar-chart-race", "data-chart", "mk-line-graph", "mk-progress-stat", "code-typing", "code-diff", "code-highlight", "code-morph",
+           "flowchart", "hw-pipeline", "exploded-stack", "hw-title", "mk-callout-highlight", "split-flap-board", "weight-wave", "logo-outro",
+           "lt-clean-bar", "lt-kicker-name", "lt-mask-reveal", "news-ticker", "thread-message-stack", "ui-3d-reveal", "mk-specs-list",
+           "mk-placeholder-grid", "product-turntable", "glass-hero", "transitions-push", "hw-scribble-transition", "mk-clone-wall-transition",
+           "mk-background", "halftone-field", "hw-text-cloud"],
+ "motions": ["soft-blur-in", "per-word-rise", "staggered-fade-up", "tracking-in", "typewriter", "scramble-reveal", "kinetic-type-swap",
+             "strikethrough-replace", "marker-highlight", "headline-slam", "count-up", "number-wheel", "mk-usage-arc", "oversized-cursor",
+             "press-ripple", "cursor-annotate", "typed-prompt", "streaming-text", "push-in", "pull-back-reveal", "parallax-zoom",
+             "directional-wipe", "iris-reveal", "zoom-through-transition", "hw-arrow", "hw-callout-circle", "svg-stroke-trace",
+             "radial-surround", "cta-lockup", "logo-sting", "vignette"]
+}

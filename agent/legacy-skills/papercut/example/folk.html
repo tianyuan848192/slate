@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<link rel="stylesheet" href="/skills/papercut/style.css">
+<script src="/skills/papercut/components.js"></script>
+</head>
+<body>
+<script>
+  // 民俗知识讲解（8 秒）：一张红纸对折三次 → 剪刀沿纹样走一圈（剪下的纸屑掉下来）→ 一折一折展开成方形窗花
+  const { seg: S1, u: U, width: W, height: H } = SLATE;
+  const st = PC.stage({ ground: 'rice', zoom: [1, 1.025] });
+  const h = PC.heading(st, { text: '窗花为什么是对称的', sub: '一张纸折三次，一剪就是八份' });
+  const A = PC.area(h);
+  const size = Math.min(A.h * 0.9, U * 44);
+  const fc = PC.foldcut(st, { x: W * 0.37, y: A.cy, size, seed: 2 });
+  const gap = U * 11;
+  const list = PC.steps(st, { x: W * 0.6, y: A.cy - gap, gap, items: ['对折三次', '沿着纹样剪', '一折一折展开'] });
+  const tag = PC.tag(st, { text: '民俗小课堂' });
+
+  function render(t) {
+    st.set(t);
+    h.draw(PC.seg(t, 0.1, 0.9));
+    // 每一行在对应的动作开始时贴出，正在做的那一步高亮
+    list.draw(PC.seg(t, 0.9, 1.3) + PC.seg(t, 2.6, 3.0) + PC.seg(t, 4.6, 5.0), { active: t < 2.6 ? 0 : t < 4.6 ? 1 : t < 6.5 ? 2 : -1 });
+    fc.set(t, { fold: [1.0, 2.5], cut: [2.75, 4.55], unfold: [4.75, 6.1] });
+    tag.draw(S1(t, 0.4, 0.8));
+  }
+</script>
+</body>
+</html>

@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<link rel="stylesheet" href="/skills/swiss/style.css">
+<script src="/skills/swiss/components.js"></script>
+</head>
+<body>
+<script>
+  // 品牌活动海报（16:9，8 秒；示例活动）：换成品牌蓝、黑底，一镜两页
+  //   A 页 0～4 秒：小标题 → 两行大标题（左上）→ 品牌色大日期翻牌（右下），左上到右下一条对角线
+  //   3.7 秒 品牌色色块从右往左扫过整屏，盖满时换页
+  //   B 页 4.1～8 秒：页面标题 → 三行日程依次入场，品牌色指针跟着旁白点到哪座城市
+  const { u: U } = SLATE;
+  const { lin } = SW;
+  const st = SW.stage({ tone: 'ink', signal: '#3D5CFF', grid: 'build' });   // signal：品牌色，整片只有这一个彩色
+  const G = st.G;
+  const A = SW.layer(st.world), B = SW.layer(st.world);
+
+  const fo = SW.folio(st.hud, { items: [[0, 'HUSH LAB'], [3, '静音实验室'], [6, '城市巡展'], [11, '2026', 'end']] });
+
+  // A 页
+  const kick = SW.note(A, { x: G.x(0), y: G.y(0), w: G.w(4), text: '品牌活动 · 第一站', size: U * 2.6, weight: 600, color: st.R.fg });
+  const ttl = SW.title(A, { x: G.x(0), y: G.y(0) + U * 7, lines: ['静音实验室', '开放日'], size: U * 11 });
+  const date = SW.numeral(A, { x: G.right, y: G.y(3) - U * 2, value: '11.02', size: U * 30, lh: 0.8, weight: 800, color: SW.C.signal, anchor: 'end' });
+  const place = SW.note(A, { x: G.x(0), y: G.y(5), w: G.w(4), text: '上海 · 免费预约', size: U * 2.6, weight: 600, color: st.R.fg });
+
+  // B 页
+  const hd = SW.heading(B, { index: '02', kicker: '巡展日程', text: '三座城市，三个周末' });
+  const ls = SW.list(B, { y: hd.bottom + U * 1.5, layout: 'rows', rowH: U * 14.5, titleSize: U * 6, size: U * 7.5, noteAt: 0.32, items: [
+    { title: '上海', note: '西岸展厅', value: '11.02' },
+    { title: '成都', note: '东郊展厅', value: '11.09' },
+    { title: '深圳', note: '湾区展厅', value: '11.16' },
+  ] });
+  const fn = SW.footnote(st.hud, { text: '示例活动信息', anchor: 'end' });
+  const wp = SW.wipe(st.root, { dir: 'left' });
+
+  function render(t) {
+    st.set(t);
+    fo.draw(lin(t, 0.2, 0.9));
+    const onB = wp.set(lin(t, 3.7, 4.5));     // 色块盖满（p = 0.5，约 4.1 秒）时换页
+    A.show(!onB); B.show(onB);
+    kick.draw(lin(t, 0.3, 0.9));
+    ttl.draw(lin(t, 0.5, 1.4));
+    date.draw(lin(t, 1.2, 2.8));
+    place.draw(lin(t, 1.0, 1.6));
+    hd.draw(lin(t, 4.2, 5.0));
+    ls.items.forEach((it, i) => it.draw(lin(t, 4.5 + i * 0.25, 5.4 + i * 0.25)));
+    const q = SLATE.interpolate(t, [6.0, 6.5, 6.9, 7.4], [0, 1, 1, 2], { easing: SW.E });
+    ls.focus(t < 5.2 ? -1 : q, lin(t, 5.2, 5.7));
+    fn.draw(lin(t, 4.6, 5.1));
+  }
+</script>
+</body>
+</html>

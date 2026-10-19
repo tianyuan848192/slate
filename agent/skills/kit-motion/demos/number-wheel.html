@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<link rel="stylesheet" href="/assets/fonts/lib/inter.css" />
+<link rel="stylesheet" href="/assets/fonts/lib/noto-serif-sc.css" />
+<style>
+  *{box-sizing:border-box}
+  html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#071b16}
+  #root{position:absolute;left:0;top:0;width:100%;height:78%;display:flex;flex-direction:column;align-items:center;justify-content:center;color:#ecfff8;font-family:Inter,"Noto Serif SC",system-ui,sans-serif;text-align:center}
+  .label{color:#68d8b5;font-weight:800;letter-spacing:0.1em;font-family:"Noto Serif SC",Inter,serif}
+  .num{font-weight:900;font-family:Inter,system-ui,sans-serif}
+</style>
+</head>
+<body>
+<div id="root">
+  <div class="label">本月新增用户</div>
+  <div class="num" data-value="30,222">30,222</div>
+</div>
+<script src="/skills/kit-motion/kit.js"></script>
+<script src="/skills/kit-motion/number-wheel.js"></script>
+<script>
+  const u = SLATE.u;
+  const root = document.getElementById("root");
+  const label = root.querySelector(".label");
+  const num = root.querySelector(".num");
+  label.style.fontSize = (6 * u) + "px";
+  num.style.fontSize = (26 * u) + "px";
+  num.style.marginTop = (3 * u) + "px";
+  SLATE.waits = SLATE.waits || [];
+  SLATE.waits.push(document.fonts.load('900 100px "Inter"'), document.fonts.load('800 60px "Noto Serif SC"'));
+
+  const tl = SLATE.timeline();
+  tl.tween(label, { opacity: [0, 1], y: [1.8 * u, 0] }, { at: 0.2, dur: 0.5, ease: "outQuart" });
+  KIT.motions.numberWheel(tl, num, { at: 0.65 });
+  window.render = t => tl.at(t);
+</script>
+</body>
+</html>

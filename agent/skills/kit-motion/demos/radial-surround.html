@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="zh">
+<head>
+<meta charset="UTF-8">
+<link rel="stylesheet" href="/assets/fonts/lib/noto-serif-sc.css">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body { width: 100%; height: 100%; overflow: hidden; background: #0b0c0e; }
+  #scene {
+    position: absolute; inset: 0; overflow: hidden;
+    background: radial-gradient(ellipse at 50% 44%, #171a20 0%, #0b0c0e 72%);
+    font-family: "Noto Serif SC", serif; color: #f8fafc;
+  }
+  .center {
+    position: absolute; left: 50%; top: 45%;
+    width: calc(var(--u) * 44); height: calc(var(--u) * 20);
+    margin-left: calc(var(--u) * -22); margin-top: calc(var(--u) * -10);
+    display: flex; align-items: center; justify-content: center;
+    border: calc(var(--u) * 0.16) solid color-mix(in srgb, #61a8ff 46%, #343a46);
+    border-radius: calc(var(--u) * 2.2);
+    background: color-mix(in srgb, #14171c 90%, #61a8ff);
+    box-shadow: 0 calc(var(--u) * 3) calc(var(--u) * 9) rgba(0,0,0,0.4);
+    opacity: 0; z-index: 1;
+  }
+  .center span { font-size: calc(var(--u) * 7); font-weight: 700; letter-spacing: 0.06em; }
+  .chip {
+    padding: calc(var(--u) * 1.1) calc(var(--u) * 2.2);
+    border: calc(var(--u) * 0.14) solid #343a46;
+    border-radius: calc(var(--u) * 0.6);
+    background: #14171c; color: #f8fafc;
+    font-size: calc(var(--u) * 4); font-weight: 500; line-height: 1; letter-spacing: 0.12em;
+  }
+</style>
+</head>
+<body>
+<div id="scene">
+  <div class="center" id="subject"><span>你的团队</span></div>
+  <div class="chip">文档</div>
+  <div class="chip">工单</div>
+  <div class="chip">看板</div>
+  <div class="chip">邮件</div>
+  <div class="chip">聊天</div>
+  <div class="chip">表格</div>
+</div>
+<script src="/skills/kit-motion/kit.js"></script>
+<script src="/skills/kit-motion/radial-surround.js"></script>
+<script>
+  document.documentElement.style.setProperty('--u', SLATE.u + 'px');
+  SLATE.waits = SLATE.waits || [];
+  SLATE.waits.push(document.fonts.load('700 60px "Noto Serif SC"'));
+  SLATE.waits.push(document.fonts.load('500 40px "Noto Serif SC"'));
+  const root = document.getElementById('scene');
+  const tl = SLATE.timeline();
+  KIT.motions.radialSurround(tl, root.querySelector('#subject'), {
+    at: 0,
+    dur: Math.min(5, SLATE.duration || 5),
+    chips: Array.from(root.querySelectorAll('.chip')),
+    closeIn: true
+  });
+  window.render = t => tl.at(t);
+</script>
+</body>
+</html>

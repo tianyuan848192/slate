@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<link rel="stylesheet" href="/skills/arena/style.css">
+<script src="/skills/arena/components.js"></script>
+</head>
+<body>
+<script>
+  // 排名赛：三个评测项目依次切换，柱子重新排序（示例数据）
+  const { seg, u: U, width: W, height: H, safe } = SLATE;
+  const st = NA.stage({ floor: false, zoom: [1, 1.03] });
+  const w = st.world;
+  const items = ['A', 'B', 'C', 'D', 'E'].map((k, i) => ({ id: k, name: '模型 ' + k, color: NA.C.series[i] }));
+  const frames = [
+    { label: '数学推理', note: '示例评测 X · 准确率', values: { A: 92.4, B: 88.1, C: 85.6, D: 90.2, E: 79.5 } },
+    { label: '代码生成', note: '示例评测 Y · 通过率', values: { A: 71.3, B: 78.9, C: 64.2, D: 74.0, E: null } },
+    { label: '中文理解', note: '示例评测 Z · 准确率', values: { A: 83.5, B: 80.2, C: 89.7, D: 82.8, E: 77.1 } },
+  ];
+  const t1 = NA.heading(w, { text: '谁是单项冠军？' });
+  const y0 = t1.bottom + U * 3, y1 = SLATE.captionZone.y - U * 3;
+  const pn = NA.panel(w, { x: safe.x + U * 4, y: y0, w: safe.w - U * 8, h: y1 - y0, title: '分项成绩' });
+  const race = NA.barRace(w, { x: safe.x + U * 8, y: y0 + U * 3, w: safe.w - U * 16, h: y1 - y0 - U * 5, items, frames, unit: '', digits: 1, max: 100 });
+  const src = NA.source(st.hud, { text: '示例数据，仅演示版式；做片时换成有出处的数字并标明来源和日期' });
+
+  function render(t) {
+    st.set(t);
+    t1.draw(seg(t, 0.1, 0.9));
+    pn.set(t, seg(t, 0.3, 1));
+    race.set(t, [[0.8, 0], [3.8, 1], [6.4, 2]]);
+    src.draw(seg(t, 1, 1.5));
+  }
+</script>
+</body>
+</html>

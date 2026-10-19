@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<link rel="stylesheet" href="/skills/iso/style.css">
+<script src="/skills/iso/components.js"></script>
+</head>
+<body>
+<div class="iso-kicker" id="kicker">架构拆解</div>
+<div class="iso-title" id="title">一次 API 请求的旅程</div>
+<svg class="iso-canvas" id="c"></svg>
+<script>
+  // 等距示例（7 秒）：手机 App → API 网关 → 订单服务 → 数据库，请求逐站点亮，最后响应沿原路流回
+  const { seg, stagger, ease, u: U, width: W, height: H } = SLATE;  // U = 短边的 1%
+  const kicker = document.getElementById('kicker'), title = document.getElementById('title');
+  kicker.style.fontSize = U * 2.2 + 'px';
+  title.style.fontSize = U * 4.6 + 'px';
+  title.style.marginTop = U * 3.2 + 'px';
+
+  // 世界原点放在画面左侧偏上；整张图在标题右下方，落在字幕区以上
+  const w = ISO.world(document.getElementById('c'), { x: W * 0.5 - U * 22, y: H * 0.35, k: U * 3 });
+  const grid = ISO.grid(w, { a0: -14, a1: 32, b0: -22, b1: 12 });
+  const pad = ISO.platform(w, { a: -3.7, b: -3.7, w: 7.4, d: 7.4, label: '用户端' });
+  const cloud = ISO.platform(w, { a: 6.3, b: -13.7, w: 17.4, d: 17.4, label: '云端 · 私有网络', side: 'right' });
+  const z = cloud.top;
+
+  // 模块：中心分别在 (0,0)、(10,0)、(10,-10)、(20,-10)，占地 4.4×4.4
+  const client = ISO.block(w, { a: -2.2, b: -2.2, w: 4.4, d: 4.4, h: 2.2, z, color: 'gray', icon: 'user' });
+  const gw = ISO.block(w, { a: 7.8, b: -2.2, w: 4.4, d: 4.4, h: 3, z, icon: 'shield' });
+  const svc = ISO.block(w, { a: 7.8, b: -12.2, w: 4.4, d: 4.4, h: 3.6, z, icon: 'gear', slots: 2 });
+  const db = ISO.block(w, { a: 17.8, b: -12.2, w: 4.4, d: 4.4, h: 4.2, z, shape: 'cyl', color: 'navy' });
+
+  // 管线：端点放在模块的边上
+  const p1 = ISO.pipe(w, { path: [[2.2, 0], [7.8, 0]], z });
+  const p2 = ISO.pipe(w, { path: [[10, -2.2], [10, -7.8]], z });
+  const p3 = ISO.pipe(w, { path: [[12.2, -10], [17.8, -10]], z });
+  const k1 = ISO.packet(w, p1), k2 = ISO.packet(w, p2), k3 = ISO.packet(w, p3);
+  const back = [p1, p2, p3].map(p => ISO.flow(w, p, { reverse: true }));
+
+  const lClient = ISO.label(w, { at: client, text: '手机 App', sub: '发起请求', lift: U * 5 });
+  const lGw = ISO.label(w, { at: gw, text: 'API 网关', sub: '鉴权 · 限流' });
+  const lSvc = ISO.label(w, { at: svc, text: '订单服务', sub: '处理业务逻辑' });
+  const lDb = ISO.label(w, { at: db, text: '数据库', sub: '读写订单' });
+  // 结果挂在用户端下方：响应回到手机
+  const done = ISO.label(w, { at: [0, 3.7, z], text: '200 OK', sub: '响应耗时 86 ms', below: true, lift: U * 3, tone: 'accent' });
+
+  // 一次只点亮正在讲的一站（模块 + 标签 + 通往它的管线）
+  const spot = ISO.spotlight({ client, gw, svc, db, p1, p2, p3, lClient, lGw, lSvc, lDb }, [
+    [1.4, 2.8, ['p1', 'gw', 'lGw']],
+    [2.8, 4.2, ['p2', 'svc', 'lSvc']],
+    [4.2, 5.6, ['p3', 'db', 'lDb']],
+  ]);
+
+  function render(t) {
+    const h = seg(t, 0, 0.6);
+    kicker.style.opacity = h; title.style.opacity = h;
+    title.style.transform = `translateY(${(1 - h) * U * 1.5}px)`;
+    grid.draw(seg(t, 0, 0.8));
+    pad.draw(seg(t, 0, 0.5)); cloud.draw(seg(t, 0.1, 0.7));
+    [client, gw, svc, db].forEach((b, i) => b.draw(stagger(t, i, 0.25, 0.14, 0.55)));
+    [p1, p2, p3].forEach((p, i) => p.draw(stagger(t, i, 0.75, 0.15, 0.4, ease.inOut)));
+    [lClient, lGw, lSvc, lDb].forEach((l, i) => l.draw(stagger(t, i, 0.95, 0.1, 0.5)));
+    // 请求逐站前进
+    k1.at(seg(t, 1.5, 2.2, ease.inOut));
+    k2.at(seg(t, 2.9, 3.5, ease.inOut));
+    k3.at(seg(t, 4.3, 4.9, ease.inOut));
+    // 响应沿原路流回，结果挂在第一段管线下方
+    back.forEach(f => f.set(t, seg(t, 5.5, 5.9)));
+    done.draw(seg(t, 5.9, 6.5));
+    spot.set(t);
+  }
+</script>
+</body>
+</html>

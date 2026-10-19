@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<link rel="stylesheet" href="/skills/papercut/style.css">
+<script src="/skills/papercut/components.js"></script>
+</head>
+<body>
+<script>
+  // 收尾祝福（7 秒）：横批贴上 → 春联从上往下展开 → 福字斗方落下（轻震一下）→ 纸屑撒落 → 背光、金光扫过 → 熄灯，只留福字亮着
+  const { seg: S1, u: U, width: W, height: H, safe } = SLATE;
+  const st = PC.stage({ ground: 'indigo', zoom: [1.04, 1], kicks: [2.5] });
+  const hill = PC.hills(st, { y: H * 0.93, amp: H * 0.04, far: 0, depth: 0.7, seed: 12 });
+  const bn = PC.banner(st, { text: '万事如意', w: U * 40 });
+  // 上联贴右边、下联贴左边（面对门时）
+  const right = PC.couplet(st, { x: W * 0.76, y: bn.bottom + U * 3, text: '灯火万家添喜气' });
+  const left = PC.couplet(st, { x: W * 0.24, y: bn.bottom + U * 3, text: '春风一路送平安' });
+  const fuY = H * 0.47, fuS = U * 36;
+  const fu = PC.fu(st, { x: W / 2, y: fuY, size: fuS });
+  const lamps = [-1, 1].map((s, i) => PC.lantern(st, { x: W / 2 + s * U * 30, y: H * 0.27, r: U * 3.6, seed: 7 + i }));
+  const confetti = PC.scraps(st, { mode: 'burst', n: 60, x: W / 2, y: fuY - fuS * 0.3, at: 2.5, spread: U * 34, size: U * 0.8, tones: [PC.C.red, PC.C.cream, PC.C.back], seed: 9 });
+  const line = PC.text(st, { x: W / 2, y: fuY + fuS * 0.5 + U * 7.5, text: '示例品牌　恭贺新春', size: U * 3.8, weight: 600, spacing: U * 0.4 });
+
+  function render(t) {
+    st.set(t);
+    hill.draw(PC.seg(t, 0.2, 0.9));
+    const lit = S1(t, 3.0, 3.6);
+    bn.draw(PC.seg(t, 0.2, 0.7));
+    right.draw(PC.seg(t, 0.6, 1.8, SLATE.ease.inOut));
+    left.draw(PC.seg(t, 0.9, 2.1, SLATE.ease.inOut));
+    lamps.forEach((l, i) => l.draw(PC.seg(t, 1.3 + i * 0.2, 2.2 + i * 0.2), { glow: lit }));
+    line.draw(PC.seg(t, 3.4, 3.8));
+    // 收尾：熄灯，只留福字一圈亮（先压暗已经画好的纸，再画福字）
+    st.dim(0.6 * S1(t, 5.5, 6.4, SLATE.ease.inOut), { x: W / 2, y: fuY, r: fuS * 0.62 });
+    fu.draw(PC.seg(t, 2.0, 2.6), { glow: lit, sheen: S1(t, 3.6, 4.6, SLATE.ease.inOut) });
+    confetti.draw();
+  }
+</script>
+</body>
+</html>

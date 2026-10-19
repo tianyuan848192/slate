@@ -1,0 +1,34 @@
+/* 窗花剪纸：米纸 / 靛蓝夜纸 / 青碧纸做地，中国红纸片做主体，文字是剪出来、贴上去的纸 */
+/* 书法字体：马善政楷书（Ma Shan Zheng，SIL OFL 1.1），镜像里的 /assets/fonts/ 提供 */
+@font-face {
+  font-family: "Ma Shan Zheng";
+  src: url(/assets/fonts/MaShanZheng-Regular.woff2) format("woff2");
+  font-weight: 400;
+  font-style: normal;
+  font-display: block;
+}
+:root {
+  --pc-u: 10.8px;                 /* components.js 会按画幅改成 SLATE.u */
+  --pc-bg: #F2E7D2;
+  --pc-red: #D2201F;
+  --pc-ink: #2A1B12;
+  /* 字幕：一条深红纸条（横批样式），米色字 */
+  --slate-caption-bg: rgba(150, 20, 24, 0.94);
+  --slate-caption-color: #FBF0DA;
+  --slate-caption-font: "Noto Sans CJK SC", "Noto Sans SC", sans-serif;
+  --slate-caption-weight: 500;
+}
+html, body { background: var(--pc-bg); color: var(--pc-ink); font-family: "Noto Sans CJK SC", "Noto Sans SC", sans-serif; }
+.pc-root { position: absolute; inset: 0; overflow: hidden; background: var(--pc-bg); }
+.pc-cv, .pc-svg { position: absolute; left: 0; top: 0; }
+/* 文字按几何轮廓栅格化：纸片入场时文字会跟着轻微旋转缩放，这样每一帧的字形边缘都完全一致 */
+.pc-svg text { text-rendering: geometricPrecision; }
+
+/* 字幕纸条：两端燕尾，带一点纸影（只改外观，不改位置） */
+.slate-caption-layer { filter: drop-shadow(calc(var(--pc-u) * 0.25) calc(var(--pc-u) * 0.35) calc(var(--pc-u) * 0.35) rgba(30, 8, 4, 0.35)); }
+.slate-caption-layer .slate-caption {
+  border-radius: 0;
+  padding: calc(var(--pc-u) * 1.05) calc(var(--pc-u) * 4.4);
+  clip-path: polygon(0 0, 100% 0, calc(100% - var(--pc-u) * 1.7) 50%, 100% 100%, 0 100%, calc(var(--pc-u) * 1.7) 50%);
+  letter-spacing: 0.06em;
+}

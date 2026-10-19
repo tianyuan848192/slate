@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<link rel="stylesheet" href="/assets/fonts/lib/noto-serif-sc.css" />
+<style>
+  html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#f4f4f5}
+  #root{position:absolute;inset:0}
+  .card{position:absolute;left:410px;top:150px;width:1100px;height:640px;border-radius:28px;background:#fff;font-family:"Noto Serif SC",serif;
+    box-shadow:0 0 0 1px rgba(0,0,0,.05),0 2px 4px rgba(0,0,0,.04),0 24px 64px rgba(0,0,0,.08)}
+  .eyebrow{position:absolute;left:56px;top:40px;font-size:30px;font-weight:700;color:#71717a}
+  .headline{position:absolute;left:56px;top:84px;font-size:60px;font-weight:900;color:#18181b}
+  .delta{position:absolute;right:56px;top:50px;padding:10px 22px;border-radius:999px;background:#f4f4f5;color:#3f3f46;font-size:28px;font-weight:700}
+  .grid{position:absolute;left:56px;right:56px;height:1px;background:#f0f0f2}
+  .bar{position:absolute;bottom:80px;width:70px;border-radius:12px 12px 4px 4px;background:#d4d4d8;transform-origin:50% 100%}
+  .bar.spike{background:#52525b}
+  .week{position:absolute;bottom:26px;width:90px;margin-left:-10px;text-align:center;font-size:26px;font-weight:700;color:#a1a1aa}
+  .zone{position:absolute;left:545px;top:100px;width:160px;height:124px}
+  .spike-label{position:absolute;left:0;right:0;top:0;text-align:center;font-size:44px;font-weight:900;color:#18181b}
+</style>
+</head>
+<body>
+<div id="root"></div>
+<script src="/skills/kit-motion/kit.js"></script>
+<script src="/skills/kit-motion/cursor-annotate.js"></script>
+<script>
+  SLATE.waits = SLATE.waits || [];
+  SLATE.waits.push(document.fonts.load('900 60px "Noto Serif SC"'), document.fonts.load('700 30px "Noto Serif SC"'));
+  const stage = KIT.stage(document.getElementById("root"), 1920, 1080);
+  const bars = [[80,150],[202,172],[324,160],[446,196],[590,400,1],[712,236],[834,214],[956,248]];
+  const weeks = ["一周","二周","三周","四周","上线","六周","七周","八周"];
+  let html = '<div class="card" id="card"><div class="eyebrow">每周注册量</div><div class="headline">12,480</div><div class="delta">本季 +38%</div>' +
+    '<div class="grid" style="top:300px"></div><div class="grid" style="top:420px"></div><div class="grid" style="top:560px"></div>';
+  bars.forEach((b, i) => {
+    html += '<div class="bar' + (b[2] ? ' spike' : '') + '" style="left:' + b[0] + 'px;height:' + b[1] + 'px"></div>';
+    html += '<div class="week" style="left:' + b[0] + 'px' + (b[2] ? ';color:#18181b' : '') + '">' + weeks[i] + '</div>';
+  });
+  html += '<div class="zone"><div class="spike-label">+184%</div></div></div>';
+  stage.innerHTML = html;
+
+  const tl = SLATE.timeline();
+  tl.tween(stage.querySelectorAll(".bar"), "scaleY", [0.2, 1], { at: 0, dur: 0.28, ease: "outQuart", each: 0.01 });
+  KIT.motions.cursorAnnotate(tl, stage.querySelector(".zone"), { at: 0.35, dur: 2.95, shape: "circle", color: "#f43f5e" });
+  window.render = t => tl.at(t);
+</script>
+</body>
+</html>

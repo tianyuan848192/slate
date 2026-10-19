@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<link rel="stylesheet" href="/skills/papercut/style.css">
+<script src="/skills/papercut/components.js"></script>
+</head>
+<body>
+<script>
+  // 春节营销开场（7 秒）：红纸从中缝剪开 → 楔形纸一折一折展开成团花 → 灯笼垂下 → 背光点灯 → 标题逐字贴上
+  const { seg: S1, u: U, width: W, height: H } = SLATE;
+  const st = PC.stage({ ground: 'indigo', enter: 'cut', zoom: [1, 1.04] });
+  const far = PC.hills(st, { y: H * 0.8, amp: H * 0.07, far: 0, depth: 0.9, seed: 3 });
+  const near = PC.hills(st, { y: H * 0.9, amp: H * 0.05, far: 1, depth: 0.4, seed: 8 });
+  const snow = PC.scraps(st, { n: 46, size: U * 0.55, tones: [PC.C.cream], speed: U * 3.5, seed: 4 });
+  const fl = PC.flower(st, { x: W / 2, y: H * 0.37, r: U * 16, seed: 3 });
+  const lamps = [[0.2, 0.33, 4.6], [0.31, 0.2, 3.4], [0.8, 0.33, 4.6], [0.69, 0.2, 3.4]]
+    .map(([x, y, r], i) => PC.lantern(st, { x: W * x, y: H * y, r: U * r, seed: i + 1 }));
+  const title = PC.heading(st, { text: '年味，到家了', y: H * 0.7, size: U * 8, sub: '示例品牌 · 年货节' });
+  const tag = PC.tag(st, { text: '示例品牌' });
+
+  function render(t) {
+    st.set(t);
+    far.draw(PC.seg(t, 0.3, 1.2));
+    near.draw(PC.seg(t, 0.45, 1.3));
+    snow.draw(S1(t, 0.4, 1.4));
+    const glow = S1(t, 2.7, 3.4);
+    lamps.forEach((l, i) => l.draw(PC.seg(t, 1.3 + (i % 2) * 0.25, 2.3 + (i % 2) * 0.25), { glow: S1(t, 2.8 + i * 0.08, 3.4 + i * 0.08) }));
+    fl.draw(PC.seg(t, 0.7, 2.6), { glow, spin: Math.max(0, t - 2.6) * 0.04 });
+    title.draw(PC.seg(t, 3.0, 3.9));
+    tag.draw(S1(t, 1, 1.4));
+  }
+</script>
+</body>
+</html>

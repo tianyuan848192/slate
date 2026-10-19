@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<link rel="stylesheet" href="/skills/collage/style.css">
+<script src="/skills/collage/components.js"></script>
+</head>
+<body>
+<script>
+  // "一张图看懂"：三步因果从左到右依次贴出来——暖海供能 → 热气上升 → 偏转成旋；最后镜头推向第三步（推近 = 强调）
+  // 开场接上一镜的网点退去。插画都用剪纸 + 马克笔拼出来，不需要照片
+  const { seg, u: U, width: W, height: H, svg } = SLATE;
+  const st = CL.stage({ paper: 'cream', enter: 'dots', cam: [[0, W / 2, H / 2, 1], [4.5, W / 2, H / 2, 1.015], [8, W / 2 + U * 3, H / 2 + U, 1.05]] });
+  const w = st.world;
+  const h = CL.heading(w, { kicker: '一张图看懂', text: '台风是怎么转起来的' });
+  const box = st.area({ top: h.bottom + U * 2 });
+  const cols = [1, 3, 5].map(k => box.x + box.w * k / 6);
+
+  // 底部：一条撕开的深蓝纸当海面，上面印浅色网点和浪线
+  const sea = CL.tornCard(w, { x: box.x + U * 2, y: U * 64.8, w: box.w - U * 4, h: U * 11.6, tone: 'ink', torn: 'tlr', rotate: 0.6, from: 'bottom', seed: 12 });
+  CL.halftone(sea.inner, { x: sea.x, y: sea.y, w: sea.w, h: sea.h, pitch: U * 2.2, color: '#e9e2d2', opacity: 0.35, field: (u, v) => 0.3 + 0.3 * Math.sin(u * 40 + v * 6) * (1 - v) });
+  for (let k = 0; k < 3; k++) {
+    const yy = sea.y + U * 2.8 + k * U * 2.8, pts = [];
+    for (let i = 0; i <= 30; i++) pts.push(`${(sea.x + sea.w * i / 30).toFixed(1)},${(yy + Math.sin(i * 1.1 + k) * U * 0.5).toFixed(1)}`);
+    svg('polyline', { points: pts.join(' '), fill: 'none', stroke: '#e9e2d2', 'stroke-width': U * 0.3, opacity: 0.6, 'stroke-linecap': 'round' }, sea.inner);
+  }
+
+  // 三步的序号和标签
+  const names = ['暖海供能', '热气上升', '偏转成旋'];
+  const steps = names.map((s, i) => ({
+    badge: CL.badge(w, { x: cols[i] - U * 9, y: U * 31.9, text: String(i + 1), size: U * 3.2 }),
+    label: CL.text(w, { x: cols[i] - U * 6, y: U * 33.3, text: s, size: U * 4, weight: 900 }),
+  }));
+
+  // ① 三道马克笔箭头从海面升起 + 手写批注
+  const vapor = [-1, 0, 1].map(k => CL.arrow(w, { from: [cols[0] + k * U * 7, U * 63.9], to: [cols[0] + k * U * 7 + U * 1.5, U * 50], bend: 0.12 * (k % 2 ? 1 : -1), width: U * 0.55, seed: 40 + k }));
+  const temp = CL.note(w, { x: cols[0], y: U * 45.2, text: '海温 ≥ 26.5℃', anchor: 'middle', rotate: -4 });
+
+  // ② 剪纸积雨云（白纸 + 底部网点阴影），一道红箭头从海面穿过云柱
+  const c2 = cols[1];
+  // 云的轮廓：以云柱中线 c2 为原点、单位 U 的一串点（M 起点，之后每三个数是 Q 的控制点和终点）
+  const cloudPts = [[-13.9, 60.2], [-19, 58.3, -15.7, 54.6], [-18.5, 50.9, -13.9, 48.6], [-15.7, 44.9, -11.1, 43.5], [-19.9, 43.1, -20.8, 39.6],
+    [-13.9, 36.3, -4.6, 37.2], [0.9, 35, 7.4, 36.9], [17.6, 36.3, 21.1, 39.6], [19, 43.3, 11.1, 43.5], [16.2, 45.4, 13.9, 48.9],
+    [19, 51.4, 15.6, 54.8], [19.4, 58.5, 13.9, 60.2], [6.9, 63.1, 0, 61.1], [-6.9, 63.3, -13.9, 60.2]];
+  const cxy = (dx, dy) => `${(c2 + dx * U).toFixed(1)} ${(dy * U).toFixed(1)}`;
+  const cloudD = 'M ' + cxy(...cloudPts[0]) + cloudPts.slice(1).map(q => ` Q ${cxy(q[0], q[1])} ${cxy(q[2], q[3])}`).join('') + ' Z';
+  const cloud = CL.piece(w, { d: cloudD, tone: 'white', box: { x: c2 - U * 21.1, y: U * 35, w: U * 42.2, h: U * 28.3 } });
+  const clipId = 'cloudclip';
+  svg('path', { d: cloudD }, svg('clipPath', { id: clipId }, svg('defs', {}, st.svg)));
+  const shade = svg('g', { 'clip-path': `url(#${clipId})` }, cloud.inner);
+  CL.halftone(shade, { x: c2 - U * 21.1, y: U * 35, w: U * 42.2, h: U * 28.3, pitch: U * 2.1, color: CL.C.ink, opacity: 0.22, field: (u, v) => Math.max(0, v - 0.35) * 1.2 });
+  const rise = CL.arrow(w, { from: [c2, U * 64.1], to: [c2 + U, U * 39.8], bend: 0.06, seed: 50 });
+
+  // ③ 卫星云图（占位）+ 两道逆时针的箭头（北半球台风逆时针旋转）
+  const c3 = cols[2];
+  const storm = CL.cutout(w, { x: c3 - U * 16.7, y: U * 38.9, w: U * 33.3, h: U * 26.9, art: 'storm', rotate: -2, seed: 31 });
+  const spinA = CL.arrow(w, { from: [c3 + U * 19, U * 59.3], to: [c3 + U * 10.2, U * 38.1], bend: 0.28, seed: 61 });
+  const spinB = CL.arrow(w, { from: [c3 - U * 19, U * 45.2], to: [c3 - U * 10.2, U * 66.3], bend: 0.28, seed: 62 });
+
+  function render(t) {
+    const T = CL.step(t);
+    st.set(t);
+    h.draw(seg(T, 0.2, 1.2));
+    sea.draw(seg(T, 0.5, 1.0));
+    steps.forEach((s, i) => { const a = [1.1, 2.9, 4.5][i]; s.badge.draw(seg(T, a, a + 0.3)); s.label.draw(seg(T, a + 0.1, a + 0.5)); });
+    vapor.forEach((v, i) => v.draw(seg(T, 1.5 + i * 0.15, 2.3 + i * 0.15)));
+    temp.draw(seg(T, 2.4, 3.3, SLATE.ease.linear));
+    cloud.draw(seg(T, 3.3, 3.8));
+    rise.draw(seg(T, 3.8, 4.5));
+    storm.draw(seg(T, 4.8, 5.3));
+    spinA.draw(seg(T, 5.4, 6.0));
+    spinB.draw(seg(T, 5.8, 6.4));
+  }
+</script>
+</body>
+</html>

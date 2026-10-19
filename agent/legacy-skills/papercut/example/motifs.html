@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<link rel="stylesheet" href="/skills/papercut/style.css">
+<script src="/skills/papercut/components.js"></script>
+</head>
+<body>
+<script>
+  // 纹样寓意（7 秒）：上一镜盖过来的红纸揭开 → 四张纹样卡依次贴上 → 逐张点名（抬起来，其余压暗）
+  const { seg: S1, u: U, width: W, height: H } = SLATE;
+  const st = PC.stage({ ground: 'rice', enter: 'peel', zoom: [1, 1.03] });
+  const h = PC.heading(st, { text: '剪纸里的好彩头', sub: '四种常见纹样和它们的寓意' });
+  const A = PC.area(h);
+  const items = [['cloud', '云纹', '吉祥如意'], ['fret', '回纹', '绵延不断'], ['coin', '钱纹', '财源广进'], ['plum', '梅花', '五福临门']];
+  const s = U * 24, gap = U * 6.5, x0 = W / 2 - (s * 4 + gap * 3) / 2 + s / 2;
+  const cy = A.y + (A.h - U * 38) / 2 + s / 2;      // 卡片 + 两行字约 38u 高，整体在内容区里垂直居中
+  const tiles = items.map(([m, name, meaning], i) => PC.tile(st, { x: x0 + i * (s + gap), y: cy, size: s, motif: m, name, meaning, seed: 30 + i }));
+  const src = PC.source(st, { text: '寓意取民间常见说法' });
+
+  function render(t) {
+    st.set(t);
+    h.draw(PC.seg(t, 0.3, 1.1));
+    // 2.8 秒起每 0.9 秒点名一张；6.4 秒后全部恢复
+    const k = t >= 2.8 && t < 6.4 ? Math.floor((t - 2.8) / 0.9) : -1;
+    const on = k >= 0 ? PC.seg(t, 2.8 + k * 0.9, 3.05 + k * 0.9) : 0;
+    tiles.forEach((tl, i) => tl.draw(PC.seg(t, 0.9 + i * 0.25, 1.35 + i * 0.25), { focus: i === k ? on : 0, dim: k >= 0 && i !== k ? on : 0 }));
+    src.draw(S1(t, 1.6, 2.0));
+  }
+</script>
+</body>
+</html>

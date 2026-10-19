@@ -1,0 +1,1346 @@
+[
+ {
+  "id": "count-up",
+  "fn": "countUp",
+  "title": "数字滚动计数",
+  "summary": "数字淡入上浮，按正弦缓动从起始值滚到终值，落定时轻轻放大一下，之后微微浮动并停住",
+  "use_when": "展示统计数据、增长率、金额、倒计时等关键数字，需要克制可信的“数据落定”感时",
+  "native": 3,
+  "params": [
+   {
+    "name": "at",
+    "desc": "开始时间（秒），默认 0"
+   },
+   {
+    "name": "dur",
+    "desc": "这一镜给动作的总时长，默认 3；短于入场+退场（2.05s+退场 0.45s）时整体等比压缩，更长时多出来的是停留段"
+   },
+   {
+    "name": "start",
+    "desc": "起始值，默认 0；可用元素的 data-start 覆盖"
+   },
+   {
+    "name": "end",
+    "desc": "终值；默认取元素原文字里的数字，取不到则为 100；可用 data-end 覆盖"
+   },
+   {
+    "name": "prefix",
+    "desc": "数字前的固定文字，默认空"
+   },
+   {
+    "name": "suffix",
+    "desc": "数字后的固定文字，默认 %"
+   },
+   {
+    "name": "color",
+    "desc": "数字颜色，默认 #71f5a7（绿）；可用 #61a8ff（蓝）、#c5a3ff（紫）"
+   },
+   {
+    "name": "glow",
+    "desc": "是否在数字下方加柔和光晕，默认 false"
+   },
+   {
+    "name": "exit",
+    "desc": "退场方式：none（默认，一直停住）、fade（淡出）、up（上移淡出）"
+   },
+   {
+    "name": "rise",
+    "desc": "入场/退场位移，默认 0.92*SLATE.u"
+   },
+   {
+    "name": "locale",
+    "desc": "数字千分位格式，默认 en-US"
+   }
+  ],
+  "notes": "计数值按 30fps 取帧再按正弦缓动取整，任何时刻跳转都显示同一个数；终值一定精确落定。前后缀字号 0.55em，单个货币符号或运算符号会上提到数字的视觉中线。函数会把目标元素的内容换成前缀/数字/后缀三个 span（只做一次）。",
+  "frame_s": 0.57
+ },
+ {
+  "id": "cta-lockup",
+  "fn": "ctaLockup",
+  "title": "行动号召收尾",
+  "summary": "行动标题上浮淡入，按钮胶囊带轻微回弹弹出，说明小字最后落定，随后整组极轻微浮动停留",
+  "use_when": "产品片、发布视频、讲解片的结尾，需要一个清楚的最终行动号召（标题 + 按钮 + 小字）并稳稳停住",
+  "native": 4,
+  "params": [
+   {
+    "name": "at",
+    "desc": "开始时刻（秒），默认 0"
+   },
+   {
+    "name": "dur",
+    "desc": "整段时长（秒），默认 4；入场固定 1.6 秒，更短时等比压缩，剩下的都是停留浮动"
+   },
+   {
+    "name": "action",
+    "desc": "行动标题元素（选择器或元素），默认取容器第 1 个子元素"
+   },
+   {
+    "name": "button",
+    "desc": "按钮胶囊元素，默认取第 2 个子元素"
+   },
+   {
+    "name": "micro",
+    "desc": "说明小字元素，默认取第 3 个子元素"
+   },
+   {
+    "name": "drift",
+    "desc": "停留时整组上浮的幅度（SLATE.u 的倍数），默认 0.35；设 0 关闭"
+   }
+  ],
+  "notes": "target 可以是整组容器（自动取前三个子元素作为标题/按钮/小字），也可以直接传 [标题, 按钮, 小字] 三个元素组成的数组（此时用它们的父元素做停留浮动）。动作不会创建任何内容，只给已有元素排动画。没有退场，最后停在定格状态。",
+  "frame_s": 0.56
+ },
+ {
+  "id": "cursor-annotate",
+  "fn": "cursorAnnotate",
+  "title": "马克笔圈注",
+  "summary": "马克笔滑入画面，在目标周围手绘圈、下划线或箭头，墨迹紧跟笔尖，画完抬笔离开",
+  "use_when": "讲解图表、界面或卡片时，需要像手写批注一样突出某个数字、柱子或区域",
+  "native": 2.95,
+  "params": [
+   {
+    "name": "at",
+    "desc": "开始时刻（秒），默认 0"
+   },
+   {
+    "name": "dur",
+    "desc": "总时长，默认 2.95；更短时各节拍等比压缩，更长时多出的时间用来停留"
+   },
+   {
+    "name": "shape",
+    "desc": "批注形状：circle（手绘圈，默认）、underline（下划线）、arrow（箭头）"
+   },
+   {
+    "name": "color",
+    "desc": "墨水颜色，默认 #f43f5e"
+   }
+  ],
+  "notes": "目标元素就是被标注的区域；墨迹层和笔加在目标的父元素里（父元素为 static 时改成 relative）。几何在第一次渲染时按实际布局计算（字体已加载），换算掉舞台缩放；笔的出入场以整个视口为边界。笔迹粗细随笔速变化：慢处粗、快处细，抬笔时收细。墨迹画完后保留。",
+  "frame_s": 0.23
+ },
+ {
+  "id": "directional-wipe",
+  "fn": "directionalWipe",
+  "native": 0.9,
+  "notes": "父元素要设 overflow:hidden；如果父元素是 static 定位，会被改成 relative。扫光层和色散层自动建在父元素里（data-qa=ignore）。新画面在 at 之前是 visibility:hidden。不要在 CSS 里给两块画面写 transform。示范页把两块画面的文字分别放在左上和右下，免得重叠。",
+  "params": [
+   {
+    "desc": "[旧画面, 新画面]，两块叠放在同一个父元素里（绝对定位铺满）；只给一个元素时，当作新画面擦入",
+    "name": "target"
+   },
+   {
+    "desc": "开始时间（秒），默认 0",
+    "name": "at"
+   },
+   {
+    "desc": "擦除主体的时长，默认 0.9；扫光和闪烁按比例缩放",
+    "name": "dur"
+   },
+   {
+    "desc": "新画面推入的位移（单位 SLATE.u），默认 9；旧画面后退距离是它的 7/6",
+    "name": "shift"
+   },
+   {
+    "desc": "旧画面最大模糊（单位 SLATE.u），默认 0.75",
+    "name": "blur"
+   },
+   {
+    "desc": "要不要加扫光，默认 true",
+    "name": "glare"
+   },
+   {
+    "desc": "要不要加红青色散闪烁，默认 true",
+    "name": "glitch"
+   },
+   {
+    "desc": "新画面内描边的颜色（可选），如 '#38bdf8'",
+    "name": "ring"
+   }
+  ],
+  "summary": "新画面从左往右擦入并轻推，旧画面后退变模糊，中途有扫光和红青色散闪烁",
+  "title": "方向擦除转场",
+  "use_when": "两块叠放的画面或卡片之间的转场，比如前后对比、换章节、换镜头",
+  "frame_s": 0.29
+ },
+ {
+  "id": "headline-slam",
+  "fn": "headlineSlam",
+  "title": "标题重砸",
+  "summary": "粗标题从 1.6 倍缩小砸进画面，落地时画面抖三帧，停留时轻轻上下浮动，最后快速向上甩出",
+  "use_when": "开场主标题、口号、需要重量感和冲击感的一句话，进场后停留再干脆退场",
+  "native": 3.5,
+  "params": [
+   {
+    "name": "at",
+    "desc": "开始时间（秒），默认 0"
+   },
+   {
+    "name": "dur",
+    "desc": "整段时长（秒），默认 3.5；入场 0.72 秒和退场 0.46 秒固定，中间停留随时长伸缩；短于 1.18 秒时入场和退场一起等比压缩"
+   },
+   {
+    "name": "shake",
+    "desc": "落地抖动幅度倍数，默认 1；设 0 不抖"
+   },
+   {
+    "name": "drift",
+    "desc": "停留时浮动幅度（单位 SLATE.u），默认 0.33"
+   },
+   {
+    "name": "exit",
+    "desc": "是否向上甩出退场，默认 true"
+   },
+   {
+    "name": "from",
+    "desc": "入场起始缩放，默认 1.6"
+   }
+  ],
+  "notes": "时长结构照原作：入场和退场时长固定，只伸缩中间停留，不对整段做等比缩放，只有总时长不够时才压缩。抖动用 CSS 的 translate 属性，跟 transform 上的缩放和 y 位移叠加，不另外造包裹元素。位移量按原卡片尺寸换算成 SLATE.u：抖动 0.78u/0.18u、0.54u/0.12u，浮动 0.33u；退场上移 1.2 倍画面高度。",
+  "frame_s": 0.4
+ },
+ {
+  "id": "hw-arrow",
+  "fn": "hwArrow",
+  "native": 4,
+  "notes": "箭头是在目标父元素里创建的 SVG 辅助元素（父元素为 static 时会改成 relative）。画线用 attr 补间 stroke-dashoffset，inQuad 加速冲向箭头尖；箭头尖到达后 2 帧内沿行进方向拉伸（面积不变），隔 1 帧后用阻尼 0.9、响应 0.22s 的弹簧回弹；抖动是作用在内层容器上的 10Hz 确定性跳变；外层容器在 3.4×k 秒时淡出（k = dur/4）。",
+  "params": [
+   {
+    "desc": "开始时间（秒），默认 0",
+    "name": "at"
+   },
+   {
+    "desc": "整体时长（秒），默认 4；入场、到达拉伸、退场都按比例缩放",
+    "name": "dur"
+   },
+   {
+    "desc": "箭头放在目标哪一侧：left（默认）| right（镜像）",
+    "name": "side"
+   },
+   {
+    "desc": "弯曲程度：straight | gentle（默认）| swoop",
+    "name": "style"
+   },
+   {
+    "desc": "笔触质感：plain（默认）| soft | sharp | spray",
+    "name": "stroke"
+   },
+   {
+    "desc": "停留时抖动：off | calm（默认）| lively",
+    "name": "boil"
+   },
+   {
+    "desc": "线条颜色，默认 #f4f2ec",
+    "name": "color"
+   },
+   {
+    "desc": "线宽（按 380 宽的箭头框计），默认 6",
+    "name": "weight"
+   },
+   {
+    "desc": "箭头框宽度 px，默认 26 * SLATE.u",
+    "name": "size"
+   },
+   {
+    "desc": "箭头尖离目标边缘的距离 px，默认 1.5 * SLATE.u",
+    "name": "gap"
+   },
+   {
+    "desc": "有多个目标时依次错开的秒数（随 dur 缩放），默认 0.5",
+    "name": "each"
+   },
+   {
+    "desc": "抖动形状的种子，不填就按调用次序自动生成",
+    "name": "seed"
+   }
+  ],
+  "summary": "在目标旁画出一支手绘抖动箭头，箭头尖到达时顺着方向拉伸再回弹，停留时轻微抖动，最后淡出",
+  "title": "手绘箭头",
+  "use_when": "需要用手绘批注的感觉指向某个标题、卡片、数字或画面局部，提示观众“看这里”时",
+  "frame_s": 0.45
+ },
+ {
+  "id": "hw-callout-circle",
+  "fn": "hwCalloutCircle",
+  "title": "手绘圈注标注",
+  "summary": "手绘抖动椭圆圈住目标，接着画出斜线填充和弧形引线，手写标签带冲劲弹出，圈线随之受压回弹",
+  "use_when": "讲解画面里需要手绘风格地圈出某个元素（数字、卡片、图片局部），并配一句手写批注时使用",
+  "native": 2.03,
+  "params": [
+   {
+    "name": "at",
+    "desc": "开始时间（秒），默认 0"
+   },
+   {
+    "name": "dur",
+    "desc": "入场总时长，默认 2.03，各段等比缩放"
+   },
+   {
+    "name": "label",
+    "desc": "标签文字；可传数组，按目标依次对应"
+   },
+   {
+    "name": "labelAt",
+    "desc": "标签方位：right（默认）| left | below"
+   },
+   {
+    "name": "strokeType",
+    "desc": "圈线和引线的笔触：plain（默认）| soft | sharp（干马克笔虚线）| spray（喷点）"
+   },
+   {
+    "name": "boil",
+    "desc": "线条抖动：calm（默认）| lively | off"
+   },
+   {
+    "name": "scribble",
+    "desc": "是否画斜线填充，默认 true"
+   },
+   {
+    "name": "connector",
+    "desc": "是否画引线，默认 true；关掉时标签从中心弹出"
+   },
+   {
+    "name": "seed",
+    "desc": "形状随机种子，默认 4，多个目标依次加 3"
+   },
+   {
+    "name": "padX/padY",
+    "desc": "椭圆相对目标的放大倍数，默认 1.3 / 1.2"
+   },
+   {
+    "name": "outAt",
+    "desc": "可选：在这一绝对时刻淡出（0.35 秒，inQuad）"
+   },
+   {
+    "name": "ink/accent/font",
+    "desc": "线条颜色、填充颜色、标签字体"
+   }
+  ],
+  "notes": "辅助元素（SVG 圈线、填充、引线、标签）都建在目标的父元素里，并标了 data-qa=\"ignore\"；父元素如果是 static 定位，会被改成 relative。标签放在哪里由调用方负责，要避开字幕区。抖动按每 3 帧（30fps）换一次位置，受压回弹用的是阻尼 0.9、响应 0.22 的弹簧曲线，压缩量按弹出到达时的速度算出来。",
+  "frame_s": 0.5
+ },
+ {
+  "id": "iris-reveal",
+  "fn": "irisReveal",
+  "native": 1.45,
+  "notes": "目标（后一状态）和 before 应该叠放、尺寸一致（绝对定位铺满父元素）。光圈闭合时目标设为 visibility:hidden，完全张开后 before 隐藏，避免文字重叠。半径每帧按元素尺寸算，最大值盖住最远角（×1.02+2px）。边环是父元素里的 SVG，带 data-qa=\"ignore\"。缓动：淡入 outCubic，光圈 inOutCubic，边环入 outQuad、出 inQuad，退场 inCubic。示范页把前后两张卡片左右错开，避免两层文字重叠。",
+  "params": [
+   {
+    "desc": "开始时间（秒），默认 0",
+    "name": "at"
+   },
+   {
+    "desc": "总时长（秒），默认 openAt+1.1=1.45；所有时间按比例缩放",
+    "name": "dur"
+   },
+   {
+    "desc": "开始后多久光圈张开（按原设计计的秒数），默认 0.35",
+    "name": "openAt"
+   },
+   {
+    "desc": "光圈原点，占目标宽高的百分比，默认 50 / 50",
+    "name": "x / y"
+   },
+   {
+    "desc": "前一状态的元素（可选，按序号和目标配对）",
+    "name": "before"
+   },
+   {
+    "desc": "'color'（默认，前一状态压暗去色）或 'plain'",
+    "name": "register"
+   },
+   {
+    "desc": "边环颜色，默认 #22c55e",
+    "name": "accent"
+   },
+   {
+    "desc": "是否显示边环，默认 true",
+    "name": "rim"
+   },
+   {
+    "desc": "开头 0.32s 淡入，默认 true",
+    "name": "fadeIn"
+   },
+   {
+    "desc": "'none'（默认）/'fade'/'up' 退场，0.5s",
+    "name": "exit"
+   },
+   {
+    "desc": "退场开始的绝对秒数，默认 at+dur+1",
+    "name": "exitAt"
+   }
+  ],
+  "summary": "圆形遮罩从指定原点张开，一次揭开新画面盖住压暗去色的旧画面，强调色细环贴着光圈边缘走",
+  "title": "圆形光圈揭示",
+  "use_when": "前后对比、改版前后、夜转昼这类两种状态的切换；也可以当整屏转场，用圆形揭开后一个画面",
+  "frame_s": 0.4
+ },
+ {
+  "id": "kinetic-type-swap",
+  "fn": "kineticTypeSwap",
+  "title": "句中换词滚动",
+  "summary": "整句不动，只有句中一个遮罩词槽上下滚过几个候选词，最后定在末词，轻轻呼吸",
+  "use_when": "口号、标语里要依次换几个关键词（更快→更清楚→更动人），又不想整句重新排版的时候",
+  "native": 4,
+  "params": [
+   {
+    "name": "at",
+    "desc": "开始时间（秒），默认 0"
+   },
+   {
+    "name": "dur",
+    "desc": "这一段的总时长，默认 4；比 2.25 秒（有退场时 2.7 秒）短就等比压缩，更长就把多出来的时间留给末词停留"
+   },
+   {
+    "name": "options",
+    "desc": "候选词：数组或逗号分隔的字符串；不传就读元素的 data-options，再没有就读元素自己的文字。按顺序出现，最后一个是定格词"
+   },
+   {
+    "name": "cues",
+    "desc": "可选，每次换词的时刻（数组或逗号分隔字符串，相对 at 的秒数）；不传就在 0.48 到 1.61 秒之间均匀排开"
+   },
+   {
+    "name": "color",
+    "desc": "词槽颜色，默认用 --kit-accent，没有就是 #71f5a7"
+   },
+   {
+    "name": "exit",
+    "desc": "退场方式：none（默认，一直停到切镜）、fade（淡出）、up（淡出的同时上移）"
+   },
+   {
+    "name": "fadeTarget",
+    "desc": "开场 0.3 秒淡入的元素，默认是词槽的父元素（整句）；传 false 就不淡入"
+   }
+  ],
+  "notes": "目标元素要传句子里的词槽 span，前后固定不变的文字由调用方自己放在旁边。词槽会被改成单格 inline-grid，所有候选词叠在同一格里，所以宽度从一开始就是最宽那个词的宽度，换词时整句不会重新排版。换词节奏和原版一样：旧词用 inQuint 向上甩出遮罩，新词用 outQuint 从下面进来，最后一个词用 outBack(1.7) 落定，进出只重叠一小段。停留阶段做 opacity 1↔0.9 的 sine 呼吸，重复次数取奇数，所以结束时正好回到 1。同一个元素多次调用不会重复重建（用 dataset.kitSplit 做了标记）。",
+  "frame_s": 0.37
+ },
+ {
+  "id": "logo-sting",
+  "fn": "logoSting",
+  "title": "标志重击定格",
+  "summary": "标志从 1.15 倍重重落到原大小，同时弹出一圈强调色光环、白闪一帧，之后完全静止",
+  "use_when": "品牌标志、片头或片尾定版，需要一下有力的\"落地\"冲击感，随后稳稳停住",
+  "native": 0.95,
+  "params": [
+   {
+    "name": "at",
+    "desc": "开始时间（秒），默认 0"
+   },
+   {
+    "name": "dur",
+    "desc": "入场总时长，默认 0.95；落地点约在 58% 处，之后光环扩散"
+   },
+   {
+    "name": "accent",
+    "desc": "光环颜色：green / blue / violet 或任意 CSS 颜色，默认 green"
+   },
+   {
+    "name": "ringSize",
+    "desc": "光环初始直径基准（px），默认 38*SLATE.u"
+   },
+   {
+    "name": "from",
+    "desc": "起始缩放，默认 1.15"
+   },
+   {
+    "name": "flash",
+    "desc": "白闪不透明度，0 表示不闪，默认 1"
+   }
+  ],
+  "notes": "光环和白闪层是辅助元素，加在目标元素的父元素里（父元素如果是 static 定位，会自动改成 relative）。白闪铺满父元素，持续 1/30 秒。光环每帧都按目标元素的 offset 重新对准中心。原作只压缩入场、不做退场，这里遵照约定按 dur 等比缩放。",
+  "frame_s": 0.14
+ },
+ {
+  "id": "marker-highlight",
+  "fn": "markerHighlight",
+  "title": "马克笔强调",
+  "summary": "文字上浮入场，到点后一笔手绘马克笔（荧光、圈、波浪线、涂抹）画在重点词上，词轻轻一弹",
+  "use_when": "标题或金句里需要把某个词突出出来的时候，比如结论、口号、关键数字",
+  "native": 3.5,
+  "params": [
+   {
+    "name": "at",
+    "desc": "开始时间（秒），默认 0"
+   },
+   {
+    "name": "dur",
+    "desc": "整体时长，默认 3.5，所有时间点按比例缩放"
+   },
+   {
+    "name": "word",
+    "desc": "要强调的子串（第一个匹配处，不区分大小写）；不给就整段文字都强调；没匹配到就只做入场"
+   },
+   {
+    "name": "style",
+    "desc": "highlight（荧光底）| circle（圈）| underline（波浪下划线）| scribble（涂抹），默认 highlight"
+   },
+   {
+    "name": "color",
+    "desc": "墨水颜色，可写 green/blue/violet 或任意 CSS 颜色，默认 green"
+   },
+   {
+    "name": "drawAt",
+    "desc": "开画时间（相对 at，按原设计 3.5 秒计），默认 0.9，会自动夹紧保证在退场前画完"
+   },
+   {
+    "name": "exit",
+    "desc": "none | fade | up，默认 none（一直停住）"
+   },
+   {
+    "name": "rise",
+    "desc": "是否带上浮入场，默认 true"
+   }
+  ],
+  "notes": "笔画路径在固定 viewBox 里写好，用 preserveAspectRatio=\"none\" 拉伸到重点词的框里，有意保留笔头粗细不均的手绘感；靠测得的路径长度做虚线偏移来显出笔画。同一元素重复调用时会复用已经建好的标记，不重复拆分。",
+  "frame_s": 0.19
+ },
+ {
+  "id": "mk-usage-arc",
+  "fn": "mkUsageArc",
+  "native": 3.35,
+  "notes": "目标元素是一个正方形的仪表容器，里面放数字（和可选的标签）；若容器里没有 [data-arc-fill] 圆，动作会自动插入一层 SVG 圆环（底环 + 弧线），随容器尺寸缩放。原设计时间：0–0.6s 淡入上浮（outQuart，位移 1.5u），0.15–1.25s 画弧并滚动数字（inOutCubic），3.0–3.35s 上移淡出（inCubic，位移 1.1u）。",
+  "params": [
+   {
+    "desc": "开始时刻（秒），默认 0",
+    "name": "at"
+   },
+   {
+    "desc": "总时长（秒），默认 3.35，含退场；所有阶段等比缩放",
+    "name": "dur"
+   },
+   {
+    "desc": "目标比例 0–1，默认 0.76",
+    "name": "value"
+   },
+   {
+    "desc": "数字元素的选择器（在目标内查找），默认 [data-arc-num] 或 .arc-num",
+    "name": "num"
+   },
+   {
+    "desc": "数字前后缀，默认 '' 与 '%'",
+    "name": "prefix / suffix"
+   },
+   {
+    "desc": "弧线颜色，默认 var(--kit-accent, #0071e3)",
+    "name": "color"
+   },
+   {
+    "desc": "底环颜色，默认 rgba(29,29,31,0.1)",
+    "name": "track"
+   },
+   {
+    "desc": "线宽（相对 220 的 viewBox），默认 3",
+    "name": "stroke"
+   },
+   {
+    "desc": "是否退场，默认 true",
+    "name": "exit"
+   }
+  ],
+  "summary": "细线圆环从顶部顺时针画到目标比例，同时中心百分比数字同步滚动，整体上浮淡入、上移淡出",
+  "title": "细线环形仪表",
+  "use_when": "展示单个占比或进度类数据（使用率、完成度、增长占比），适合简洁、偏数据可视化的画面",
+  "frame_s": 0.17
+ },
+ {
+  "id": "number-wheel",
+  "fn": "numberWheel",
+  "native": 1.44,
+  "notes": "每列用 tl.call 按缓动后的进度算位移（em 单位，与字号无关），同时只显示当前窗口里相邻的两格数字，其他格设为 visibility:hidden，免得被裁掉的数字被当成越界文字。每个元素只构建一次（有 dataset.kitWheel 标记）；中间格加了 data-qa=\"ignore\"，元素带 aria-label 写最终值。",
+  "params": [
+   {
+    "desc": "开始时刻（秒），默认 0",
+    "name": "at"
+   },
+   {
+    "desc": "整体时长（秒），默认 1.2 + 0.06×(位数-1)，按它等比缩放每列时长和错开间隔",
+    "name": "dur"
+   },
+   {
+    "desc": "要显示的数字字符串（可以带逗号、小数点、符号），默认读 data-value 或元素里的文字",
+    "name": "value"
+   },
+   {
+    "desc": "每列停下前多转几圈：single(0)/double(1)/triple(2)，也可以直接给数字，默认 single",
+    "name": "spin"
+   },
+   {
+    "desc": "列间距：tight/standard/wide 或任意 CSS 长度，默认 standard(0.02em)",
+    "name": "spacing"
+   },
+   {
+    "desc": "数字颜色：inherit/ink/paper/accent 或任意颜色，默认 inherit",
+    "name": "tone"
+   },
+   {
+    "desc": "列与列之间的错开间隔（按原设计的秒数），默认 0.06",
+    "name": "each"
+   },
+   {
+    "desc": "缓动，默认 outQuart",
+    "name": "ease"
+   }
+  ],
+  "summary": "把数字的每一位做成竖向滚轮，从 0 依次错开滚到目标数字，适合展示指标、价格、计数",
+  "title": "数字滚轮",
+  "use_when": "展示一个关键数字（用户数、金额、比分、星标数），想要机械计数器一位位滚到位的效果时",
+  "frame_s": 0.14
+ },
+ {
+  "id": "oversized-cursor",
+  "fn": "oversizedCursor",
+  "title": "巨型光标点击",
+  "summary": "放大3.5倍的箭头光标从画外滑入，尖端点中控件按下点亮，退到下方停住，最后加速离开画面",
+  "use_when": "界面演示开场、需要一个“点这里”的因果点击来触发后续变化，或给静态界面画面加一点视线引导",
+  "native": 2.6,
+  "params": [
+   {
+    "name": "at",
+    "desc": "开始时刻（秒），默认 0"
+   },
+   {
+    "name": "dur",
+    "desc": "总时长，默认 2.6；入场 1.02 秒和退场 0.4 秒固定，中间停留可伸缩，太短时整体等比压缩"
+   },
+   {
+    "name": "variant",
+    "desc": "光标配色：light（白身黑边，默认）或 dark（黑身白边）"
+   },
+   {
+    "name": "size",
+    "desc": "光标边长 px，默认 20.7 * SLATE.u"
+   },
+   {
+    "name": "ignite",
+    "desc": "点击后是否把目标点亮成强调色，默认 true"
+   },
+   {
+    "name": "accent",
+    "desc": "点亮的背景色，默认 #0a84ff"
+   },
+   {
+    "name": "fg",
+    "desc": "点亮后的文字色，默认 #ffffff"
+   },
+   {
+    "name": "exit",
+    "desc": "目标自身的退场：none（默认，保留）/ fade / up"
+   }
+  ],
+  "notes": "光标作用在目标列表的第一个元素上（尖端落在它的中心），光标元素加到目标的父元素里；父元素如果是 static 会改成 relative。点击时刻在 at+0.7 秒（按下 0.1 秒，松开 0.22 秒），适合在这里配点击音效。原作点亮时还会滑入一个勾号，因为不改调用方的内容，这里只做颜色点亮。",
+  "frame_s": 0.16
+ },
+ {
+  "id": "parallax-zoom",
+  "fn": "parallaxZoom",
+  "title": "视差放大转场",
+  "summary": "网格卡片由中心向外依次浮现，焦点卡放大铺满画面，其余卡片向外视差散开并淡出",
+  "use_when": "从一组卡片或图块网格转场到某一张卡片的主题画面，适合作为开场或章节过渡",
+  "native": 6,
+  "params": [
+   {
+    "name": "at",
+    "desc": "开始时间（秒），默认 0"
+   },
+   {
+    "name": "dur",
+    "desc": "总时长（秒），默认 6，所有节点等比缩放"
+   },
+   {
+    "name": "cards",
+    "desc": "卡片选择器或元素，默认是网格容器的直接子元素"
+   },
+   {
+    "name": "focus",
+    "desc": "焦点卡：序号、选择器或元素；默认是带 data-pz-focus=\"true\" 的卡片，没有就取中间那张"
+   },
+   {
+    "name": "scale",
+    "desc": "焦点卡最终放大倍数；默认取 6 和刚好铺满画面所需倍数中较大的那个"
+   },
+   {
+    "name": "push",
+    "desc": "其他卡片每隔一格向外推多远，单位 SLATE.u，默认 83（约等于原设计 1080p 下的 900px）"
+   },
+   {
+    "name": "label",
+    "desc": "焦点卡里放大时要淡出的内容，默认是焦点卡的子元素"
+   },
+   {
+    "name": "reveal",
+    "desc": "铺满后淡入的元素（比如标题），可不传"
+   }
+  ],
+  "notes": "原设计的节奏：0 秒起卡片从中心向外依次浮现（每张间隔 0.03 秒，各 0.5 秒，outCubic）；1.7 秒起用 3 秒 inOutCubic 推进：焦点卡放大，其他卡缩到 0.6 倍并按网格偏移向外推；2.5 秒起焦点卡里的文字淡出（1 秒，inCubic）；3.5 秒起其他卡片淡出（1 秒，inCubic）；4.2 秒起 reveal 淡入（0.7 秒，outCubic）。网格的行列优先读 data-pz-row/data-pz-col，没写就按排版位置推算。卡片位置在初始化时测量，要求网格已经排好版。",
+  "frame_s": 0.57
+ },
+ {
+  "id": "per-word-rise",
+  "fn": "perWordRise",
+  "title": "逐词上浮",
+  "summary": "词或字依次从下方上浮，由模糊变清晰，落位时柔和减速，然后保持静止",
+  "use_when": "标题、口号、关键句入场，想要克制、干净、有节奏感的逐词或逐字揭示时使用；也可以选择淡出或上浮退场",
+  "native": 1.45,
+  "params": [
+   {
+    "name": "at",
+    "desc": "开始时刻（秒），默认 0"
+   },
+   {
+    "name": "dur",
+    "desc": "入场总时长（秒），默认 1.45；内部节奏按它等比缩放"
+   },
+   {
+    "name": "split",
+    "desc": "'word'（默认，按词）或 'char'（按字）"
+   },
+   {
+    "name": "cues",
+    "desc": "可选，各单元落位时刻数组（相对 at 的秒数），超出部分按数组间隔外推"
+   },
+   {
+    "name": "exit",
+    "desc": "'none'（默认，一直停住）、'fade'（只淡出）或 'up'（错开上浮淡出）"
+   },
+   {
+    "name": "hold",
+    "desc": "入场结束到退场开始的停留时长，默认 1.55*k"
+   },
+   {
+    "name": "exitAt",
+    "desc": "可选，退场开始的绝对时刻，优先于 hold"
+   },
+   {
+    "name": "exitDur",
+    "desc": "退场时长，默认 0.5*k"
+   },
+   {
+    "name": "rise",
+    "desc": "上浮距离，单位 SLATE.u，默认 4"
+   },
+   {
+    "name": "blur",
+    "desc": "起始模糊，单位 SLATE.u，默认 0.7"
+   }
+  ],
+  "notes": "落位用分段三次缓动（前 78% 减速走完 93% 的路程，最后 22% 平滑滑完剩下 7%，不过冲、速度一阶连续），单个 tl.call 根据时间算出所有单元的状态，可以任意跳帧。多个目标元素的单元合成一条波浪依次入场。位移和模糊按 SLATE.u 换算（原设计在 540px 高的容器里是 8cqh / 1.4cqh）。",
+  "frame_s": 0.33
+ },
+ {
+  "id": "press-ripple",
+  "fn": "pressRipple",
+  "title": "按下涟漪",
+  "summary": "光标从右下角减速飞入，按下目标后一起压缩回弹，冒出两圈点击波纹，文字换成对勾，光标再飞出画面",
+  "use_when": "产品演示里表现\"点一下按钮→确认成功\"的收尾一拍，例如保存、提交、批准等控件的状态切换",
+  "native": 2.4,
+  "params": [
+   {
+    "name": "at",
+    "desc": "开始时间（秒），默认 0"
+   },
+   {
+    "name": "dur",
+    "desc": "整体时长，默认 2.4，所有节拍等比缩放"
+   },
+   {
+    "name": "done",
+    "desc": "按下后显示在对勾旁的文字；不传就不换文字，只有按压和波纹"
+   },
+   {
+    "name": "accent",
+    "desc": "波纹和对勾的颜色，默认 #22c55e"
+   },
+   {
+    "name": "cursor",
+    "desc": "光标配色 light（白底黑边）或 dark，默认 light"
+   },
+   {
+    "name": "enter",
+    "desc": "目标是否先淡入上浮，默认 true"
+   },
+   {
+    "name": "exit",
+    "desc": "none / fade / up，结尾 0.45 秒退场，默认 none 停在确认状态"
+   }
+  ],
+  "notes": "光标和波纹只在 render 时根据目标的实际位置算一次（这时字体已加载），舞台缩放也换算好了。目标按下时 data-state 会从 idle 切到 pressed，往回拖时间轴会恢复。光标和波纹的 SVG 都放在目标的父元素里，父元素需要是定位容器。",
+  "frame_s": 0.14
+ },
+ {
+  "id": "pull-back-reveal",
+  "fn": "pullBackReveal",
+  "native": 2.4,
+  "notes": "目标应是整块画面容器（内含标题、卡片），动作只改它的 transform。放大到 2.2 倍时，周边文字会被推出画框和安全区，所以多了 context 参数：这些文字在拉远走到 60% 时才淡入，这时缩放已接近 1。卡片和焦点数据块全程可见。地面光晕要跟着画面一起缩放，所以放在目标内部的第一个子元素位置，不在父元素里。示范页外面套了一层 overflow:hidden 的镜头框。",
+  "params": [
+   {
+    "desc": "开始时刻（秒），默认 0",
+    "name": "at"
+   },
+   {
+    "desc": "入场总时长，默认 2.4（停 0.55 + 拉远 1.2 + 落定 0.65），三段按比例缩放",
+    "name": "dur"
+   },
+   {
+    "desc": "起始放大倍数，默认 2.2",
+    "name": "from"
+   },
+   {
+    "desc": "镜头一开始对准的子元素，用它的中心作为缩放原点",
+    "name": "focus"
+   },
+   {
+    "desc": "缩放原点，默认 '50% 50%'（没给 focus 时用）",
+    "name": "origin"
+   },
+   {
+    "desc": "周边文字元素，镜头基本拉开后再淡入，避免放大时越出安全区",
+    "name": "context"
+   },
+   {
+    "desc": "入场后的停留时长，地面光晕在这段里轻轻呼吸一次，默认 0",
+    "name": "hold"
+   },
+   {
+    "desc": "地面光晕元素；不给时自动创建，传 false 则不要",
+    "name": "ground"
+   },
+   {
+    "desc": "光晕颜色，默认 var(--kit-accent, #8b5cf6)",
+    "name": "color"
+   }
+  ],
+  "summary": "镜头先紧贴一个数据停住，再一次减速拉远，露出标题和卡片，最后轻轻落定",
+  "title": "拉远揭示",
+  "use_when": "先让观众盯住一个数字或细节，再拉远交代它所在的完整画面，让这个数字有了上下文",
+  "frame_s": 0.45
+ },
+ {
+  "id": "push-in",
+  "fn": "pushIn",
+  "title": "镜头推进",
+  "summary": "整块画面缓慢连续地向前推进放大，结尾轻柔淡出，让居中主体更聚焦",
+  "use_when": "需要强调某个居中标题或画面、营造“镜头慢慢推近”的专注感时；适合可长可短的停留镜头",
+  "native": 4,
+  "params": [
+   {
+    "name": "at",
+    "desc": "开始时间（秒），默认 0"
+   },
+   {
+    "name": "dur",
+    "desc": "总时长（秒），默认 4；推进 0.8 秒和淡出 0.65 秒固定，中间匀速推进段随时长伸缩，时长不足 1.45 秒时两段等比压缩"
+   },
+   {
+    "name": "intensity",
+    "desc": "推进强度：subtle(1.08) / standard(1.12) / bold(1.18)，或直接给最终缩放数字，默认 standard"
+   },
+   {
+    "name": "fadeOut",
+    "desc": "结尾是否淡出，默认 true"
+   }
+  ],
+  "notes": "只改目标元素的 scale 和 opacity，缩放中心为元素中心。目标通常是整块画面或卡片里的“镜头层”，外层容器需 overflow:hidden 以裁掉放大部分。",
+  "frame_s": 0.53
+ },
+ {
+  "id": "radial-surround",
+  "fn": "radialSurround",
+  "title": "环形包围",
+  "summary": "细线标签沿椭圆环交替弹出，围住静止的中心主体，再整体向内收拢，四周轻微压暗",
+  "use_when": "提出问题的开场，比如“团队被一堆工具淹没”：中心主体不动，被一圈标签包围、挤压",
+  "native": 5,
+  "params": [
+   {
+    "name": "at",
+    "desc": "开始时间（秒），默认 0"
+   },
+   {
+    "name": "dur",
+    "desc": "整体时长，默认 5，所有时间等比缩放"
+   },
+   {
+    "name": "chips",
+    "desc": "环上的标签元素（元素、数组或选择器），会被移到中心元素父元素里的定位层中"
+   },
+   {
+    "name": "closeIn",
+    "desc": "排好之后是否向内收拢并压暗边缘，默认 true"
+   },
+   {
+    "name": "cues",
+    "desc": "可选，每个标签的入场秒数数组（按 5 秒设计计），空位用默认错开节奏"
+   },
+   {
+    "name": "exit",
+    "desc": "'none' | 'fade' | 'up'，默认 none，最后 0.45 秒（按比例）退场"
+   },
+   {
+    "name": "farX/farY/nearX/nearY",
+    "desc": "外环和内环椭圆半径（单位 SLATE.u），默认 46/25/31/18"
+   },
+   {
+    "name": "dim",
+    "desc": "是否加边缘压暗层，默认 true"
+   }
+  ],
+  "notes": "中心元素只做淡入加轻微缩放（0.94→1），之后完全不动。标签位置用 SLATE.u 算，中心点在第一次渲染时按布局测量（不受舞台缩放影响）。默认节奏：中心 0.05s 入场；标签从 0.9s 起每隔 0.3s 交替出现在上下左右对称的位置（outQuart，0.55s）；3.3s 开始收拢，每个错开 0.09s（inOutCubic，0.75s），4.5s 收拢完。为避开字幕区，示范页把中心放在 45% 高度，外环纵向半径也比原作小一些。",
+  "frame_s": 0.54
+ },
+ {
+  "id": "scramble-reveal",
+  "fn": "scrambleReveal",
+  "title": "乱码解码显现",
+  "summary": "文字先以固定种子的乱码滚动，再从左到右逐字锁定成目标文字，同时带弧线入场",
+  "use_when": "科技、黑客、终端、数据解码风格的标题或关键词出场；需要\"破译\"\"加载完成\"感时",
+  "native": 1.65,
+  "params": [
+   {
+    "name": "at",
+    "desc": "开始时间（秒），默认 0"
+   },
+   {
+    "name": "dur",
+    "desc": "入场+解码总时长，默认 1.65；弧线入场占 0.42/1.65，最后 0.15/1.65 是锁定后的收尾"
+   },
+   {
+    "name": "each",
+    "desc": "多个元素时依次错开的秒数，默认 0.15"
+   },
+   {
+    "name": "fps",
+    "desc": "乱码换字的帧率，默认 30"
+   },
+   {
+    "name": "seed",
+    "desc": "乱码随机种子，默认 0x27c0ffee"
+   },
+   {
+    "name": "glyphs",
+    "desc": "拉丁乱码字符池，默认 A-Z0-9 和符号"
+   },
+   {
+    "name": "cjkGlyphs",
+    "desc": "汉字乱码字符池（目标字是汉字时用它，保持等宽）"
+   },
+   {
+    "name": "move",
+    "desc": "做入场位移/淡入的元素，默认就是目标本身（比如可以传整张终端卡片）"
+   },
+   {
+    "name": "hold",
+    "desc": "解码完成后的停留秒数；大于 0.3 时做一次轻微上浮漂移，最后 0.3 秒静止。默认 0"
+   },
+   {
+    "name": "exit",
+    "desc": "'none' | 'fade' | 'up'，在停留结束后退场，默认 'none'"
+   },
+   {
+    "name": "exitDur",
+    "desc": "退场时长，默认 0.45"
+   }
+  ],
+  "notes": "乱码表在初始化时用确定性 LCG 一次算好，render 只按时间查表，所以前后任意跳帧画面都一致。逐帧整段替换 textContent（white-space: pre），建议用等宽字体；遇到汉字会从汉字池里取乱码，免得宽度乱跳。空白字符一直保持原样。位移量按 SLATE.u 换算（x -5.4u、y 1u、漂移 -0.22u、上移退场 x +6.8u / y -3.5u）。",
+  "frame_s": 0.43
+ },
+ {
+  "id": "soft-blur-in",
+  "fn": "softBlurIn",
+  "title": "柔焦上浮显现",
+  "summary": "元素从透明、模糊、略微偏移的状态柔和上浮（或下落）到位并变清晰，多个元素依次错开",
+  "use_when": "标题、副标题、说明文字、数据标签、产品界面标注的入场；需要克制、带电影感的柔和显现时",
+  "native": 0.8,
+  "params": [
+   {
+    "name": "at",
+    "desc": "开始时间（秒），默认 0"
+   },
+   {
+    "name": "dur",
+    "desc": "单个元素的显现时长，默认 0.8；错开间隔随之等比缩放"
+   },
+   {
+    "name": "each",
+    "desc": "相邻元素的错开间隔（按原设计 0.8 秒时长计），默认 0.12"
+   },
+   {
+    "name": "distance",
+    "desc": "起始偏移：close / standard / far（约 1.3u / 2.6u / 4.8u），或直接给数字（单位 u），默认 standard"
+   },
+   {
+    "name": "direction",
+    "desc": "up 从下方升起，down 从上方落下，默认 up"
+   },
+   {
+    "name": "blur",
+    "desc": "起始模糊：soft / standard / heavy（约 0.74u / 1.67u / 3.15u），或数字（单位 u），默认 standard"
+   },
+   {
+    "name": "ease",
+    "desc": "缓动，默认 outQuart"
+   }
+  ],
+  "notes": "原设计在 1080 短边下偏移 14/28/52px、模糊 8/18/34px，这里按 SLATE.u 换算。所有元素在开始前就处于透明、模糊、偏移的起始状态。",
+  "frame_s": 0.55
+ },
+ {
+  "id": "staggered-fade-up",
+  "fn": "staggeredFadeUp",
+  "title": "逐词浮现",
+  "summary": "文字逐词依次淡入，同时从下方升起、由模糊变清晰、由略小放大到原大小",
+  "use_when": "标题、口号、金句需要一词一词地入场；也可用于一组卡片或图标依次出现",
+  "native": 2.02,
+  "params": [
+   {
+    "name": "at",
+    "desc": "开始时间（秒），默认 0"
+   },
+   {
+    "name": "dur",
+    "desc": "整段时长（秒），默认 0.4 + (词数-1)×0.18；按比例缩放间隔和每个词的时长"
+   },
+   {
+    "name": "direction",
+    "desc": "up | down | left | right，默认 up（从下方升起）"
+   },
+   {
+    "name": "distance",
+    "desc": "close | standard | far（行程 ×0.5 / ×1 / ×1.85），也可直接给倍数"
+   },
+   {
+    "name": "tone",
+    "desc": "可选：ink | paper | accent 或任意 CSS 颜色，给文字上色"
+   },
+   {
+    "name": "split",
+    "desc": "auto | words | chars | none。auto：目标里已有子元素就逐个动子元素，否则按词拆分"
+   },
+   {
+    "name": "each",
+    "desc": "每个词之间的间隔（秒），默认 0.18（会随 dur 一起缩放）"
+   },
+   {
+    "name": "wordDur",
+    "desc": "每个词的动画时长，默认 0.4"
+   },
+   {
+    "name": "ease",
+    "desc": "缓动，默认 outQuart"
+   }
+  ],
+  "notes": "节奏按原示范版：0.4 秒一词、间隔 0.18 秒、缓动 power3.out（outQuart），起始 opacity 0 / scale 0.92 / 位移约 28px×1.9 缩放（约 5u）/ 模糊约 1u。示范页从 0.4 秒开始播放，和原作一致。",
+  "frame_s": 0.14
+ },
+ {
+  "id": "streaming-text",
+  "fn": "streamingText",
+  "title": "流式吐字",
+  "summary": "像 AI 回答流式输出：词按不均匀节奏成串出现，先灰后墨，逐个上色",
+  "use_when": "展示 AI 助手回答、聊天气泡、模型输出等需要“边生成边显示”质感的段落文字；比打字机更自然。",
+  "native": 2.2,
+  "params": [
+   {
+    "name": "at",
+    "desc": "开始时刻（秒），默认 0"
+   },
+   {
+    "name": "dur",
+    "desc": "整段流式时长（秒）；不填按实测节奏自然排（约每词 0.12 秒），填了则把节奏和上色时长等比缩放"
+   },
+   {
+    "name": "tone",
+    "desc": "'dark-on-light'（默认，灰 #767676 → 墨 #141414）或 'light-on-dark'（灰 #5f5f5f → 白 #f3f3f3）"
+   },
+   {
+    "name": "ink",
+    "desc": "最终墨色，覆盖 tone；不填且没给 tone 时读元素自身文字颜色"
+   },
+   {
+    "name": "fresh",
+    "desc": "刚出现时的灰色，覆盖 tone"
+   },
+   {
+    "name": "ramp",
+    "desc": "每个词由灰变墨的时长，默认 0.2667 秒"
+   }
+  ],
+  "notes": "节奏表是 29 个实测间隔循环使用，0 表示两个词同时到达，形成\"两个一起、停一下、再来三个\"的成串感。多个目标元素按顺序接着同一节奏流下去。中文按浏览器分词拆词。",
+  "frame_s": 0.39
+ },
+ {
+  "id": "strikethrough-replace",
+  "fn": "strikethroughReplace",
+  "title": "划线替换",
+  "summary": "一条彩色横线快速划过旧文字，随后新文字从下方淡入上浮替换",
+  "use_when": "对比新旧说法、纠正措辞、“从A变成B”的改写强调，如价格变动、流程升级、观点修正",
+  "native": 0.54,
+  "params": [
+   {
+    "name": "at",
+    "desc": "开始时间（秒），默认 0"
+   },
+   {
+    "name": "dur",
+    "desc": "整体时长（秒），默认 0.54，各段等比缩放"
+   },
+   {
+    "name": "next",
+    "desc": "替换上来的新文字元素（元素或选择器）；不给则只划线"
+   },
+   {
+    "name": "origin",
+    "desc": "划线生长的起点：left（默认）/ center / right"
+   },
+   {
+    "name": "thickness",
+    "desc": "线粗：thin / standard（默认）/ thick，或直接给数字（相对字号的 em 比例）"
+   },
+   {
+    "name": "tint",
+    "desc": "线色：red（默认）/ amber / blue / violet"
+   },
+   {
+    "name": "color",
+    "desc": "自定义线色，优先于 tint"
+   },
+   {
+    "name": "rise",
+    "desc": "新文字上浮距离（相对其字号的 em 比例），默认 0.24"
+   }
+  ],
+  "notes": "target 是被划掉的旧文字；划线元素加在它的父元素里（父元素若是 static 会改成 relative），每帧按旧文字的 offset 定位，所以字体加载后排版变化也能对齐。线粗和新文字上浮距离按字号换算（原设计 58px 字号：线 6px、上浮 14px），在任何画幅下比例都不变。原作没有让旧文字变暗，这里也保持原样。",
+  "frame_s": 0.18
+ },
+ {
+  "id": "svg-stroke-trace",
+  "fn": "svgStrokeTrace",
+  "title": "SVG 描线显形",
+  "summary": "按路径实测长度把 SVG 线条从头描到尾；闭合图形描完后淡淡填色，之后轻微上下浮动，可选退场",
+  "use_when": "标志、签名、波浪线、图标这类线稿入场；想让一个图形“被画出来”时用",
+  "native": 1.85,
+  "params": [
+   {
+    "name": "at",
+    "desc": "开始时刻（秒），默认 0"
+   },
+   {
+    "name": "dur",
+    "desc": "入场时长（描线加填色），默认 1.85；描线占 84%"
+   },
+   {
+    "name": "color",
+    "desc": "线条和填色的颜色；不填就用图形原来的 stroke 颜色"
+   },
+   {
+    "name": "strokeWidth",
+    "desc": "线宽（viewBox 单位），不填保持原样；自动生成的线条默认 12"
+   },
+   {
+    "name": "fill",
+    "desc": "'auto'（默认，闭合图形才填）/ true / false"
+   },
+   {
+    "name": "fillOpacity",
+    "desc": "填色的最终不透明度，默认 0.16"
+   },
+   {
+    "name": "glow",
+    "desc": "线条光晕，默认 true"
+   },
+   {
+    "name": "each",
+    "desc": "多条线依次开始的间隔（秒），默认 0 同时描"
+   },
+   {
+    "name": "hold",
+    "desc": "入场后停留秒数，期间做一次轻微上浮再回落，默认 0"
+   },
+   {
+    "name": "exit",
+    "desc": "'none'（默认）/ 'fade' / 'up'，接在停留之后"
+   },
+   {
+    "name": "path",
+    "desc": "目标里没有 SVG 图形时，在目标上方叠一层按此路径（1024×520 的 viewBox）画的线"
+   }
+  ],
+  "notes": "目标可以是 svg、svg 里的图形，或含有 svg 的元素；会找出其中的 path/line/polyline/polygon/circle/ellipse/rect 逐个描线。描线的虚线长度用 getTotalLength 实测。闭合路径（d 以 Z 结尾、polygon、circle、ellipse、rect）会在下面复制一份做填色。停留时的浮动和上移退场幅度按 SLATE.u 换算。",
+  "frame_s": 0.44
+ },
+ {
+  "id": "tracking-in",
+  "fn": "trackingIn",
+  "title": "字距收拢入场",
+  "summary": "文字从宽字距、略低位置淡入，字距收紧到正常并轻轻上浮到位",
+  "use_when": "高级感标题、栏目标签、界面文字的克制入场；多行文字依次出现",
+  "native": 1,
+  "params": [
+   {
+    "name": "at",
+    "desc": "开始时间（秒），默认 0"
+   },
+   {
+    "name": "dur",
+    "desc": "整体时长（秒），默认 0.9 + each×(元素数-1)，按比例缩放单段时长和错开"
+   },
+   {
+    "name": "each",
+    "desc": "多个元素之间的错开（秒，按原设计计），默认 0.1"
+   },
+   {
+    "name": "tracking",
+    "desc": "字距幅度：tight(0.6) / standard(1) / wide(1.8) 或数字倍率，默认 standard"
+   },
+   {
+    "name": "rise",
+    "desc": "起始下沉量：subtle / standard / bold，或数字（单位 SLATE.u），默认 standard≈0.74u"
+   },
+   {
+    "name": "tone",
+    "desc": "文字颜色：inherit / ink / paper / accent（取 --kit-accent）或任意颜色，默认 inherit"
+   },
+   {
+    "name": "ease",
+    "desc": "缓动，默认 outQuart"
+   }
+  ],
+  "notes": "原设计：单段 0.9s，power3.out，字距 0.28em→0.02em（乘以倍率），y 8px(1080p)→0，透明度 0→1。位移按 SLATE.u 换算。",
+  "frame_s": 0.26
+ },
+ {
+  "id": "typed-prompt",
+  "fn": "typedPrompt",
+  "title": "提示词打字",
+  "summary": "提示词按人手节奏分块打出，光标确定性闪烁，可先打错末尾再退格改正",
+  "use_when": "产品演示里展示向 AI 输入提示词、搜索框输入、命令行输入等场景；需要真实的打字节奏、光标和打错改正的小细节时使用。",
+  "native": 4,
+  "params": [
+   {
+    "name": "at",
+    "desc": "开始时刻（秒），默认 0"
+   },
+   {
+    "name": "dur",
+    "desc": "整段时长（秒），默认 4；入场按比例压缩，打字过长时等比压缩，多出的时间变成停留"
+   },
+   {
+    "name": "text",
+    "desc": "要打出的文字，默认读取目标元素原有文字"
+   },
+   {
+    "name": "glyph",
+    "desc": "行首提示符，默认 \">\"，空字符串不显示"
+   },
+   {
+    "name": "cadence",
+    "desc": "\"human\"（默认，随机 1-3 字一块、间隔有变化）或 \"uniform\"（一字一拍）"
+   },
+   {
+    "name": "caret",
+    "desc": "\"blink\"（默认，打字期间整数次闪烁后常亮）或 \"solid\""
+   },
+   {
+    "name": "correction",
+    "desc": "打错的末尾词：先打这个，停顿后退格再打正确的。有空格的文字替换最后一个词；中文等无空格文字替换末尾同样字数。空字符串关闭"
+   },
+   {
+    "name": "cues",
+    "desc": "数组，相对 at 的秒数，第 N 个值对齐第 N 个词开始打的时刻"
+   },
+   {
+    "name": "accent",
+    "desc": "提示符和光标颜色，默认 var(--kit-accent, #7c5cff)"
+   },
+   {
+    "name": "exit",
+    "desc": "\"none\"（默认，停在末帧）、\"fade\" 或 \"up\""
+   },
+   {
+    "name": "seed",
+    "desc": "打字节奏的随机种子"
+   }
+  ],
+  "notes": "每一帧的文字都从初始化时建好的“时刻→文字”表里查出，用固定种子的线性同余随机数，前后任意跳帧结果一致。光标闪烁用正弦相位，打字窗口内正好整数个周期，结束后常亮。入场：透明度 0.5s outCubic，上移 1.8u 用 outQuart；停留期轻微漂移 0.3u 后回到静止；退场 0.45s inCubic。目标元素内容会被替换成提示符 + 文字 + 光标。",
+  "frame_s": 0.44
+ },
+ {
+  "id": "typewriter",
+  "fn": "typewriter",
+  "native": 2.12,
+  "notes": "原组件靠 max-width 裁切，按 steps(28) 一档一档露出文字。这里改成按实际字数走阶梯：拆成单字后，用 visibility 加 opacity 一个一个显示出来，排版从头到尾不动。每一帧都按 p 重新计算所有字的状态，不缓存，所以跳着取帧也是对的。光标标了 data-qa=\"ignore\"，放在目标元素里面跟着最后一个字走；它左右的外边距一正一负，正好抵消，不占排版空间。光标的宽度和间距用 em 计算，跟着字号缩放。示范页的时间点按 SLATE.duration 自动收紧，保证这一镜里能看到打字过程。",
+  "params": [
+   {
+    "desc": "开始时刻（秒），默认 0",
+    "name": "at"
+   },
+   {
+    "desc": "整体时长，默认 2.12：前 1.2 秒打字，0.2 秒起光标闪 8 个半程（各 0.24 秒）。改时长时所有时间按同一比例缩放",
+    "name": "dur"
+   },
+   {
+    "desc": "光标样式：line 细线（默认）/ block 方块 / none 不要光标",
+    "name": "caret"
+   },
+   {
+    "desc": "文字和光标的颜色：ink 近黑 / paper 近白 / accent 跟 --brand 走；不传就沿用元素原来的颜色",
+    "name": "tone"
+   },
+   {
+    "desc": "闪烁时透明度降到多少，默认 0.2",
+    "name": "blinkTo"
+   }
+  ],
+  "summary": "文字逐字打出，光标跟在最后一个字后面，打完后匀速闪烁几下",
+  "title": "打字机",
+  "use_when": "命令行、口号、标题需要一字一字敲出来的时候；浅色底、深色底都能用，光标可以是细线、方块，也可以不要",
+  "frame_s": 0.14
+ },
+ {
+  "id": "vignette",
+  "fn": "vignette",
+  "title": "电影暗角",
+  "summary": "在画面上叠一层径向暗角：先浅，再逐渐收紧压暗四周，然后轻轻呼吸，把视线引到中心",
+  "use_when": "画面主体在中央，需要电影感、聚焦氛围或给画面\"收边\"时；可叠在整块场景、图片或卡片上",
+  "native": 3.8,
+  "params": [
+   {
+    "name": "at",
+    "desc": "开始时间（秒），默认 0"
+   },
+   {
+    "name": "dur",
+    "desc": "总时长，默认 3.8，整体等比缩放"
+   },
+   {
+    "name": "color",
+    "desc": "暗角颜色 RGB，默认 \"0,0,0\""
+   },
+   {
+    "name": "fromAlpha / toAlpha",
+    "desc": "起始和最终的边缘不透明度，默认 0.35 / 0.92"
+   },
+   {
+    "name": "fromSize / toSize",
+    "desc": "中心透明区域的半径（%），默认 70 / 26"
+   },
+   {
+    "name": "breathe",
+    "desc": "呼吸时透明区放大到的半径（%），默认 32；设 null 表示不呼吸"
+   },
+   {
+    "name": "edge",
+    "desc": "颜色到达最深处的位置（%），默认 100"
+   },
+   {
+    "name": "shape",
+    "desc": "ellipse 或 circle，默认 ellipse"
+   },
+   {
+    "name": "z",
+    "desc": "遮罩层的 z-index，默认 90"
+   }
+  ],
+  "notes": "遮罩层建在目标元素的父元素里，按目标的布局位置和尺寸盖住它（父元素原来是 static 定位时改成 relative）。时间安排：0–1.6s 从浅暗角收紧到深暗角（inOutCubic），保持到 2.0s，然后在 2.0–2.9s、2.9–3.8s 之间呼吸一次（inOutSine）。用 call 逐帧直接写背景，画面只由 t 决定。",
+  "frame_s": 1.1
+ }
+]

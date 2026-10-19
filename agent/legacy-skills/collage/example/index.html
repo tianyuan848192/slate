@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<link rel="stylesheet" href="/skills/collage/style.css">
+<script src="/skills/collage/components.js"></script>
+</head>
+<body>
+<script>
+  // 时事开场（冷开场）：一张剪报落下 → 卫星云图滑入 → 盖章（全画面冲击）→ 圈出关键词 → 抛出问题。结尾网点盖满，接下一镜
+  // 示例新闻：报名、台风编号都是占位，做片时换成真实报道，并把"示例新闻"角标去掉
+  const { seg, u: U, width: W, height: H, svg } = SLATE;
+  const st = CL.stage({ paper: 'cream', push: 0.045, drift: [U * 3, -U], exit: 'dots', punch: [2.39] });
+  const w = st.world;
+
+  // 左：剪报（撕边、略斜），上面印报头、栏目标签、两行宋体标题和一行正文
+  const card = CL.tornCard(w, { x: U * 15.7, y: U * 13.9, w: U * 79.6, h: U * 50, tone: 'newsprint', rotate: -2, seed: 21 });
+  const ci = card.inner, x0 = card.x + U * 3.7;
+  const mast = CL.text(ci, { x: x0, y: card.y + U * 5.4, text: '示例晚报 · A3 社会新闻', size: U * 2.4, color: CL.C.ink2, weight: 700 });
+  svg('line', { x1: x0, x2: card.x + card.w - U * 3.7, y1: card.y + U * 7, y2: card.y + U * 7, stroke: CL.C.ink, 'stroke-width': U * 0.25 }, ci);
+  const kick = CL.kicker(ci, { x: x0, y: card.y + U * 13.1, text: '台风快讯' });
+  const size = U * 6.2;
+  const head = CL.text(ci, { x: x0, y: card.y + U * 23.1, lines: ['第 9 号台风今晨登陆', '沿海多地停课停运'], font: 'serif', size, lh: 1.2 });
+  const body = CL.text(ci, { x: x0, y: card.y + U * 37.5, text: '大风暴雨来袭，航班列车暂停', size: U * 3.6, color: CL.C.ink2 });
+  // 圈出"停课停运"：宋体汉字等宽（1em + 字距），第二行的第 5～8 个字
+  const adv = size * 1.02, l2 = card.y + U * 23.1 + size * 1.2;
+  const ring = CL.circle(ci, { x: x0 + adv * 4, y: l2 - size * 0.88, w: adv * 4, h: size, pad: U * 1.2, seed: 5 });
+  const stamp = CL.stamp(ci, { x: card.x + card.w - U * 16.7, y: card.y + U * 45, text: '橙色预警', size: U * 4.2, rotate: -9, seed: 8 });
+
+  // 右：卫星云图（占位插画；正式做片用 src: '/input/文件名'），胶带贴住
+  const photo = CL.cutout(w, { x: card.x + card.w + U * 5.6, y: U * 16.7, w: U * 55.6, h: U * 39.8, art: 'storm', caption: '卫星云图（示意）', rotate: 3, from: 'right', seed: 31 });
+  const tp = CL.tape(w, { x: card.x + card.w + U * 33.4, y: U * 17.3, w: U * 14, angle: -4, seed: 2 });
+
+  // 问题纸条 + 指向云图的箭头
+  const ask = CL.strip(w, { x: W / 2 + U * 4.6, y: U * 73.1, text: '它从哪儿来？', size: U * 5.4, anchor: 'middle', rotate: -2, from: 'bottom', seed: 4 });
+  const arw = CL.arrow(w, { from: [W / 2 + U * 26.3, U * 71.3], to: [W / 2 + U * 34.6, U * 60.2], bend: -0.3, seed: 6 });
+  const wm = CL.watermark(st.hud, { text: '示例新闻' });
+
+  function render(t) {
+    const T = CL.step(t);          // 纸片、文字一拍二
+    st.set(t);                     // 镜头、颗粒、冲击、转场每帧都动
+    card.draw(seg(T, 0.15, 0.65));
+    mast.draw(seg(T, 0.5, 0.8));
+    kick.draw(seg(T, 0.6, 0.9));
+    head.draw(seg(T, 0.7, 1.1));
+    body.draw(seg(T, 1.0, 1.4));
+    photo.draw(seg(T, 1.0, 1.6));
+    tp.draw(seg(T, 1.6, 1.8));
+    stamp.set(t, 2.3);             // 0.09 秒砸下，2.39 秒落定，和舞台的 punch 对齐
+    ring.draw(seg(T, 2.9, 3.5));
+    ask.draw(seg(T, 3.4, 3.9));
+    arw.draw(seg(T, 4.1, 4.6));
+    wm.draw(seg(T, 0.4, 0.8));
+  }
+</script>
+</body>
+</html>

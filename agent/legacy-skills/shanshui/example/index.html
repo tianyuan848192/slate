@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<link rel="stylesheet" href="/skills/shanshui/style.css">
+<script src="/skills/shanshui/components.js"></script>
+</head>
+<body>
+<script>
+  // 茶品牌广告开场（7 秒）：墨晕扩散显出青绿茶山 → 竖排题字"高山云雾"逐字写出 → 题款 → 钤印。手卷缓慢右移，云雾漂移，一行飞鸟。
+  // 品牌名"山岚"是示例，做片时换成用户的品牌；广告片不用"最""第一"这类词。
+  const { seg, u: U, width: W, height: H, ease } = SLATE;
+  const st = SS.stage({ palette: 'qinglv', pan: [U * 14, -U * 14], enter: 'bloom', bloomAt: [0.6, 0.42], enterDur: 1.5 });
+  const hills = SS.mountains(st, { layers: 5, kind: 'range', seed: 12, from: 0.42, to: 0.97, peak: { x: 0.3, layer: 2, h: 2.0, w: 26 } });
+  const flock = SS.birds(st.hud, { n: 5, from: [W * 0.06, H * 0.24], to: [W * 0.52, H * 0.12], size: U * 1.3, seed: 4 });
+  const ti = SS.vtitle(st.hud, { x: W * 0.8, y: H * 0.13, text: '高山云雾', size: U * 11 });
+  const ins = SS.inscription(st.hud, { x: ti.left - U * 4, y: ti.y + U * 3, text: '明前头采' });
+  const se = SS.seal(st.hud, { x: (ins.left + ins.right) / 2, y: ins.bottom + U * 6, text: '山岚', size: U * 7.5 });
+
+  function render(t) {
+    st.set(t);
+    hills.draw(seg(t, 0, 1.8));
+    ti.draw(seg(t, 0.9, 3.0, ease.linear));
+    ins.draw(seg(t, 3.0, 3.6));
+    se.draw(seg(t, 3.7, 4.05));
+    flock.draw(seg(t, 1.2, 6.8, ease.linear));
+  }
+</script>
+</body>
+</html>

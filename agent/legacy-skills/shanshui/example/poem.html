@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<link rel="stylesheet" href="/skills/shanshui/style.css">
+<script src="/skills/shanshui/components.js"></script>
+</head>
+<body>
+<script>
+  // 诗词意境收尾（8 秒，全片最后一镜）：绢底淡入 → 烘云托月缓缓升起 → 两句诗从右列起逐字写出 → 题款、钤印 → 山和月淡去，只留诗和印（留白收尾）。
+  // 屏上是诗句原文时，旁白念白话解读，不要和字幕重复同一句。
+  const { seg, u: U, width: W, height: H, ease } = SLATE;
+  const st = SS.stage({ palette: 'shuimo', paper: 'silk', zoom: [1, 1.04], enter: 'fade', enterDur: 1.0 });
+  const luna = SS.moon(st, { x: W * 0.27, y: H * 0.27, r: U * 6.5, depth: 0.1 });
+  const hills = SS.mountains(st, { layers: 4, kind: 'range', seed: 33, from: 0.5, to: 0.95, height: 0.9, peak: { x: 0.2, layer: 1, h: 1.7, w: 20 } });
+  const v = SS.verse(st.hud, { lines: ['明月松间照', '清泉石上流'], x: W * 0.74, y: H * 0.15, size: U * 8.4, colGap: U * 13 });
+  const ins = SS.inscription(st.hud, { x: v.left - U * 6, y: v.top + U * 6, text: '录王维山居秋暝句' });
+  const se = SS.seal(st.hud, { x: (ins.left + ins.right) / 2, y: ins.bottom + U * 5.5, text: '山居', kind: 'zhu', size: U * 7 });
+
+  function render(t) {
+    st.set(t);
+    const fadeAway = 1 - seg(t, 6.6, 7.9, ease.inOut);   // 收尾：景淡去，诗和印留下
+    luna.draw(seg(t, 0.2, 3.0) * fadeAway);
+    hills.draw(seg(t, 0, 2.0) * fadeAway);
+    v.play(t, 0.8);                                       // 每字 0.42 秒，换列多停 0.3 秒，约 5 秒写完
+    ins.draw(seg(t, 5.7, 6.2));
+    se.draw(seg(t, 6.25, 6.6));
+  }
+</script>
+</body>
+</html>

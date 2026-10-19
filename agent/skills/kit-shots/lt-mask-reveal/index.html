@@ -1,0 +1,9 @@
+<!doctype html><html><head><meta charset="utf-8">
+<style>html,body{margin:0;background:radial-gradient(ellipse at 65% 35%,#5a6b7d 0%,#2d3846 45%,#11161d 100%)} #main{position:absolute;inset:0}</style></head>
+<body><div id="main"></div>
+<script src="/skills/kit-motion/kit.js"></script>
+<script src="/skills/kit-shots/lt-mask-reveal/shot.js"></script>
+<script>
+  const tl = SLATE.timeline().add(KIT.shots["lt-mask-reveal"](document.getElementById("main"), { dur: SLATE.duration }), 0);
+  window.render = t => tl.at(t);
+</script></body></html>

@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<link rel="stylesheet" href="/skills/collage/style.css">
+<script src="/skills/collage/components.js"></script>
+</head>
+<body>
+<script>
+  // 时间线（横移 = 逐步揭示）：红线上钉着四张卡片，镜头从左往右扫过；右上角的撕页日历跟着镜头翻到第几天
+  // 上一镜用 exit: 'sheet' 盖了一张同样的纸过来：这一镜同样是 cream 纸、种子相同、t=0 镜头不推不移，所以接缝看不出来
+  // 横移的镜头里，标题、日历放 hud（贴屏）；世界里的文字用 st.guard，碰到安全区边缘之前淡出
+  const { seg, u: U, width: W, height: H } = SLATE;
+  const st = CL.stage({ paper: 'cream', cam: [[0, W / 2, H / 2, 1], [1.0, W / 2, H / 2, 1], [7.4, U * 224.1, H / 2, 1.02], [8, U * 224.1, H / 2, 1.02]], exit: 'dots' });
+  const w = st.world;
+  const h = CL.heading(st.hud, { kicker: '示意', text: '一个台风的一生' });
+  const cal = CL.dateFlip(st.hud, { x: SLATE.safe.x + SLATE.safe.w - U * 18, y: SLATE.safe.y + U, values: ['1', '2', '4', '6'], head: '第', tail: '天', label: '台风日历' });
+
+  // 红线：分段拉出，每段在对应的卡片落下之前拉到
+  const ty = U * 38.9, xs = [64.8, 124.1, 183.3, 242.6].map(v => v * U);
+  const knots = [U * 35.2, ...xs, U * 314.8];
+  const segs = knots.slice(1).map((x, i) => CL.thread(w, { points: [[knots[i], ty], [x, ty]], sag: U * 1.6 }));
+  const segT = [[0.1, 0.3], [0.35, 0.65], [2.3, 2.9], [3.9, 4.5], [4.5, 4.9]];
+
+  const stages = [
+    { title: '热带扰动', sub: '开始打转', size: U * 10.2, rot: -2 },
+    { title: '热带风暴', sub: '获得名字', size: U * 11.6, rot: 1.5 },
+    { title: '台风', sub: '风力 ≥ 12 级', size: U * 13.4, rot: -1.5 },
+    { title: '登陆后减弱', sub: '失去暖海燃料', size: U * 11.6, rot: 2 },
+  ];
+  const cw = U * 44.4, ch = U * 20.8, top0 = ty + U * 2.8;
+  const cards = stages.map((s, i) => {
+    const x0 = xs[i] - cw / 2;
+    const card = CL.tornCard(w, { x: x0, y: top0, w: cw, h: ch, tone: i % 2 ? 'white' : 'newsprint', rotate: s.rot, torn: 'trbl', seed: 80 + i });
+    const words = SLATE.svg('g', {}, card.inner);   // 文字单独一组，交给 guard 控制淡出
+    const title = CL.text(words, { x: x0 + U * 2.8, y: top0 + U * 8, text: s.title, font: 'serif', size: U * 4.6 });
+    const sub = CL.text(words, { x: x0 + U * 2.8, y: top0 + U * 14.1, text: s.sub, size: U * 3.6, color: CL.C.ink2 });
+    st.guard(words, [x0 + U * 1.9, top0 + U * 1.9, U * 27.8, U * 14.8]);
+    const icon = CL.cutout(card.inner, { x: x0 + cw - U * 2.8 - s.size, y: top0 + U * 3.7, w: s.size, h: s.size * 0.86, art: 'storm', border: U * 0.45, rotate: 3, seed: 90 + i });
+    const pin = CL.pin(w, { x: xs[i], y: ty + U * 0.6 });
+    return { card, title, sub, icon, pin };
+  });
+  const landed = CL.stamp(cards[3].card.inner, { x: xs[3] + U * 13.9, y: top0 + U * 15.9, text: '登陆', shape: 'round', size: U * 3.4, rotate: -12, seed: 3 });
+  const drop = [0.2, 0.7, 2.9, 4.5];
+
+  function render(t) {
+    const T = CL.step(t);
+    st.set(t);
+    h.draw(seg(T, 0.2, 1.1));
+    cal.draw(seg(T, 0.4, 0.9));
+    cal.set(t, [[0, 0], [2.9, 1], [4.6, 2], [6.3, 3]]);
+    segs.forEach((s, i) => s.draw(seg(T, segT[i][0], segT[i][1], SLATE.ease.inOut)));
+    cards.forEach((c, i) => {
+      const a = drop[i];
+      c.pin.draw(seg(T, a - 0.1, a + 0.15));
+      c.card.draw(seg(T, a, a + 0.45));
+      c.title.draw(seg(T, a + 0.3, a + 0.6));
+      c.sub.draw(seg(T, a + 0.4, a + 0.7));
+      c.icon.draw(seg(T, a + 0.35, a + 0.75));
+    });
+    landed.set(t, 5.8);
+  }
+</script>
+</body>
+</html>

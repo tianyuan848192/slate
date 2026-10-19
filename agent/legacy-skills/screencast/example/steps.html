@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<link rel="stylesheet" href="/skills/screencast/style.css">
+<script src="/skills/screencast/components.js"></script>
+</head>
+<body>
+<script>
+  // 三步完成一项操作（约 8 秒）：顶部步骤条当标题 → ① 点选模板 → ② 推近表单、打字、打开开关 → ③ 拉回全景、点"发布"、弹出通知
+  // 示意界面：右上角标"示意界面"；做片时按用户产品的真实流程和字段改
+  const { seg, u: U, ease } = SLATE;
+  const st = SC.stage({ wall: 'mist' });
+  const steps = SC.chapter(st.hud, { items: ['选择模板', '填写信息', '一键发布'], done: 5.4 });
+  const fr = SC.frame(st.world, { kind: 'app', ...SC.fit({ top: steps.bottom, aspect: 1.75 }) });   // 不写窗口标题：推近时它会钻到步骤条底下
+  const pad = U * 3.2, bw = fr.bw, bh = fr.bh;
+
+  // 第 1 页：选模板
+  const pA = SC.group(fr);
+  SC.header(pA, { x: pad, y: U * 2.4, w: bw - pad * 2, title: '新建报名表', sub: '选一个模板开始，之后都可以改' });
+  const names = [['活动报名', 'calendar'], ['问卷调查', 'doc'], ['订单收集', 'card']];
+  const gap = U * 2.2, tw = (bw - pad * 2 - gap * 2) / 3, ty = U * 11.5, th = bh - ty - pad - U * 7.4;
+  const tpl = names.map(([n, ic], i) => {
+    const c = SC.card(pA, { x: pad + i * (tw + gap), y: ty, w: tw, h: th });
+    const tile = SC.group(c, { x: U * 2, y: U * 2, w: U * 5.2, h: U * 5.2 });
+    Object.assign(tile.el.style, { borderRadius: U * 1.2 + 'px', background: 'var(--sc-accent-soft)', color: 'var(--sc-accent)', display: 'flex', alignItems: 'center', justifyContent: 'center' });
+    tile.el.append(SC.icon(ic, U * 2.6));
+    SC.text(c, { x: U * 2, y: U * 8.6, text: n, size: U * 1.9, weight: 700, color: 'var(--ui-ink)' }).draw(1);
+    SC.skel(c, { x: U * 2, y: U * 12.6, w: tw - U * 4, lines: 2, seed: 11 + i });
+    // 模板缩略：几行"字段"占位
+    const pv0 = SC.group(c, { x: U * 2, y: U * 17.2, w: tw - U * 4, h: th - U * 19.2 });
+    Object.assign(pv0.el.style, { borderRadius: U * 0.9 + 'px', background: 'var(--ui-bg)', boxShadow: 'inset 0 0 0 1px var(--ui-line)' });
+    [0, 1, 2].forEach(k => SC.skel(pv0, { x: U * 1.4, y: U * (1.4 + k * 3.6), w: pv0.bw - U * 2.8, lines: 1, h: U * 2, seed: k }));
+    if (i === 0) SC.chip(c, { text: '推荐', tone: 'accent', x: tw - U * 6.6, y: U * 2.4 });
+    return c;
+  });
+  const next = SC.button(pA, { x: bw - pad - U * 12, y: bh - pad - U * 4.4, w: U * 12, h: U * 4.4, label: '下一步' });
+
+  // 第 2 页：填信息（左边表单，右边实时预览）
+  const pB = SC.group(fr);
+  SC.header(pB, { x: pad, y: U * 2.4, w: bw - pad * 2, title: '填写信息', sub: '这些内容会显示在报名页顶部' });
+  const col = SC.group(pB, { x: pad, y: U * 10, w: bw * 0.5, h: U * 34 });
+  const fw = col.bw;
+  const nameF = SC.field(col, { x: 0, y: U * 2.6, w: fw, label: '活动名称', placeholder: '给活动起个名字' });
+  SC.field(col, { x: 0, y: U * 11, w: fw * 0.62, label: '报名截止', icon: 'calendar', value: '10 月 30 日 18:00' });
+  SC.field(col, { x: fw * 0.62 + U * 1.6, y: U * 11, w: fw * 0.38 - U * 1.6, label: '人数上限', value: '200' });
+  SC.text(col, { x: 0, y: U * 18.6, text: '报名需要审核', size: U * 1.6, weight: 700, color: 'var(--ui-ink)' }).draw(1);
+  SC.text(col, { x: 0, y: U * 21.2, text: '审核通过后才会发送入场码', size: U * 1.35, color: 'var(--ui-muted)' }).draw(1);
+  const tg = SC.toggle(col, { x: fw - U * 4.4, y: U * 19.4 });
+  SC.text(col, { x: 0, y: U * 26, text: '收集哪些信息', size: U * 1.4, weight: 700, color: 'var(--ui-ink2)' }).draw(1);
+  let cx = 0;
+  ['姓名', '手机号', '公司', '职位'].forEach((n, i) => { const c = SC.chip(col, { text: n, tone: i < 3 ? 'accent' : 'muted', x: cx, y: U * 29.2 }); cx += c.offsetWidth + U * 1; });
+  const pv = SC.card(pB, { x: pad + bw * 0.5 + U * 3, y: U * 10, w: bw - pad * 2 - bw * 0.5 - U * 3, h: bh - U * 10 - pad - U * 7.4 });
+  SC.chip(pv, { text: '预览', tone: 'muted', x: U * 2, y: U * 2 });
+  const pvTitle = SC.text(pv, { x: U * 2, y: U * 6, text: '', size: U * 2.6, weight: 700, color: 'var(--ui-ink)' });
+  pvTitle.draw(1);
+  SC.skel(pv, { x: U * 2, y: U * 11, w: pv.w - U * 4, lines: 3, seed: 5 });
+  SC.button(pv, { x: U * 2, y: pv.h - U * 6.4, w: pv.w - U * 4, h: U * 4.2, label: '立即报名' });
+  SC.button(pB, { x: bw - pad - U * 12 - U * 13, y: bh - pad - U * 4.4, w: U * 12, h: U * 4.4, label: '保存草稿', kind: 'secondary' });
+  const pub = SC.button(pB, { x: bw - pad - U * 12, y: bh - pad - U * 4.4, w: U * 12, h: U * 4.4, label: '发布', icon: 'arrow' });
+  const ok = SC.toast(fr, { x: bw - U * 30, y: U * 2, w: U * 27, title: '已发布', text: '链接已复制' });
+  const tag = SC.mark(st.hud, { text: '示意界面' });
+
+  const cur = SC.cursor(st, { keys: [
+    { t: 0.8, at: [fr.x + fr.w * 0.72, fr.y + fr.h * 0.9] },
+    { t: 1.45, at: { el: tpl[0].el, fx: 0.55, fy: 0.62 }, click: true },
+    { t: 2.15, at: { el: next.el, fx: 0.6, fy: 0.6 }, click: true },
+    { t: 2.95, at: { el: nameF.el, fx: 0.75, fy: 0.6 }, click: true },
+    { t: 4.2, at: { el: tg.el, fx: 0.5, fy: 0.55 }, click: true },
+    { t: 4.75, at: { el: pub.el, fx: 0.62, fy: 0.62 }, click: true },
+    { t: 5.9, at: [fr.x + fr.w * 0.3, fr.y + fr.h * 0.84] },   // 点完移到空白处，不挡通知和预览
+  ] });
+  const [c0, c1, c2, c3, c4] = cur.clicks;
+  // 镜头：第 2 步推近表单和预览（1.22 倍，窗口仍左右居中），第 3 步点"发布"前拉回全景；top 让目标落在步骤条和字幕区之间
+  st.camera([{ t: 2.35, at: [col, pv], zoom: 1.22, dy: U * 2 }, { t: 4.5, zoom: 1, dur: 0.8 }], { top: steps.bottom });
+
+  function render(t) {
+    st.set(t);
+    fr.draw(SC.pop(t, 0.05));
+    steps.set(t, [0.3, 2.3, 4.85], seg(t, 0.15, 0.8));
+    tag.draw(seg(t, 0.6, 1.1));
+    // 第 1 步：选中模板（描边 + 轻微浮起）
+    const sel = seg(t, c0, c0 + 0.25);
+    tpl[0].el.style.boxShadow = sel > 0 ? `inset 0 0 0 ${U * 0.22}px ${SC.rgba(SC.C.accent, sel)}, 0 0 0 ${U * 0.45 * sel}px ${SC.rgba(SC.C.accent, 0.14 * sel)}` : '';
+    tpl.forEach((c, i) => c.draw(seg(t, 0.25 + i * 0.08, 0.85 + i * 0.08)));
+    next.press(SC.pulse(t, c1));
+    SC.swap(pA, pB, seg(t, 2.3, 2.8));
+    // 第 2 步：打字（预览同步更新）、打开开关
+    nameF.focus(seg(t, c2, c2 + 0.2) * (1 - seg(t, c3, c3 + 0.2)));
+    const typed = seg(t, 3.15, 3.8, ease.linear);
+    nameF.type('新品体验会', typed, t);
+    pvTitle.el.textContent = SLATE.typewriter('新品体验会', typed) || '未命名活动';
+    pvTitle.el.style.color = typed > 0 ? 'var(--ui-ink)' : 'var(--ui-muted)';
+    tg.set(seg(t, c3, c3 + 0.25));
+    // 第 3 步：发布 → 通知
+    pub.press(SC.pulse(t, c4));
+    ok.set(t, 5.05);
+    cur.set(t);
+  }
+</script>
+</body>
+</html>

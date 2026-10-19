@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<link rel="stylesheet" href="/skills/editorial/style.css">
+<script src="/skills/editorial/components.js"></script>
+</head>
+<body>
+<script>
+  // 架构图：一次网页请求经过的几站。点阵纸 + 幽灵态铺底，按旁白逐站上墨，请求沿线走；最后全部恢复成完整的图。8 秒
+  const { seg, u: U } = SLATE;
+  const st = ED.stage({ grid: 'dots' });
+  const w = st.world;
+  const h = ED.heading(w, { kicker: '架构 · 网站后端', text: '一次网页请求，要经过哪几站' });
+  const A = ED.area(h, { gap: 4 });
+  const P = A.portrait;
+  // 节点位置用区域内的比例坐标：横屏从左往右，竖屏从上往下
+  const at = P
+    ? { user: [0.5, 0.06], cdn: [0.5, 0.25], lb: [0.5, 0.46], a: [0.26, 0.67], b: [0.74, 0.67], db: [0.5, 0.9] }
+    : { user: [0.085, 0.5], cdn: [0.29, 0.5], lb: [0.5, 0.5], a: [0.71, 0.2], b: [0.71, 0.8], db: [0.915, 0.5] };
+  const nw = P ? U * 38 : U * 25, nh = P ? U * 11 : U * 15;
+  // 横屏五列，节点窄：图标放在标题上方（align: 'center'）
+  const g = ED.graph(w, { ...A, nodeW: nw, nodeH: nh, align: P ? 'left' : 'center',
+    nodes: [
+      { id: 'user', at: at.user, title: '浏览器', sub: '发出请求', icon: 'user', kind: 'external' },
+      { id: 'cdn', at: at.cdn, title: 'CDN', sub: '就近返回静态文件', icon: 'globe' },
+      { id: 'lb', at: at.lb, title: '负载均衡', sub: '分给空闲的服务器', icon: 'route' },
+      { id: 'a', at: at.a, w: P ? U * 36 : nw, h: P ? nh : U * 12, title: '应用服务 A', icon: 'server' },
+      { id: 'b', at: at.b, w: P ? U * 36 : nw, h: P ? nh : U * 12, title: '应用服务 B', icon: 'server' },
+      { id: 'db', at: at.db, title: '数据库', sub: '订单和账户', icon: 'db', kind: 'store' },
+    ],
+    links: [
+      { from: 'user', to: 'cdn' }, { from: 'cdn', to: 'lb' },
+      { from: 'lb', to: 'a' }, { from: 'lb', to: 'b' },
+      { from: 'a', to: 'db' }, { from: 'b', to: 'db' },
+    ],
+    zones: [{ id: 'vpc', ids: ['lb', 'a', 'b', 'db'], label: '云上私有网络', pad: U * 2.6 }],
+  });
+  const plan = [
+    [1.0, 'user'],
+    [1.7, 'user>cdn', 'cdn'],
+    [2.5, 'cdn>lb', 'lb', 'vpc'],
+    [3.3, 'lb>a', 'lb>b', 'a', 'b'],
+    [4.1, 'a>db', 'b>db', 'db'],
+  ];
+
+  function render(t) {
+    st.set(t);
+    h.draw(seg(t, 0, 0.9));
+    g.draw(seg(t, 0.3, 1.1));
+    g.set(t, plan, { release: 5.4 });
+  }
+</script>
+</body>
+</html>

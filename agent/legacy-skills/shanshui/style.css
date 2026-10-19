@@ -1,0 +1,23 @@
+/* 水墨山水：宣纸、墨分五色、留白、朱砂只给印章 */
+/* 题字：马善政毛笔楷书（Ma Shan Zheng，OFL-1.1）；题款、标题：思源宋体 SemiBold（Noto Serif SC，OFL-1.1）。字体文件和许可证全文在 /assets/fonts/（MaShanZheng-OFL.txt、NotoSerifSC-OFL.txt） */
+@font-face { font-family: "Ma Shan Zheng"; font-style: normal; font-weight: 400; font-display: block;
+  src: url(/assets/fonts/MaShanZheng-Regular.woff2) format("woff2"); }
+@font-face { font-family: "Noto Serif SC"; font-style: normal; font-weight: 600; font-display: block;
+  src: url(/assets/fonts/NotoSerifSC-SemiBold.woff2) format("woff2"); }
+:root {
+  --ss-paper: #F2ECDE;
+  --ss-ink: #1E1C1A;
+  /* 字幕：浅纸色底、墨色宋体，压在深色山体上也清楚 */
+  --slate-caption-bg: rgba(247, 242, 231, 0.9);
+  --slate-caption-color: #1E1C1A;
+  --slate-caption-font: "Noto Serif SC", "Noto Sans CJK SC", serif;
+  --slate-caption-weight: 600;
+}
+html, body { background: var(--ss-paper); color: var(--ss-ink); font-family: "Noto Sans CJK SC", "Noto Sans SC", sans-serif; }
+.ss-root { position: absolute; left: 0; top: 0; width: 100%; height: 100%; overflow: hidden; background: var(--ss-paper); }
+.ss-paper, .ss-grain, .ss-back, .ss-svg, .ss-fx { position: absolute; left: 0; top: 0; }
+.ss-back, .ss-fx { width: 100%; height: 100%; }
+.ss-layer { position: absolute; will-change: transform; }
+.ss-fxc { position: absolute; left: 0; top: 0; }
+.ss-grain { pointer-events: none; }
+.slate-caption { border: 1px solid rgba(30, 28, 26, 0.28); box-shadow: 0 0.3vmin 1.2vmin rgba(30, 28, 26, 0.12); letter-spacing: 0.06em; }

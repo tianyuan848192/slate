@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="zh">
+<head>
+<meta charset="UTF-8" />
+<title>提示词打字</title>
+<link rel="stylesheet" href="/assets/fonts/lib/noto-serif-sc.css" />
+<link rel="stylesheet" href="/assets/fonts/lib/jetbrains-mono.css" />
+<style>
+  html, body { margin: 0; width: 100%; height: 100%; overflow: hidden; background: #f4f6f9; }
+  #root { position: absolute; inset: 0; background: radial-gradient(ellipse at 50% 40%, #ffffff 0%, #f4f6f9 70%); }
+  .label {
+    position: absolute; left: 192px; top: 300px;
+    font: 600 34px "Noto Serif SC", serif; color: #6b7280; letter-spacing: 0.1em;
+  }
+  .card {
+    position: absolute; left: 192px; top: 370px; width: 1536px; height: 250px;
+    box-sizing: border-box; padding: 0 64px;
+    display: flex; align-items: center;
+    border: 2px solid #dfe4ec; border-radius: 28px; background: #ffffff;
+    box-shadow: 0 30px 80px rgba(20, 22, 27, 0.1);
+  }
+  .prompt {
+    font: 600 76px "Noto Serif SC", serif; color: #14161b; line-height: 1.45;
+  }
+  .prompt .kit-tp-glyph { font-family: "JetBrains Mono", monospace; }
+</style>
+</head>
+<body>
+<div id="root"></div>
+<script src="/skills/kit-motion/kit.js"></script>
+<script src="/skills/kit-motion/typed-prompt.js"></script>
+<script>
+  SLATE.waits = SLATE.waits || [];
+  SLATE.waits.push(document.fonts.load('600 76px "Noto Serif SC"', '帮我总结第三季度营收报告应'));
+  SLATE.waits.push(document.fonts.load('600 76px "JetBrains Mono"', '>'));
+
+  const root = document.getElementById('root');
+  const stage = KIT.stage(root, 1920, 1080);
+  stage.innerHTML = `
+    <div class="label">向助手提问</div>
+    <div class="card"><div class="prompt">帮我总结第三季度营收报告</div></div>`;
+  KIT.theme(stage, { '--kit-accent': '#7c3aed' });
+
+  const tl = SLATE.timeline();
+  const dur = SLATE.duration || 4;
+  tl.tween(stage.querySelector('.label'), 'opacity', [0, 1], { at: 0, dur: 0.5, ease: 'outCubic' });
+  KIT.motions.typedPrompt(tl, stage.querySelector('.prompt'), {
+    at: 0, dur,
+    cadence: 'human',
+    correction: '应收报告'
+  });
+  window.render = t => tl.at(t);
+</script>
+</body>
+</html>

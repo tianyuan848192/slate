@@ -1,0 +1,22 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Agent 替用户做的决定（生成页第一步展示）",
+  "type": "object",
+  "required": ["title", "kind", "audience", "ratio", "duration", "resolution", "fps", "skills", "voice", "subtitles"],
+  "additionalProperties": false,
+  "properties": {
+    "title": {"type": "string", "maxLength": 40},
+    "kind": {"enum": ["知识科普", "原理讲解", "教程步骤", "清单盘点", "故事案例", "数据故事", "产品介绍", "新品发布", "功能上新", "品牌故事", "促销活动", "广告宣传", "产品演示"], "description": "写法（见 agent/skills/genres.json）；广告宣传、产品演示是旧任务的值"},
+    "audience": {"type": "string", "maxLength": 80},
+    "summary": {"type": "string", "maxLength": 300},
+    "ratio": {"enum": ["16:9", "9:16", "1:1", "4:5"]},
+    "duration": {"type": "number", "minimum": 10, "maximum": 36000},
+    "resolution": {"enum": ["720p", "1080p"]},
+    "fps": {"enum": [30, 60]},
+    "skills": {"type": "array", "items": {"type": "string", "maxLength": 40}, "maxItems": 4},
+    "voice": {"type": "string", "maxLength": 40},
+    "subtitles": {"type": "boolean"},
+    "bgm": {"type": ["string", "null"], "maxLength": 40},
+    "decided": {"type": "array", "items": {"type": "string", "maxLength": 20}, "description": "哪些项是 Agent 决定的（其余是用户指定的）"}
+  }
+}

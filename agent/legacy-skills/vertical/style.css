@@ -1,0 +1,53 @@
+/* 竖屏快剪：配色、字体和基础版式（按 9:16 设计）。1vmin = 短边的 1% = SLATE.u */
+:root {
+  --vt-bg: #1D1F2B;
+  --vt-ink: #FFFFFF;
+  --vt-coral: #F25F5C;
+  --vt-yellow: #FFE066;
+  --vt-indigo: #5B5BD6;
+  --vt-dark: #14151E;
+  --vt-shadow: #0B0C12;
+  /* 字幕做成贴纸：黄底黑字，粗一点 */
+  --slate-caption-bg: #FFE066;
+  --slate-caption-color: #14151E;
+  --slate-caption-weight: 900;
+  --slate-caption-font: "Noto Sans CJK SC", sans-serif;
+}
+html, body {
+  background: radial-gradient(120% 70% at 50% 30%, #2A2D40 0%, var(--vt-bg) 60%, #15161F 100%);
+  color: var(--vt-ink); font-family: "Noto Sans CJK SC", sans-serif;
+}
+#stage, .vt-stage { position: absolute; inset: 0; overflow: hidden; }
+.vt-screen { position: absolute; inset: 0; transform-origin: 50% 40%; }
+/* 运行时画的字幕也做成贴纸：字号放大到短边的 5.2%，两行也放得进字幕区 */
+.slate-caption { font-size: 5.2vmin; box-shadow: 0.2em 0.22em 0 var(--vt-shadow); transform: rotate(-1.5deg); }
+/* 钩子大字：最粗的字重，硬阴影 */
+.vt-hook { position: absolute; white-space: nowrap; font-weight: 900; letter-spacing: -0.02em; }
+.vt-hook-line { display: block; text-shadow: 0.05em 0.06em 0 var(--vt-shadow); }
+.vt-mark { display: inline-block; padding: 0 0.12em; margin: 0 0.04em; border-radius: 0.08em; transform: rotate(-2deg);
+  text-shadow: none; box-shadow: 0.05em 0.06em 0 var(--vt-shadow); line-height: 1.05; }
+/* 贴纸：白边 + 硬阴影 */
+.vt-sticker { position: absolute; display: inline-flex; align-items: center; gap: 0.3em; white-space: nowrap; font-weight: 900;
+  padding: 0.28em 0.6em; border-radius: 0.5em; border: 0.14em solid #fff; box-shadow: 0.12em 0.14em 0 var(--vt-shadow); line-height: 1.1; }
+/* 快切卡片 */
+.vt-card { position: absolute; overflow: hidden; box-shadow: 0 0 0 0.6vmin #fff inset, 1.2vmin 1.4vmin 0 var(--vt-shadow); }
+.vt-card-icon { position: absolute; left: 50%; border-radius: 50%; background: #FFE066; display: flex; align-items: center; justify-content: center;
+  box-shadow: 0.8vmin 0.9vmin 0 rgba(11, 12, 18, .55); }
+.vt-card-value { position: absolute; left: 50%; white-space: nowrap; font-weight: 900; line-height: 1; letter-spacing: -0.03em;
+  text-shadow: 0.05em 0.06em 0 rgba(11, 12, 18, .55); }
+.vt-card-label { position: absolute; left: 0; right: 0; text-align: center; font-weight: 900; white-space: nowrap; }
+/* 产品徽章 */
+.vt-badge { position: absolute; border-radius: 50%; display: flex; align-items: center; justify-content: center;
+  border: 1.2vmin solid #fff; box-shadow: 1.4vmin 1.6vmin 0 var(--vt-shadow); box-sizing: border-box; }
+.vt-badge-img { width: 80%; height: 80%; object-fit: contain; }
+/* 行动号召按钮 */
+.vt-cta-wrap { position: absolute; }
+.vt-cta { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; gap: 0.4em; background: #FFE066;
+  color: #14151E; font-weight: 900; white-space: nowrap; box-shadow: 0.14em 0.16em 0 var(--vt-shadow); border: 0.12em solid #fff; }
+.vt-cta-ripple { position: absolute; inset: 0; border: 0.6vmin solid #FFE066; }
+/* 顶部进度条 */
+.vt-progress { position: absolute; display: flex; }
+.vt-progress-seg { flex: 1; overflow: hidden; background: rgba(255, 255, 255, .25); }
+.vt-progress-fill { width: 100%; height: 100%; transform-origin: left center; }
+.vt-wave { position: absolute; }
+.vt-wave-bar { position: absolute; top: 50%; transform: translateY(-50%); }

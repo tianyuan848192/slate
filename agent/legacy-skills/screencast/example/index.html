@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<link rel="stylesheet" href="/skills/screencast/style.css">
+<script src="/skills/screencast/components.js"></script>
+</head>
+<body>
+<script>
+  // 新功能发布开场（约 7 秒）：标题 → 窗口升起 → 光标点进输入框、打字 → 点"生成"前推近 → 图表长出、摘要流出
+  // 没有用户截图，界面是组件搭的示意稿，所以右上角标"示意界面"；数字是占位，做片时换成用户给的数据
+  const { seg, u: U, ease } = SLATE;
+  const st = SC.stage({ wall: 'mist' });
+  const hd = SC.heading(st.hud, { kicker: '新功能', text: '一句话生成报表' });
+  const fr = SC.frame(st.world, { kind: 'browser', ...SC.fit({ top: hd.bottom, aspect: 1.72 }), url: 'app.example.com/reports' });
+  const side = SC.sidebar(fr, { brand: '示例工作台', active: 1, foot: '林晓', items: [
+    { icon: 'home', label: '总览' }, { icon: 'chart', label: '报表' }, { icon: 'table', label: '数据源' }, { icon: 'users', label: '团队' }, { icon: 'settings', label: '设置' },
+  ] });
+  const x0 = side.w + U * 3, mw = fr.bw - x0 - U * 3;
+  SC.header(fr, { x: x0, y: U * 2.4, w: mw, title: '智能报表', sub: '用一句话描述想看的数据', actions: [{ label: '导出', kind: 'secondary', icon: 'download' }] });
+  const bw0 = U * 11, fw = mw - bw0 - U * 1.2;
+  const input = SC.field(fr, { x: x0, y: U * 10.4, w: fw, h: U * 5.2, icon: 'spark', placeholder: '例如：近 30 天各渠道的销售额' });
+  const go = SC.button(fr, { x: x0 + fw + U * 1.2, y: U * 10.4, w: bw0, h: U * 5.2, label: '生成', icon: 'spark' });
+  const cy0 = U * 18.4, chh = fr.bh - cy0 - U * 2.6;
+  const res = SC.card(fr, { x: x0, y: cy0, w: mw, h: chh });
+  // 生成前：空状态（占位条）；生成后：图表 + 摘要。两层叠在卡片里，用 SC.swap 切换
+  const empty = SC.group(res, { w: mw, h: chh });
+  SC.skel(empty, { x: U * 2.4, y: U * 2.6, w: mw * 0.32, lines: 2, h: U * 1.3 });
+  SC.skel(empty, { x: U * 2.4, y: chh * 0.42, w: mw - U * 4.8, lines: 4, h: U * 1.1, gap: U * 2.2, seed: 3 });
+  const full = SC.group(res, { w: mw, h: chh });
+  SC.text(full, { x: U * 2.4, y: U * 2, text: '近 30 天各渠道销售额（万元）', size: U * 1.6, weight: 700, color: 'var(--ui-ink)' }).draw(1);
+  const cw = mw * 0.6;
+  const ch = SC.chart(full, { kind: 'bar', x: U * 1.2, y: U * 5.4, w: cw, h: chh - U * 7, data: [42.6, 58.3, 36.1, 71.8, 24.5], labels: ['官网', '小程序', '门店', '直播', '分销'], hi: 3, max: 80, unit: ' 万', digits: 1 });
+  SC.chip(full, { text: 'AI 摘要', tone: 'accent', x: cw + U * 3.4, y: U * 5.8 });
+  const sum = SC.stream(full, { x: cw + U * 3.4, y: U * 9.4, w: mw - cw - U * 5.8, text: '直播渠道增长最快，环比提升 38%；分销渠道仍有空间，建议下月加大投放。' });
+  const tag = SC.mark(st.hud, { text: '示意界面' });
+
+  const cur = SC.cursor(st, { keys: [
+    { t: 0.9, at: [fr.x + fr.w * 0.8, fr.y + fr.h * 0.9] },
+    { t: 1.75, at: { el: input.el, fx: 0.56, fy: 0.6 }, click: true },   // 点在文字将要出现的位置右侧，不挡打字
+    { t: 3.7, at: { el: go.el, fx: 0.62, fy: 0.62 }, click: true },
+    { t: 4.7, at: { el: res.el, fx: 0.97, fy: 0.9 } },   // 点完移开，不挡住要看的内容
+  ] });
+  // 点"生成"前 0.3 秒开始推近：目标是输入框 + 结果卡片的并集（1.3 倍，0.9 秒到位），之后缓慢继续推；
+  // dx 往左挪半个侧栏宽，让推近后的窗口在画面里左右居中
+  st.camera([{ t: 3.4, at: [input, res], zoom: 1.3, dx: -side.w / 2 }]);
+
+  function render(t) {
+    st.set(t);
+    hd.draw(seg(t, 0.25, 1.25)); hd.out(seg(t, 3.3, 3.65));
+    fr.draw(SC.pop(t, 0.1));
+    tag.draw(seg(t, 0.6, 1.1));
+    side.select(1, 1);
+    input.focus(seg(t, cur.clicks[0], cur.clicks[0] + 0.2));
+    input.type('近 30 天各渠道的销售额', seg(t, 2.0, 3.35, ease.linear), t);
+    go.press(SC.pulse(t, cur.clicks[1]));
+    go.hover(seg(t, 3.45, 3.7) * (1 - seg(t, 4.1, 4.4)));
+    SC.swap(empty, full, seg(t, 3.95, 4.35));
+    ch.draw(seg(t, 4.05, 5.2, ease.linear));
+    ch.mark(3, seg(t, 5.3, 5.7));
+    sum.set(seg(t, 4.6, 6.1, ease.linear));
+    cur.set(t);
+  }
+</script>
+</body>
+</html>

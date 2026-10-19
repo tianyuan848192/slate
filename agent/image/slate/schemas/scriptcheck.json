@@ -1,0 +1,13 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "剧本和参考资料的核对结果（slate-publish script 生成）",
+  "type": "object",
+  "required": ["ok", "rounds", "issues"],
+  "properties": {
+    "ok": {"type": "boolean"}, "rounds": {"type": "integer", "minimum": 1, "maximum": 10}, "strict": {"type": ["boolean", "null"]},
+    "blocking": {"type": "integer"},
+    "issues": {"type": "array", "maxItems": 30, "items": {"type": "object", "properties": {
+      "kind": {"enum": ["contradiction", "unsupported", "term"]}, "text": {"type": "string", "maxLength": 300},
+      "ref": {"type": "string", "maxLength": 300}, "suggestion": {"type": "string", "maxLength": 300}}}}
+  }
+}

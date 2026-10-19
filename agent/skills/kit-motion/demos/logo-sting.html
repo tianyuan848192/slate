@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<link rel="stylesheet" href="/assets/fonts/lib/noto-serif-sc.css" />
+<style>
+  html, body { margin: 0; width: 100%; height: 100%; overflow: hidden; background: #0b0c0e; }
+  #scene {
+    position: absolute; inset: 0; overflow: hidden;
+    display: flex; align-items: center; justify-content: center;
+    background: #0b0c0e;
+  }
+  #mark {
+    color: #f8fafc; font-family: "Noto Serif SC", serif; font-weight: 900;
+    line-height: 1; letter-spacing: 0.04em; white-space: nowrap;
+    transform-origin: 50% 50%;
+  }
+</style>
+</head>
+<body>
+<div id="scene"><div id="mark">星火实验室</div></div>
+<script src="/skills/kit-motion/kit.js"></script>
+<script src="/skills/kit-motion/logo-sting.js"></script>
+<script>
+  const mark = document.getElementById("mark");
+  mark.style.fontSize = 13 * SLATE.u + "px";
+  SLATE.waits = SLATE.waits || [];
+  SLATE.waits.push(document.fonts.load('900 60px "Noto Serif SC"'));
+  const tl = SLATE.timeline();
+  KIT.motions.logoSting(tl, mark, { at: 0.2, accent: "violet" });
+  window.render = t => tl.at(t);
+</script>
+</body>
+</html>

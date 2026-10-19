@@ -1,0 +1,9 @@
+<!doctype html><html><head><meta charset="utf-8">
+<style>html,body{margin:0;background:radial-gradient(ellipse at 30% 70%,#5b6f86 0%,#2f3a4a 55%,#161b24 100%)} #main{position:absolute;inset:0}</style></head>
+<body><div id="main"></div>
+<script src="/skills/kit-motion/kit.js"></script>
+<script src="/skills/kit-shots/hw-text-cloud/shot.js"></script>
+<script>
+  const tl = SLATE.timeline().add(KIT.shots["hw-text-cloud"](document.getElementById("main"), { dur: SLATE.duration }), 0);
+  window.render = t => tl.at(t);
+</script></body></html>

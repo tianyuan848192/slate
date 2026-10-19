@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<link rel="stylesheet" href="/skills/datastory/style.css">
+<script src="/skills/datastory/components.js"></script>
+</head>
+<body>
+<div class="ds-title" id="title">2025 年营收逐季走高</div>
+<div class="ds-sub" id="sub">单位：亿元</div>
+<svg class="ds-canvas" id="c"></svg>
+<script>
+  // 数据叙事示例（7.5 秒）：四个季度的柱子依次长出来 → 高亮第四季度并和第一季度对比 → 右侧放大关键数字并停留
+  // 示例数据：实际做片时只用用户提供或有出处的数字，并在出处脚注里写清来源
+  const { seg, ease, u: U, width: W, height: H } = SLATE;  // U = 短边的 1%
+  const title = document.getElementById('title'), sub = document.getElementById('sub');
+  title.style.fontSize = U * 4.6 + 'px';
+  sub.style.fontSize = U * 2.2 + 'px';
+  sub.style.top = `calc(8% + ${U * 6.6}px)`;
+  const c = document.getElementById('c');
+
+  const data = [
+    { label: '第一季度', value: 2.1 },
+    { label: '第二季度', value: 2.6 },
+    { label: '第三季度', value: 3.4 },
+    { label: '第四季度', value: 4.6 },
+  ];
+  const chart = DS.bars(c, { x: W * 0.1, y: H * 0.3, w: W * 0.46, h: H * 0.42, data, max: 5, ticks: [1, 2, 3, 4, 5], digits: 1 });
+  const cmp = DS.compare(c, { from: chart.top(0), to: chart.top(3), text: '全年翻了 2.2 倍' });
+  const big = DS.stat(c, { x: W * 0.63, y: H * 0.33, value: 4.6, digits: 1, unit: '亿元', label: '第四季度营收', delta: '创历史新高' });
+  const src = DS.source(c, { text: '来源：用户提供的 2025 年经营数据' });
+
+  function render(t) {
+    const h = seg(t, 0, 0.6);
+    title.style.opacity = h; sub.style.opacity = seg(t, 0.2, 0.8);
+    title.style.transform = `translateY(${(1 - h) * U * 1.5}px)`;
+    src.draw(seg(t, 0.5, 1.0));
+    chart.draw(seg(t, 0.4, 3.0, ease.linear));   // 柱子跟着旁白一根根长出来
+    chart.focus(3, seg(t, 3.1, 3.6));             // 只突出一个对比：第四季度 vs 第一季度
+    cmp.draw(seg(t, 3.4, 4.3));
+    big.draw(seg(t, 4.2, 5.4));                   // 关键数字放大，停留到镜头结束（2 秒以上）
+  }
+</script>
+</body>
+</html>

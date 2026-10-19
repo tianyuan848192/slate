@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="zh">
+<head>
+<meta charset="UTF-8">
+<link rel="stylesheet" href="/assets/fonts/lib/noto-sans-jp.css">
+<style>
+  html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#111318;}
+  #root{position:absolute;inset:0;overflow:hidden;font-family:"Noto Sans JP",system-ui,sans-serif;}
+  .card{position:absolute;left:50%;top:14%;width:62%;height:56%;margin-left:-31%;box-sizing:border-box;
+    background:#fff;border-radius:2vmin;box-shadow:0 3vmin 8vmin rgba(0,0,0,.45);
+    display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5vmin;color:#1c1c1e;}
+  .card h1{margin:0;font-size:7vmin;font-weight:700;letter-spacing:.02em;}
+  .card p{margin:-2vmin 0 0;font-size:4vmin;color:#6e6e73;}
+  .btn{padding:2vmin 5vmin;border-radius:1.6vmin;border:2px solid rgba(0,0,0,.12);background:#f2f4f7;
+    color:#0f172a;font-size:5vmin;font-weight:700;line-height:1;box-shadow:0 .4vmin 1.2vmin rgba(0,0,0,.1);}
+</style>
+</head>
+<body>
+<div id="root">
+  <div class="card">
+    <h1>一键生成宣传视频</h1>
+    <p>选好素材，剩下的交给我们</p>
+    <div class="btn" id="go">立即生成</div>
+  </div>
+</div>
+<script src="/skills/kit-motion/kit.js"></script>
+<script src="/skills/kit-motion/oversized-cursor.js"></script>
+<script>
+  SLATE.waits = SLATE.waits || [];
+  SLATE.waits.push(document.fonts.load('700 60px "Noto Sans JP"'));
+  const root = document.getElementById('root');
+  const tl = SLATE.timeline();
+  KIT.motions.oversizedCursor(tl, root.querySelector('#go'), { at: 0.2, dur: Math.max(1.5, (SLATE.duration || 3) - 0.3) });
+  window.render = t => tl.at(t);
+</script>
+</body>
+</html>

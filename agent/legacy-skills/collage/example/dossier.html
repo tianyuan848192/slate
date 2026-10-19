@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<link rel="stylesheet" href="/skills/collage/style.css">
+<script src="/skills/collage/components.js"></script>
+</head>
+<body>
+<script>
+  // 案卷变体（牛皮纸）做辟谣：左边是网传说法——划掉、盖章；右边是真相卡——黑条一条条揭开，露出结论
+  // 一支片只用一种底纸：用牛皮纸就整片都用牛皮纸
+  const { seg, u: U, width: W, height: H } = SLATE;
+  const st = CL.stage({ paper: 'kraft', push: 0.035, drift: [U * 2, 0], punch: [2.69] });
+  const w = st.world;
+  const h = CL.heading(w, { kicker: '辟谣', text: '手机充一整夜会爆炸？' });
+  const box = st.area({ top: h.bottom + U * 2 });
+
+  // 左：网传说法
+  const claim = CL.tornCard(w, { x: box.x + U, y: box.y + U * 2, w: U * 72.2, h: U * 40.7, tone: 'white', rotate: -2, seed: 41 });
+  const cx0 = claim.x + U * 4.1;
+  const tag = CL.text(claim.inner, { x: cx0, y: claim.y + U * 5.7, text: '网传说法', size: U * 2.8, weight: 700, color: CL.C.muted });
+  const qs = U * 5.8;
+  const quote = CL.text(claim.inner, { x: cx0, y: claim.y + U * 16.2, lines: ['手机充电一整夜，', '电池迟早会爆炸'], font: 'serif', size: qs, lh: 1.3 });
+  const cross = [0, 1].map(i => CL.strike(claim.inner, { x: cx0, y: claim.y + U * 16.2 + i * qs * 1.3 - qs * 0.62, w: qs * (i ? 7.1 : 8.1), h: qs * 0.4, seed: 70 + i }));
+  const verdict = CL.stamp(claim.inner, { x: claim.x + claim.w - U * 18.5, y: claim.y + U * 32.9, text: '说法夸大', size: U * 4.2, rotate: -7, seed: 12 });
+
+  // 右：真相卡（黑条盖着结论，依次揭开）+ 占位插画
+  const truth = CL.tornCard(w, { x: box.x + box.w - U * 73.1, y: box.y + U * 3, w: U * 73.1, h: U * 46.3, tone: 'cream', rotate: 1.5, from: 'right', seed: 42 });
+  const tx0 = truth.x + U * 4.1;
+  const label = CL.kicker(truth.inner, { x: tx0, y: truth.y + U * 8.1, text: '真相', size: U * 3 });
+  const facts = ['充满后会自动停充', '用合格的充电器'];
+  const fs = U * 4.4;
+  const mark = CL.highlight(truth.inner, { x: tx0 + fs * 4.1, y: truth.y + U * 18.5 - fs * 0.78, w: fs * 4.1, h: fs * 0.9, seed: 3 });
+  const lines = facts.map((s, i) => CL.text(truth.inner, { x: tx0, y: truth.y + U * 18.5 + i * fs * 2.0, text: s, size: fs, weight: 700 }));
+  const bars = facts.map((s, i) => CL.redact(truth.inner, { x: tx0, y: truth.y + U * 18.5 + i * fs * 2.0 - fs * 0.9, w: fs * s.length * 1.02, h: fs * 1.05, seed: 90 + i }));
+  const phone = CL.cutout(truth.inner, { x: truth.x + truth.w - U * 29.6, y: truth.y + U * 7.4, w: U * 25, h: U * 31.5, art: 'phone', rotate: 4, seed: 5 });
+  const tp = CL.tape(w, { x: truth.x + truth.w / 2, y: truth.y + U * 0.5, w: U * 13, angle: 3, seed: 8 });
+
+  function render(t) {
+    const T = CL.step(t);
+    st.set(t);
+    h.draw(seg(T, 0.2, 1.2));
+    claim.draw(seg(T, 0.4, 0.9));
+    tag.draw(seg(T, 0.8, 1.1));
+    quote.draw(seg(T, 0.9, 1.3));
+    cross[0].draw(seg(T, 1.9, 2.3)); cross[1].draw(seg(T, 2.1, 2.5));
+    verdict.set(t, 2.6);
+    truth.draw(seg(T, 3.0, 3.5));
+    tp.draw(seg(T, 3.5, 3.7));
+    label.draw(seg(T, 3.3, 3.6));
+    lines.forEach(l => l.draw(seg(T, 3.2, 3.4)));
+    phone.draw(seg(T, 3.4, 3.8));
+    bars[0].draw(seg(T, 3.8, 4.1));
+    bars[1].draw(seg(T, 4.3, 4.6));
+    mark.draw(seg(T, 5.2, 5.6));
+  }
+</script>
+</body>
+</html>

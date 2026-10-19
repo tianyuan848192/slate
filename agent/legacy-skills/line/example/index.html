@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<link rel="stylesheet" href="/skills/line/style.css">
+<script src="/skills/line/components.js"></script>
+</head>
+<body>
+<div class="ln-mark" id="mark">01　灵感</div>
+<svg class="ln-canvas" id="c"></svg>
+<script>
+  // 极简线条示例（7 秒）：一根线从左边画进来 → 轻轻起伏 → 升起变成灯泡 → 圆点落进灯泡里亮起来 → 细字标题
+  const { seg, ease, u: U, width: W, height: H } = SLATE;  // U = 短边的 1%
+  const mark = document.getElementById('mark');
+  mark.style.fontSize = U * 1.8 + 'px';
+  const c = document.getElementById('c');
+
+  const base = H * 0.62, size = U * 12.5;                   // 基线高度和灯泡大小
+  const flat = LN.shape('flat', { y: base });
+  const wave = LN.shape('wave', { y: base, amp: U * 1.6, len: U * 30 });
+  const bulb = LN.shape('bulb', { cx: W / 2, y: base, size });
+  const ln = LN.line(c, { shape: flat });
+  const dot = LN.dot(c, { glowR: U * 11 });
+  const center = [W / 2, base - size * 1.85];               // 灯泡玻璃球的中心
+  const title = LN.title(document.body, { text: "灵感，从一根线开始", x: W / 2, y: base + U * 6, size: U * 3.6 });
+
+  function render(t) {
+    // 形状：0～2 秒是直线，1.8～2.4 秒轻轻起伏，2.4～4 秒升起成灯泡
+    if (t < 2.4) ln.morph(flat, wave, Math.sin(Math.PI * seg(t, 1.8, 3.0, ease.linear)));
+    else ln.morph(wave, bulb, seg(t, 2.4, 4.0, ease.inOut));
+    const drawn = seg(t, 0.1, 1.8, ease.inOut);
+    ln.draw(drawn);
+    // 圆点：领着线往右走，走到一半（画面正中）停下，之后一直骑在线的这个位置上跟着变形；
+    // 灯泡成形后落进玻璃球中心，亮起来
+    dot.between(ln.pointAt(Math.min(drawn, 0.5)), center, seg(t, 4.0, 4.7));
+    dot.size(1 + 0.5 * seg(t, 4.3, 4.9));
+    dot.glow(seg(t, 4.4, 5.6) * (1 + 0.04 * Math.sin(t * 3)));
+    title.draw(seg(t, 4.8, 6.0));
+    mark.style.opacity = seg(t, 0.3, 1.2);
+  }
+</script>
+</body>
+</html>

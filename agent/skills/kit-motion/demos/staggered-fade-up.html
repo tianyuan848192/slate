@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="zh">
+<head>
+<meta charset="UTF-8" />
+<link rel="stylesheet" href="/assets/fonts/lib/noto-serif-sc.css" />
+<style>
+  html, body { margin: 0; width: 100%; height: 100%; overflow: hidden; background: #f5f5f4; }
+  #root { position: absolute; inset: 0; }
+  .wrap {
+    position: absolute; left: 0; top: 0; width: 1920px; height: 860px;
+    display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 48px;
+  }
+  .label {
+    font-family: "Noto Serif SC", serif; font-size: 48px; font-weight: 700;
+    letter-spacing: 0.3em; color: #71717a;
+  }
+  .title {
+    font-family: "Noto Serif SC", serif; font-weight: 900; color: #18181b;
+    font-size: 128px; line-height: 1.15; letter-spacing: -0.02em;
+    display: flex; flex-wrap: wrap; justify-content: center; gap: 20px 28px; max-width: 1500px;
+  }
+  .title span { display: inline-block; }
+</style>
+</head>
+<body>
+<div id="root"></div>
+<script src="/skills/kit-motion/kit.js"></script>
+<script src="/skills/kit-motion/staggered-fade-up.js"></script>
+<script>
+  SLATE.waits = SLATE.waits || [];
+  SLATE.waits.push(document.fonts.load('900 128px "Noto Serif SC"'), document.fonts.load('700 48px "Noto Serif SC"'));
+
+  const stage = KIT.stage(document.getElementById('root'), 1920, 1080);
+  stage.innerHTML = `
+    <div class="wrap">
+      <div class="label">逐 词 浮 现</div>
+      <div class="title"><span>好的动效</span><span>会讲故事</span><span>一个词</span><span>接着</span><span>一个词</span></div>
+    </div>`;
+
+  const tl = SLATE.timeline();
+  KIT.motions.staggeredFadeUp(tl, stage.querySelector('.label'), { at: 0.1, split: 'none', wordDur: 0.4 });
+  KIT.motions.staggeredFadeUp(tl, stage.querySelector('.title'), { at: 0.4 });
+  tl.set(stage.querySelector('.wrap'), { opacity: 1 }, 5);
+  window.render = t => tl.at(t);
+</script>
+</body>
+</html>

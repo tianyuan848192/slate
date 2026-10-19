@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<title>句中换词滚动</title>
+<link rel="stylesheet" href="/assets/fonts/lib/noto-serif-sc.css" />
+<style>
+  *{margin:0;padding:0;box-sizing:border-box;}
+  html,body{width:100%;height:100%;overflow:hidden;background:#0b0c0e;}
+  #root{position:absolute;inset:0;overflow:hidden;
+    background:radial-gradient(ellipse at 50% 44%, #2a2638 0%, #0b0c0e 70%);}
+  .card{position:absolute;left:9%;width:82%;top:29%;height:42%;
+    display:flex;align-items:center;justify-content:center;
+    border:1px solid rgba(52,58,70,.74);border-radius:3vmin;
+    background:rgba(21,24,30,.76);box-shadow:0 4vh 10vh rgba(11,12,14,.6);}
+  .sentence{display:flex;align-items:center;justify-content:center;gap:0.12em;
+    color:#f8fafc;font-family:"Noto Serif SC",serif;font-weight:700;
+    line-height:1.08;letter-spacing:-0.01em;white-space:nowrap;}
+</style>
+</head>
+<body>
+<div id="root">
+  <div class="card">
+    <div class="sentence" role="img" aria-label="把故事讲得更动人一点">
+      <span class="pre">把故事讲得</span>
+      <span class="slot" data-options="更快,更清楚,更动人">更动人</span>
+      <span class="suf">一点</span>
+    </div>
+  </div>
+</div>
+<script src="/skills/kit-motion/kit.js"></script>
+<script src="/skills/kit-motion/kinetic-type-swap.js"></script>
+<script>
+  const root = document.getElementById("root");
+  const sentence = root.querySelector(".sentence");
+  const fs = Math.min(9 * SLATE.u, SLATE.width * 0.7 / 10);
+  sentence.style.fontSize = Math.max(fs, 4 * SLATE.u) + "px";
+  SLATE.waits = SLATE.waits || [];
+  SLATE.waits.push(document.fonts.load('700 60px "Noto Serif SC"', "把故事讲得更快清楚动人一点"));
+
+  const tl = SLATE.timeline();
+  KIT.motions.kineticTypeSwap(tl, root.querySelector(".slot"), {
+    at: 0,
+    dur: SLATE.duration || 4,
+    color: "#c5a3ff",
+    fadeTarget: sentence
+  });
+  window.render = t => tl.at(t);
+</script>
+</body>
+</html>

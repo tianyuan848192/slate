@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="zh">
+<head>
+<meta charset="UTF-8">
+<link rel="stylesheet" href="/assets/fonts/lib/noto-serif-sc.css">
+<style>
+  * { box-sizing: border-box; }
+  html, body { margin: 0; width: 100%; height: 100%; overflow: hidden; }
+  body { font-family: "Noto Serif SC", serif; }
+  #demo {
+    position: absolute; inset: 0;
+    display: flex; align-items: center; justify-content: center;
+    padding-bottom: 12vh;
+    background: linear-gradient(135deg, #fafafa, #f4f4f5);
+    color: #18181b;
+  }
+  .panel { text-align: center; max-width: 88vw; }
+  .label { font-size: 4.4vmin; font-weight: 700; color: #71717a; line-height: 1.2; }
+  .headline { margin-top: 3vmin; font-size: 11vmin; line-height: 1.1; font-weight: 700; white-space: nowrap; }
+</style>
+<script src="/skills/kit-motion/kit.js"></script>
+<script src="/skills/kit-motion/tracking-in.js"></script>
+</head>
+<body>
+<div id="demo">
+  <div class="panel">
+    <div class="label">精致排版 · 动效</div>
+    <div class="headline">字距缓缓收拢</div>
+  </div>
+</div>
+<script>
+  SLATE.waits = SLATE.waits || [];
+  SLATE.waits.push(document.fonts.load('700 60px "Noto Serif SC"'));
+  const root = document.getElementById('demo');
+  const tl = SLATE.timeline();
+  const items = root.querySelectorAll('.label, .headline');
+  // 原示范：0.45s 开始，错开 0.16s
+  KIT.motions.trackingIn(tl, items, { at: 0.45, each: 0.16 });
+  tl.set(root, { opacity: 1 }, 4);
+  window.render = t => tl.at(t);
+  tl.at(0);
+</script>
+</body>
+</html>

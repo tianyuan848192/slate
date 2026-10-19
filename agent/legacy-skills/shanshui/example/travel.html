@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<link rel="stylesheet" href="/skills/shanshui/style.css">
+<script src="/skills/shanshui/components.js"></script>
+</head>
+<body>
+<script>
+  // 文旅目的地介绍（8 秒）：满屏墨色退去（接上一镜的 ink 结尾）→ 喀斯特群峰倒映江中 → 手卷向左展开，三处地名题签依次钉在山头 → 竹筏缓行。
+  const { seg, u: U, width: W, height: H, ease } = SLATE;
+  const st = SS.stage({ palette: 'shuimo', pan: [U * 48, -U * 48], enter: 'wash', enterDur: 1.4, bloomAt: [0.5, 0.6] });
+  const hills = SS.mountains(st, { layers: 4, kind: 'karst', seed: 21, from: 0.52, to: 0.74, depth: [0.25, 0.9], mistDensity: 0.9 });
+  const river = SS.water(st, { y: H * 0.75, mountains: hills });
+  const raft = SS.boat(st, { x: W * 0.34, y: H * 0.81, size: U * 12, speed: U * 0.8 });
+  const h1 = SS.heading(st.hud, { text: '漓江 · 百里画廊', sub: '桂林至阳朔 · 一江烟雨' });
+  const se = SS.seal(st.hud, { x: h1.right + U * 6, y: h1.bottom - U * 9, text: '桂林', size: U * 7 });
+  // 地名题签钉在第 3 层（景深和它一致），依次出现；镜头向左展开时，新的地名从左边进来
+  const L = 2, dep = hills.depths[L];
+  const spots = [['兴坪', W * 0.62, 2.0], ['九马画山', W * 0.38, 3.6], ['黄布倒影', W * 0.12, 5.2]].map(([text, x, at]) => {
+    const [px, py] = hills.peakNear(L, x);
+    return { at, m: SS.marker(st, { x: px, y: py - U * 0.5, depth: dep, text }) };
+  });
+
+  function render(t) {
+    st.set(t);
+    hills.draw(1);
+    river.draw(seg(t, 0.3, 1.6));
+    raft.draw(seg(t, 0.8, 1.8));
+    h1.draw(seg(t, 0.9, 2.1, ease.linear));
+    se.draw(seg(t, 2.2, 2.55));
+    spots.forEach(s => s.m.draw(seg(t, s.at, s.at + 0.6)));
+  }
+</script>
+</body>
+</html>

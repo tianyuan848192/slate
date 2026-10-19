@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<!-- 按选定风格 SKILL.md 写的方式引用它的样式、组件或公共库；影片风格（film-*）和机械图解是 ES module 写法，照它们的示范页 -->
+<style>
+  /* 尺寸都按短边比例算：SLATE 在页面脚本运行前就已经可用 */
+  #stage { position: absolute; inset: 0; }
+  .title { position: absolute; left: 8%; top: 9%; font-size: calc(var(--u) * 7); font-weight: 700; }
+</style>
+</head>
+<body>
+<div id="stage">
+  <div class="title" id="title">这一镜的标题</div>
+  <svg id="art" width="100%" height="100%"></svg>
+</div>
+<script>
+  // U = 短边的 1%（SLATE.u），字号、间距都写成 U 的倍数；CSS 里可以用 var(--u)
+  document.documentElement.style.setProperty('--u', SLATE.u + 'px');
+  const { seg, stagger, draw, svg, width: W, height: H, u: U } = SLATE;
+
+  // 一次性创建好所有元素；render(t) 里只根据 t 设置它们的状态
+  const title = document.getElementById('title');
+  const art = document.getElementById('art');
+  const line = svg('path', { d: `M ${W * 0.2} ${H * 0.55} L ${W * 0.8} ${H * 0.55}`, fill: 'none', stroke: 'currentColor', 'stroke-width': U * 0.6, 'stroke-linecap': 'round' }, art);
+
+  // 画面必须只由 t 决定：同一个 t 永远得到同一帧
+  function render(t) {
+    const p = seg(t, 0, 0.8);
+    title.style.opacity = p;
+    title.style.transform = `translateY(${(1 - p) * U * 3}px)`;
+    draw(line, seg(t, 0.6, 2.0));
+  }
+</script>
+</body>
+</html>

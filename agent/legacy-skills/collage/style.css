@@ -1,0 +1,34 @@
+/* 纸媒拼贴：旧报纸底、撕纸卡、半调网点、红色印章和马克笔圈注 */
+/* 标题宋体和手写批注用 OFL 字体（镜像里的 /assets/fonts/，许可见 SKILL.md）。只有页面真正用到时才会下载 */
+@font-face {
+  font-family: "Noto Serif SC";
+  src: url(/assets/fonts/NotoSerifSC-Black.woff2) format("woff2");
+  font-weight: 900;
+  font-style: normal;
+}
+@font-face {
+  font-family: "Long Cang";
+  src: url(/assets/fonts/LongCang-Regular.woff2) format("woff2");
+  font-weight: 400;
+  font-style: normal;
+}
+:root {
+  --cl-paper: #efe4cc;
+  --cl-ink: #14213d;
+  --cl-red: #b8312a;
+  /* 字幕像一条贴在纸上的深色胶条 */
+  --slate-caption-bg: rgba(20, 33, 61, 0.92);
+  --slate-caption-color: #fbf7ee;
+  --slate-caption-font: "Noto Sans CJK SC", "Noto Sans SC", sans-serif;
+  --slate-caption-weight: 600;
+}
+html, body { background: var(--cl-paper); color: var(--cl-ink); font-family: "Noto Sans CJK SC", "Noto Sans SC", sans-serif; }
+.cl-root { position: absolute; inset: 0; overflow: hidden; background: var(--cl-paper); }
+.cl-root > canvas, .cl-root > svg { position: absolute; left: 0; top: 0; }
+.cl-svg text { font-family: "Noto Sans CJK SC", "Noto Sans SC", sans-serif; }
+/* 油墨（印章、马克笔、荧光笔、网点）和纸面相乘，像真的印在纸上 */
+.cl-ink { mix-blend-mode: multiply; }
+.cl-dark .cl-ink { mix-blend-mode: normal; }
+.cl-grain { mix-blend-mode: multiply; pointer-events: none; }
+.cl-dark .cl-grain { mix-blend-mode: screen; }
+.slate-caption { border-radius: 0.2vmin; box-shadow: 0 0.35vmin 0.9vmin rgba(20, 33, 61, 0.28); }

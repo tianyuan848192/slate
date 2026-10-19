@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<link rel="stylesheet" href="/assets/fonts/lib/noto-serif-sc.css" />
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body { width: 100%; height: 100%; overflow: hidden; background: #1a1a20; font-family: "Noto Serif SC", serif; }
+  #root { position: absolute; inset: 0; overflow: hidden; }
+  .grid {
+    position: absolute; left: 0; right: 0; top: 6%; height: 71%;
+    display: grid; justify-content: center; align-content: center;
+  }
+  .card {
+    position: relative; overflow: hidden;
+    display: flex; align-items: center; justify-content: center;
+    opacity: 0;
+  }
+  .glyph { font-weight: 800; color: rgba(255,255,255,0.92); line-height: 1; text-shadow: 0 2px 8px rgba(0,0,0,0.18); font-family: system-ui, sans-serif; }
+  .label { text-align: center; color: #1a1208; font-weight: 900; line-height: 1.1; }
+  .label small { display: block; font-weight: 600; letter-spacing: 0.3em; color: rgba(26,18,8,0.7); }
+  .headline {
+    position: absolute; left: 5%; right: 5%; top: 34%;
+    text-align: center; font-weight: 900; color: #1a1a1a; opacity: 0; z-index: 20;
+    line-height: 1.3;
+  }
+  .headline span { display: block; font-weight: 600; color: rgba(26,26,26,0.7); }
+</style>
+</head>
+<body>
+<div id="root">
+  <div class="grid" id="grid"></div>
+  <div class="headline" id="headline">灵感，源于每一次发现<span>从一张卡片开始，走进整个世界</span></div>
+</div>
+<script src="/skills/kit-motion/kit.js"></script>
+<script src="/skills/kit-motion/parallax-zoom.js"></script>
+<script>
+  const u = SLATE.u;
+  SLATE.waits = SLATE.waits || [];
+  SLATE.waits.push(document.fonts.load('900 60px "Noto Serif SC"'));
+
+  const grid = document.getElementById('grid');
+  const cw = 26 * u, ch = 22 * u, gap = 2.5 * u;
+  grid.style.gridTemplateColumns = `repeat(5, ${cw}px)`;
+  grid.style.gridTemplateRows = `repeat(3, ${ch}px)`;
+  grid.style.gap = `${gap}px`;
+
+  const colors = [
+    ['#3a8b6f','#1d4d3d'],['#8b4a3a','#4a2418'],['#c89868','#8a6038'],['#3a6088','#1a2f4a'],['#b03838','#6a1818'],
+    ['#bcbcbc','#6e6e6e'],['#8a5fa0','#4a2860'],['#f5c93f','#d99a18'],['#d8d8d8','#9a9a9a'],['#5fa37e','#2a6a4a'],
+    ['#d1b66a','#8a7028'],['#4f7fc0','#1f3f80'],['#5a3a8f','#2a1858'],['#b85a3a','#6a2818'],['#f0f0e8','#c8c8be']
+  ];
+  const glyphs = ['◇','◐','◯','◑','▲','✦','❖','','✧','◈','▼','◆','●','◭','◇'];
+  colors.forEach((c, i) => {
+    const d = document.createElement('div');
+    d.className = 'card';
+    d.dataset.pzRow = Math.floor(i / 5);
+    d.dataset.pzCol = i % 5;
+    d.style.background = `linear-gradient(135deg, ${c[0]}, ${c[1]})`;
+    d.style.borderRadius = `${2 * u}px`;
+    d.style.boxShadow = `0 ${1.1 * u}px ${3.3 * u}px rgba(20,20,30,0.08)`;
+    if (i === 7) {
+      d.dataset.pzFocus = 'true';
+      d.innerHTML = `<div class="label" style="font-size:${5.2 * u}px"><small style="font-size:${2 * u}px;margin-bottom:${1.2 * u}px">灵感手册</small>探索发现</div>`;
+    } else {
+      const g = document.createElement('span');
+      g.className = 'glyph';
+      g.setAttribute('data-qa', 'ignore');
+      g.style.fontSize = `${8 * u}px`;
+      if (i === 14) g.style.color = 'rgba(40,40,40,0.7)';
+      g.textContent = glyphs[i];
+      d.appendChild(g);
+    }
+    grid.appendChild(d);
+  });
+
+  const hl = document.getElementById('headline');
+  hl.style.fontSize = `${6.5 * u}px`;
+  hl.querySelector('span').style.fontSize = `${3 * u}px`;
+  hl.querySelector('span').style.marginTop = `${1.5 * u}px`;
+
+  const tl = SLATE.timeline();
+  KIT.motions.parallaxZoom(tl, grid, { at: 0, dur: 6, reveal: hl });
+  window.render = (t) => tl.at(t);
+</script>
+</body>
+</html>

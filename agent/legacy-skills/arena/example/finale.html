@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<link rel="stylesheet" href="/skills/arena/style.css">
+<script src="/skills/arena/components.js"></script>
+</head>
+<body>
+<script>
+  // 收尾：正面对决 → 关键数字 → 领奖台（示例数据）
+  const { seg, u: U, width: W, height: H, safe } = SLATE;
+  const st = NA.stage({ zoom: [1, 1.05], exit: 'flash' });
+  const w = st.world;
+  const vs = NA.versus(w, { a: { name: '模型 A', sub: '推理冠军', color: NA.C.series[0] }, b: { name: '模型 D', sub: '长文本冠军', color: NA.C.series[3] } });
+  const big = NA.counter(w, { x: W / 2, y: H * 0.5, value: 3.2, digits: 1, unit: ' 分', label: '综合分差', sub: '前两名差距不到一次随机波动', color: NA.C.accent });
+  const pd = NA.podium(w, { cx: W / 2, base: SLATE.captionZone.y - U * 2, w: W * 0.62, h: H * 0.42, ranks: [
+    { name: '模型 A', color: NA.C.series[0], score: 86.4, sub: '综合第一' },
+    { name: '模型 D', color: NA.C.series[3], score: 83.2 },
+    { name: '模型 B', color: NA.C.series[1], score: 81.9 },
+    { name: '模型 C', color: NA.C.series[2], score: 79.8 },
+    { name: '模型 E', color: NA.C.series[4], score: 74.0 },
+  ] });
+  const t1 = NA.heading(w, { text: '综合排名', align: 'center' });
+  const src = NA.source(st.hud, { text: '示例数据，仅演示版式' });
+
+  function render(t) {
+    st.set(t);
+    // 0～2.4 秒：对决；2.4～4 秒：大数字；4 秒起：领奖台
+    const vsP = seg(t, 0.1, 1.4);
+    vs.set(t, t < 2.4 ? vsP : vsP * (1 - seg(t, 2.2, 2.5)));
+    vs.g.setAttribute('opacity', 1 - seg(t, 2.2, 2.5));
+    big.draw(seg(t, 2.5, 3.6));
+    big.g.setAttribute('opacity', 1 - seg(t, 3.9, 4.2));
+    t1.draw(seg(t, 4.1, 4.8));
+    pd.draw(seg(t, 4.3, 7.3));
+    src.draw(seg(t, 4.5, 5));
+  }
+</script>
+</body>
+</html>

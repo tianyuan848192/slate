@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<link rel="stylesheet" href="/skills/shanshui/style.css">
+<script src="/skills/shanshui/components.js"></script>
+</head>
+<body>
+<script>
+  // 酒品牌广告结尾（7 秒，朱金调板）：墨色退去 → 淡金日轮、暖赭远山 → 品牌题字 → 浓墨横扫一笔托出行动号召 → 题款、钤印定格。
+  // 品牌"松醪"和礼盒文案都是示例，做片时换成用户的；广告片不用"最""第一""国家级"这类词。
+  const { seg, u: U, width: W, height: H, ease } = SLATE;
+  const st = SS.stage({ palette: 'zhujin', zoom: [1, 1.03], enter: 'wash', enterDur: 1.3, bloomAt: [0.3, 0.45] });
+  const sun = SS.moon(st, { kind: 'sun', x: W * 0.68, y: H * 0.3, r: U * 7, depth: 0.1 });
+  const hills = SS.mountains(st, { layers: 3, kind: 'hills', seed: 44, from: 0.6, to: 0.92, height: 1.2, depth: [0.3, 0.9] });
+  const ti = SS.vtitle(st.hud, { x: W * 0.22, y: H * 0.14, text: '一壶岁月', size: U * 11 });
+  const ins = SS.inscription(st.hud, { x: ti.right + U * 4, y: ti.y + U * 3, text: '冬酿待春开坛' });
+  const se = SS.seal(st.hud, { x: (ins.left + ins.right) / 2, y: ins.bottom + U * 5.5, text: '松醪', size: U * 7 });
+  // 行动号召：一笔浓墨横扫，上面压纸色的字
+  const sx = W * 0.47, sy = H * 0.6, sw = U * 80;
+  const sweep = SS.inkSweep(st.hud, { x: sx, y: sy, w: sw, h: U * 9, seed: 12 });
+  const cta = SS.label(st.hud, { x: sx + sw * 0.38, y: sy + U * 1.6, text: '年货礼盒 · 现已开售', size: U * 4.4, anchor: 'middle', color: SS.C.paper, spacing: 0.12 });
+
+  function render(t) {
+    st.set(t);
+    sun.draw(seg(t, 0.2, 2.2));
+    hills.draw(seg(t, 0, 1.6));
+    ti.draw(seg(t, 0.9, 2.4, ease.linear));
+    sweep.draw(seg(t, 2.6, 3.3, ease.inOut));
+    cta.draw(seg(t, 3.0, 3.5));
+    ins.draw(seg(t, 3.6, 4.0));
+    se.draw(seg(t, 4.1, 4.45));
+  }
+</script>
+</body>
+</html>

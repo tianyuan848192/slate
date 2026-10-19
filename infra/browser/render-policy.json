@@ -1,0 +1,5 @@
+{
+  "EnableUnsafeSwiftShader": true,
+  "HardwareAccelerationModeEnabled": true,
+  "Disable3DAPIs": false
+}

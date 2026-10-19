@@ -1,0 +1,25 @@
+/* 编辑图解：暖灰纸、发丝线、单一强调色 */
+/* 标题、术语、大数字用思源宋体 Noto Serif SC SemiBold（SIL OFL 1.1），镜像里的 /assets/fonts/ 提供；
+   正文、标签、数值用 Noto Sans CJK SC。宋体由 ED.stage() 预加载，渲染前一定就绪 */
+@font-face {
+  font-family: "Noto Serif SC";
+  src: url(/assets/fonts/NotoSerifSC-SemiBold.woff2) format("woff2");
+  font-weight: 600;
+  font-style: normal;
+  font-display: block;
+}
+:root {
+  --ed-paper: #F0EDE7;
+  --ed-ink: #1E2227;
+  --ed-accent: #B83D1B;
+  /* 字幕：墨色底条 + 左侧一道强调色竖线（ED.stage 会按主题和强调色改写这几个变量） */
+  --slate-caption-bg: rgba(30, 34, 39, 0.9);
+  --slate-caption-color: #F4F1EB;
+  --slate-caption-font: "Noto Sans CJK SC", "Noto Sans SC", sans-serif;
+  --slate-caption-weight: 500;
+}
+html, body { background: var(--ed-paper); color: var(--ed-ink); font-family: "Noto Sans CJK SC", "Noto Sans SC", sans-serif; }
+.ed-root { position: absolute; inset: 0; overflow: hidden; background: var(--ed-paper); }
+.ed-root > canvas, .ed-root > svg { position: absolute; left: 0; top: 0; }
+.ed-svg text { font-kerning: normal; }
+.slate-caption { border-radius: 0.25vmin; letter-spacing: 0.04em; box-shadow: inset 0.45vmin 0 0 var(--ed-accent); }

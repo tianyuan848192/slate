@@ -1,0 +1,21 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "资料摘要：Agent 读完参考资料后的整理（生成页「资料整理」一步展示）",
+  "type": "object",
+  "required": ["angle", "items"],
+  "additionalProperties": false,
+  "properties": {
+    "angle": {"type": "string", "maxLength": 300, "description": "读完资料后的整体理解：这支片子从什么角度讲"},
+    "items": {"type": "array", "maxItems": 10, "items": {
+      "type": "object", "required": ["id", "summary", "used"], "additionalProperties": false,
+      "properties": {
+        "id": {"type": "string", "pattern": "^r[0-9]{2}$"},
+        "summary": {"type": "string", "maxLength": 400},
+        "used": {"type": "boolean"},
+        "facts": {"type": "array", "maxItems": 20, "items": {"type": "string", "maxLength": 200}},
+        "terms": {"type": "array", "maxItems": 30, "items": {"type": "object", "required": ["term", "meaning"], "additionalProperties": false,
+                  "properties": {"term": {"type": "string", "maxLength": 40}, "meaning": {"type": "string", "maxLength": 200}}}},
+        "reason": {"type": "string", "maxLength": 200, "description": "没用到时说明原因"}
+      }}}
+  }
+}

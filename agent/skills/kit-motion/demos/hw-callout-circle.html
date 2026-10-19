@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="zh">
+<head>
+<meta charset="utf-8" />
+<link rel="stylesheet" href="/assets/fonts/lib/long-cang.css" />
+<link rel="stylesheet" href="/assets/fonts/lib/noto-serif-sc.css" />
+<style>
+  *{margin:0;padding:0;box-sizing:border-box;}
+  html,body{width:100%;height:100%;overflow:hidden;background:#14231c;}
+  #root{position:absolute;inset:0;background:linear-gradient(150deg,#35604a 0%,#14231c 100%);}
+  .card{position:absolute;border-radius:2vmin;background:rgba(244,242,236,0.16);display:flex;flex-direction:column;align-items:center;justify-content:center;color:#f4f2ec;font-family:"Noto Serif SC",serif;}
+  .card .num{font-weight:700;}
+  .card .sub{opacity:0.8;}
+</style>
+</head>
+<body>
+<div id="root">
+  <div class="card" id="card"><div class="num">营收 +38%</div><div class="sub">第三季度同比</div></div>
+</div>
+<script src="/skills/kit-motion/kit.js"></script>
+<script src="/skills/kit-motion/hw-callout-circle.js"></script>
+<script>
+  const u = SLATE.u, W = SLATE.width, H = SLATE.height;
+  const card = document.getElementById("card");
+  const cw = 46 * u, ch = 22 * u;
+  Object.assign(card.style, { width: cw + "px", height: ch + "px", left: W * 0.42 - cw / 2 + "px", top: H * 0.42 - ch / 2 + "px" });
+  card.querySelector(".num").style.fontSize = 8 * u + "px";
+  card.querySelector(".sub").style.fontSize = 4 * u + "px";
+  SLATE.waits = SLATE.waits || [];
+  SLATE.waits.push(document.fonts.load('400 60px "Long Cang"', "重点在这"));
+  SLATE.waits.push(document.fonts.load('700 60px "Noto Serif SC"', "营收第三季度同比"));
+  const tl = SLATE.timeline();
+  KIT.motions.hwCalloutCircle(tl, card, { at: 0.4, label: "重点在这！", labelAt: "right", strokeType: "plain", boil: "calm", outAt: 3.3 });
+  window.render = t => tl.at(t);
+</script>
+</body>
+</html>

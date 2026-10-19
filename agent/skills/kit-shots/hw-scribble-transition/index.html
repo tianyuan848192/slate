@@ -1,0 +1,25 @@
+<!doctype html><html><head><meta charset="utf-8">
+<style>html,body{margin:0;background:#1b2233} #main{position:absolute;inset:0}
+.scene{position:absolute;inset:0}
+.sa{background:linear-gradient(135deg,#1f3b5c,#0f1c2e)}
+.sb{background:linear-gradient(135deg,#3a1f4f,#7a2f4a);visibility:hidden}
+.lab{position:absolute;left:50%;top:38%;margin-left:-2.2em;width:4.4em;text-align:center;white-space:nowrap;color:#fff;font:700 9vh "Noto Sans CJK SC",sans-serif;opacity:.85}
+</style></head>
+<body>
+<div class="scene sa"><div class="lab">第一幕</div></div>
+<div class="scene sb"><div class="lab">第二幕</div></div>
+<div id="main"></div>
+<script src="/skills/kit-motion/kit.js"></script>
+<script src="/skills/kit-shots/hw-scribble-transition/shot.js"></script>
+<script>
+  const tl = SLATE.timeline().add(KIT.shots["hw-scribble-transition"](document.getElementById("main"), { dur: SLATE.duration }), 0);
+  const sa = document.querySelector(".sa"), sb = document.querySelector(".sb");
+  const D = SLATE.duration || 2.2;
+  const cut = Math.min(1.1, D / 2);
+  window.render = t => {
+    const after = t >= cut;
+    sa.style.visibility = after ? "hidden" : "visible";
+    sb.style.visibility = after ? "visible" : "hidden";
+    tl.at(t);
+  };
+</script></body></html>

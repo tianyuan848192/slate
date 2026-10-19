@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<link rel="stylesheet" href="/assets/fonts/lib/noto-sans-jp.css" />
+<style>
+  *{margin:0;padding:0;box-sizing:border-box;}
+  html,body{width:100%;height:100%;overflow:hidden;background:#f4f4f5;}
+  #root{position:relative;width:100vw;height:100vh;overflow:hidden;background:#f4f4f5;
+    font-family:"Noto Sans JP",system-ui,sans-serif;color:#14161b;
+    display:flex;flex-direction:column;align-items:center;justify-content:center;}
+  .hint{position:absolute;left:50%;top:30%;margin-left:-40vw;width:80vw;text-align:center;font-weight:700;color:#5b6270;}
+  .pill{display:inline-flex;align-items:center;white-space:nowrap;font-weight:600;line-height:1;
+    background:#fff;border-style:solid;border-color:#dfe4ec;border-radius:999px;}
+  .pill[data-state="pressed"]{border-color:#bfe8cf;}
+</style>
+</head>
+<body>
+<div id="root">
+  <div class="hint">偏好设置已修改</div>
+  <span class="pill" id="btn">保存更改</span>
+</div>
+<script src="/skills/kit-motion/kit.js"></script>
+<script src="/skills/kit-motion/press-ripple.js"></script>
+<script>
+  const u = SLATE.u;
+  const root = document.getElementById('root');
+  const hint = root.querySelector('.hint');
+  hint.style.fontSize = (4.2 * u) + 'px';
+  const btn = root.querySelector('#btn');
+  btn.style.fontSize = (5.2 * u) + 'px';
+  btn.style.padding = `${2.6 * u}px ${5.4 * u}px`;
+  btn.style.borderWidth = Math.max(1, 0.22 * u) + 'px';
+  btn.style.boxShadow = `0 ${0.6*u}px ${2*u}px rgba(20,22,27,.08)`;
+
+  SLATE.waits = SLATE.waits || [];
+  SLATE.waits.push(document.fonts.load('600 60px "Noto Sans JP"'));
+  SLATE.waits.push(document.fonts.load('700 60px "Noto Sans JP"'));
+
+  const tl = SLATE.timeline();
+  tl.tween(hint, { opacity: [0, 1], y: [2 * u, 0] }, { at: 0, dur: 0.5, ease: 'outQuart' });
+  KIT.motions.pressRipple(tl, btn, { at: 0, dur: 2.4, done: '已保存', accent: '#16a34a', cursor: 'light' });
+  window.render = t => tl.at(t);
+</script>
+</body>
+</html>

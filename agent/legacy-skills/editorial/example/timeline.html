@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<link rel="stylesheet" href="/skills/editorial/style.css">
+<script src="/skills/editorial/components.js"></script>
+</head>
+<body>
+<script>
+  // 时间线：先以幽灵态铺出整条线，再按真实年份间隔画轴，画到哪一年，那一年的事件就上墨；转折点用强调色。8 秒；横屏、竖屏都能用
+  const { seg, u: U } = SLATE;
+  const st = ED.stage();
+  const w = st.world;
+  const h = ED.heading(w, { kicker: '时间线 · 语言模型', text: '大模型是怎么走到今天的' });
+  const A = ED.area(h, { gap: 2 });
+  const tl = ED.timeline(w, { ...A, from: 2012, to: 2023, items: [
+    { at: 2013, title: 'word2vec', sub: '把词变成一串数字' },
+    { at: 2017, title: 'Transformer', sub: '注意力机制成为主干', major: true },
+    { at: 2018, title: 'GPT 与 BERT', sub: '先预训练，再微调' },
+    { at: 2020, title: 'GPT-3', sub: '1750 亿参数' },
+    { at: 2022, title: 'ChatGPT 发布', sub: '对话式产品走向大众' },
+  ] });
+  const src = ED.source(st.hud, { text: '据各模型的论文和发布时间整理' });
+  const a = 0.8, b = 5.0;                       // 轴线从 a 秒画到 b 秒
+  const t17 = tl.when(1, a, b), t22 = tl.when(4, a, b);
+
+  function render(t) {
+    st.set(t);
+    h.draw(seg(t, 0, 0.9));
+    tl.prime(seg(t, 0.3, 0.9));
+    tl.draw(seg(t, a, b, ED.ease.move));
+    // 先强调转折点 2017，最后落到 2022
+    tl.focus(1, seg(t, t17 + 0.3, t17 + 0.6) * (1 - seg(t, 5.2, 5.5)));
+    tl.focus(4, seg(t, 5.3, 5.6));
+    src.draw(seg(t, 1.0, 1.5));
+  }
+</script>
+</body>
+</html>

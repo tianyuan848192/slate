@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<link rel="stylesheet" href="/skills/editorial/style.css">
+<script src="/skills/editorial/components.js"></script>
+</head>
+<body>
+<script>
+  // 柱状图 + 差值括号 + 大数字：左边是图，右边是"这张图要你记住的那个数"。8 秒（示例数据，做片时换成有出处的数字）
+  const { seg, u: U } = SLATE;
+  const st = ED.stage();
+  const w = st.world;
+  const h = ED.heading(w, { kicker: '数据 · 示例数据', text: '加上检索，答对的题更多了' });
+  const A = ED.area(h, { gap: 3 });
+  const P = A.portrait;
+  // 横屏：图在左 60%，数字在右；竖屏：图在上，数字在下
+  const cb = P ? { x: A.x, y: A.y, w: A.w, h: A.h * 0.62 } : { x: A.x, y: A.y, w: A.w * 0.6, h: A.h };
+  const under = ED.layer(w);                     // 参考虚线放在柱子下面
+  const bars = ED.bars(w, { ...cb, unit: '%', max: 100, data: [
+    { label: '只用模型', value: 58 }, { label: '加关键词检索', value: 71 }, { label: '加向量检索', value: 84 },
+  ] });
+  // 差值：从第一根柱顶引一条虚线到第三根旁边，括号量出差多少
+  const t0 = bars.top(0), t2 = bars.top(2), y0 = t0[1] + U * 5, y2 = t2[1] + U * 5;
+  const bx = t2[0] + U * 9;
+  const ref = ED.link(under, { points: [[t0[0] + U * 6, y0], [bx, y0]], dashed: true, arrow: 'none' });
+  const br = ED.bracket(w, { x: bx, y1: y2, y2: y0, text: '+26', sub: '个百分点' });
+  const num = P
+    ? ED.number(w, { x: A.x, y: A.y + A.h * 0.62 + U * 22, value: 84, unit: '%', anchor: 'start', size: U * 15, label: '最高答对率', sub: '加向量检索之后', accent: true })
+    : ED.number(w, { x: A.x + A.w * 0.7, y: A.cy + U * 6, value: 84, unit: '%', anchor: 'start', size: U * 17, label: '最高答对率', sub: '加向量检索之后', accent: true });
+  const tg = ED.tag(st.hud, { text: '示例数据' });
+  const src = ED.source(st.hud, { text: '示例数据：同一组 200 道问答题，仅演示版式' });
+
+  function render(t) {
+    st.set(t);
+    h.draw(seg(t, 0, 0.9));
+    bars.draw(seg(t, 0.8, 2.6, ED.ease.linear));
+    bars.focus(2, seg(t, 2.4, 2.8));
+    ref.draw(seg(t, 2.8, 3.3, ED.ease.move));
+    br.draw(seg(t, 3.0, 3.7, ED.ease.linear));
+    num.draw(seg(t, 3.4, 4.6, ED.ease.linear));
+    tg.draw(seg(t, 0.4, 0.9));
+    src.draw(seg(t, 0.9, 1.4));
+  }
+</script>
+</body>
+</html>

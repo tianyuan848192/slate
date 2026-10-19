@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="zh">
+<head>
+<meta charset="utf-8" />
+<link rel="stylesheet" href="/assets/fonts/lib/inter.css" />
+<link rel="stylesheet" href="/assets/fonts/lib/noto-sans-jp.css" />
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body { width: 100%; height: 100%; overflow: hidden; background: #f2f4f7; }
+  #root { position: absolute; inset: 0; }
+  .title {
+    position: absolute; left: 50%; top: 110px; transform: translateX(-50%); white-space: nowrap;
+    font-family: "Noto Sans JP", sans-serif; font-weight: 700; font-size: 60px; color: #1d1d1f;
+  }
+  .gauge {
+    position: absolute; left: 50%; top: 250px; width: 520px; height: 520px; margin-left: -260px;
+    --kit-accent: #0071e3;
+  }
+  .center {
+    position: absolute; inset: 0; display: flex; flex-direction: column;
+    align-items: center; justify-content: center; gap: 8px;
+  }
+  .arc-num {
+    font-family: "Inter", sans-serif; font-weight: 600; font-size: 120px;
+    letter-spacing: -0.02em; color: #1d1d1f; font-variant-numeric: tabular-nums; line-height: 1;
+  }
+  .label { font-family: "Noto Sans JP", sans-serif; font-weight: 500; font-size: 46px; color: #6e6e73; }
+</style>
+</head>
+<body>
+<div id="root"></div>
+<script src="/skills/kit-motion/kit.js"></script>
+<script src="/skills/kit-motion/mk-usage-arc.js"></script>
+<script>
+  SLATE.waits = SLATE.waits || [];
+  SLATE.waits.push(document.fonts.load('600 120px "Inter"'));
+  SLATE.waits.push(document.fonts.load('700 60px "Noto Sans JP"'));
+  SLATE.waits.push(document.fonts.load('500 46px "Noto Sans JP"'));
+
+  const stage = KIT.stage(document.getElementById("root"), 1920, 1080);
+  stage.innerHTML = `
+    <div class="title">本月云存储空间</div>
+    <div class="gauge" id="g">
+      <div class="center">
+        <span class="arc-num">0%</span>
+        <span class="label">使用率</span>
+      </div>
+    </div>`;
+
+  const tl = SLATE.timeline();
+  KIT.motions.mkUsageArc(tl, stage.querySelector("#g"), { at: 0.4, value: 0.76, stroke: 3 });
+  window.render = (t) => tl.at(t);
+  window.render(0);
+</script>
+</body>
+</html>

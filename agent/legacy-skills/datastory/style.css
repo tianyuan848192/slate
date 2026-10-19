@@ -1,0 +1,21 @@
+/* 数据叙事：配色、字体和基础版式 */
+:root {
+  --ds-bg: #13294B;
+  --ds-ink: #FFFFFF;
+  --ds-ink2: #AFC0DD;
+  --ds-muted: #7F93B8;
+  --ds-bar: #4F86E0;
+  --ds-accent: #F4B400;
+  --slate-caption-bg: rgba(8, 20, 40, .82);
+  --slate-caption-color: #FFFFFF;
+  --slate-caption-font: "Noto Sans CJK SC", sans-serif;
+}
+html, body {
+  background: radial-gradient(110% 90% at 30% 20%, #1A3560 0%, var(--ds-bg) 55%, #0F2140 100%);
+  color: var(--ds-ink); font-family: "Noto Sans CJK SC", sans-serif;
+}
+.ds-canvas { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
+.ds-canvas text { font-family: "Noto Sans CJK SC", sans-serif; }
+/* 左上角：标题 + 一行说明（单位、口径） */
+.ds-title { position: absolute; left: 7%; top: 8%; color: var(--ds-ink); font-weight: 700; letter-spacing: .02em; line-height: 1.2; }
+.ds-sub { position: absolute; left: 7%; color: var(--ds-ink2); font-weight: 500; letter-spacing: .04em; }

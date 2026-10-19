@@ -1,0 +1,17 @@
+/* 霓虹擂台：深色舞台、霓虹描边、玻璃面板 */
+:root {
+  --na-bg: #05070f;
+  --na-ink: #f4f7ff;
+  --na-ink2: #b8c2e0;
+  --na-accent: #3fe0ff;
+  --slate-caption-bg: rgba(8, 12, 28, 0.78);
+  --slate-caption-color: #f4f7ff;
+  --slate-caption-font: "Noto Sans CJK SC", "Noto Sans SC", sans-serif;
+  --slate-caption-weight: 600;
+}
+html, body { background: var(--na-bg); color: var(--na-ink); font-family: "Noto Sans CJK SC", "Noto Sans SC", sans-serif; }
+.na-root { position: absolute; inset: 0; overflow: hidden; background: var(--na-bg); }
+.na-bg, .na-svg { position: absolute; left: 0; top: 0; }
+.na-svg text { font-family: "Noto Sans CJK SC", "Noto Sans SC", sans-serif; }
+/* 字幕：玻璃底 + 青色描边光 */
+.slate-caption { border: 1px solid rgba(63, 224, 255, 0.55); box-shadow: 0 0 0.9vmin rgba(63, 224, 255, 0.35), inset 0 0 1.2vmin rgba(63, 224, 255, 0.12); }

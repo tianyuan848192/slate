@@ -1,0 +1,9 @@
+<!doctype html><html><head><meta charset="utf-8">
+<style>html,body{margin:0;background:radial-gradient(ellipse at 65% 35%,#5b6b80 0%,#2c3442 55%,#151a22 100%);overflow:hidden} #main{position:absolute;inset:0}</style></head>
+<body><div id="main"></div>
+<script src="/skills/kit-motion/kit.js"></script>
+<script src="/skills/kit-shots/lt-clean-bar/shot.js"></script>
+<script>
+  const tl = SLATE.timeline().add(KIT.shots["lt-clean-bar"](document.getElementById("main"), { dur: SLATE.duration }), 0);
+  window.render = t => tl.at(t);
+</script></body></html>

@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<link rel="stylesheet" href="/skills/swiss/style.css">
+<script src="/skills/swiss/components.js"></script>
+</head>
+<body>
+<script>
+  // 活动促销（16:9，7 秒；示例价格和日期）：左边 7 栏是出血的信号色色块，右边是产品和行动号召
+  //   0 秒 色块从左边擦出（开场冲击）→ 0.8 秒 原价升起 → 1.2 秒 产品 → 2.2 秒 原价被划掉
+  //   → 2.6 秒 到手价逐位翻到 999 → 3.3 秒 活动日期 → 3.6 秒 黑色行动号召，之后箭头按拍点一下
+  const { u: U, width: W, height: H } = SLATE;
+  const { lin } = SW;
+  const st = SW.stage({ grid: 'cols' });
+  const G = st.G, w = st.world;
+
+  // 色块上的元素都传 tone: 'signal'：字自动用白色，刀切线也换成白色
+  const red = SW.block(w, { x: 0, y: 0, w: G.x(7) - G.gutter, h: H, from: 'left' });
+  const kick = SW.note(w, { x: G.x(0), y: G.y(0), w: G.w(6), text: 'HUSH 2 周年庆 · 限时 7 天', size: U * 2.8, weight: 700, tone: 'signal', color: '#FFFFFF' });
+  const pr = SW.price(w, { x: G.x(0), y: G.y(1), w: G.w(6), label: '活动到手价', was: '1299', now: '999', size: U * 31, color: '#FFFFFF', tone: 'signal' });
+  const d1 = SW.note(w, { x: G.x(0), y: G.y(5), w: G.w(3), text: '10.24 — 10.31', size: U * 2.8, weight: 700, tone: 'signal', color: '#FFFFFF' });
+  const d2 = SW.note(w, { x: G.x(3), y: G.y(5), w: G.w(3), text: '前 1000 名加赠收纳包', size: U * 2.8, weight: 700, tone: 'signal', color: '#FFFFFF' });
+
+  // 右边：产品放在白色底板上；行动号召用黑色，避免和左边的信号色抢
+  const prod = SW.product(w, { ...G.box(7, 5, 0, 4), src: 'hush-cutout.svg', mode: 'cutout', bg: 'paper', pad: 0.05, zoom: [1, 1.04] });
+  const go = SW.cta(w, { x: G.x(7), y: G.y(4) + U * 1.5, w: G.w(5), text: '立即预约', sub: '搜索 HUSH 2', color: SW.C.ink });
+  const fn = SW.footnote(st.hud, { text: '示例价格，以活动页面为准', anchor: 'end' });
+
+  function render(t) {
+    st.set(t);
+    red.draw(lin(t, 0, 0.6));
+    kick.draw(lin(t, 0.4, 1.1));
+    pr.draw(lin(t, 0.8, 1.6));
+    prod.draw(lin(t, 1.2, 2.2));
+    prod.push(lin(t, 1.2, 7));
+    pr.strike(lin(t, 2.2, 2.7));
+    pr.reveal(lin(t, 2.6, 3.9));
+    d1.draw(lin(t, 3.3, 3.9));
+    d2.draw(lin(t, 3.45, 4.05));
+    go.draw(lin(t, 3.6, 4.4));
+    go.pulse(t, 4.4);
+    fn.draw(lin(t, 2.6, 3.1));
+  }
+</script>
+</body>
+</html>

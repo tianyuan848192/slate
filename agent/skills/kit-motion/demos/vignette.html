@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="zh">
+<head>
+<meta charset="UTF-8" />
+<link rel="stylesheet" href="/assets/fonts/lib/noto-serif-sc.css" />
+<style>
+  html, body { margin: 0; width: 100%; height: 100%; overflow: hidden; background: #000; }
+  #root { position: absolute; inset: 0; }
+  .scene {
+    position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; overflow: hidden;
+    background:
+      radial-gradient(circle at 22% 28%, rgba(255,196,130,0.85), rgba(255,196,130,0) 38%),
+      radial-gradient(circle at 78% 78%, rgba(64,175,200,0.55), rgba(64,175,200,0) 42%),
+      radial-gradient(circle at 50% 50%, #3b2616 0%, #1a0e07 68%, #060403 100%);
+    font-family: "Noto Serif SC", serif;
+  }
+  .haze { position: absolute; left: 50%; top: 380px; border-radius: 50%; opacity: 0; }
+  .haze-far { width: 1400px; height: 1400px; margin: -700px 0 0 -700px;
+    background: radial-gradient(circle, rgba(255,220,180,0.18), rgba(255,220,180,0) 65%); filter: blur(40px); }
+  .haze-near { width: 900px; height: 900px; margin: -450px 0 0 -450px;
+    background: radial-gradient(circle, rgba(255,240,210,0.32), rgba(255,240,210,0) 60%); filter: blur(20px); }
+  .subject { position: absolute; left: 50%; top: 380px; width: 400px; height: 400px; margin: -200px 0 0 -200px;
+    border-radius: 50%; opacity: 0;
+    background: radial-gradient(circle at 35% 32%, #fff6e0 0%, #f4c47e 28%, #b87a3f 62%, #6b3d1c 88%, #2a1607 100%);
+    box-shadow: inset -32px -32px 64px rgba(0,0,0,0.55), 0 0 110px rgba(255,180,100,0.35); }
+  .text { position: absolute; left: 0; right: 0; top: 636px; display: flex; flex-direction: column; align-items: center; gap: 14px; z-index: 5; }
+  .title { font-size: 100px; line-height: 1.12; font-weight: 700; letter-spacing: 0.18em; color: #f6ecd0;
+    text-shadow: 0 4px 24px rgba(0,0,0,0.55); opacity: 0; padding-left: 0.18em; }
+  .title span { display: inline-block; }
+  .sub { font-size: 46px; line-height: 1.1; letter-spacing: 0.32em; color: rgba(246,236,208,0.78); opacity: 0; padding-left: 0.32em; }
+</style>
+</head>
+<body>
+<div id="root"></div>
+<script src="/skills/kit-motion/kit.js"></script>
+<script src="/skills/kit-motion/vignette.js"></script>
+<script>
+  SLATE.waits = SLATE.waits || [];
+  SLATE.waits.push(document.fonts.load('700 100px "Noto Serif SC"'), document.fonts.load('400 46px "Noto Serif SC"'));
+
+  const root = document.getElementById("root");
+  const stage = KIT.stage(root, 1920, 1080);
+  stage.innerHTML = `
+    <div class="scene">
+      <div class="haze haze-far"></div>
+      <div class="haze haze-near"></div>
+      <div class="subject"></div>
+      <div class="text">
+        <div class="title">定格此刻</div>
+        <div class="sub">让目光停留在中央</div>
+      </div>
+    </div>`;
+  const scene = stage.querySelector(".scene");
+  const title = scene.querySelector(".title");
+  let chars;
+  if (!title.dataset.kitSplit) { chars = KIT.splitChars(title); title.dataset.kitSplit = "1"; }
+  else chars = Array.from(title.querySelectorAll("span"));
+  const mid = (chars.length - 1) / 2;
+
+  const tl = SLATE.timeline();
+  tl.tween(scene.querySelector(".haze-far"), { opacity: 1 }, { at: 0, dur: 0.8, ease: "outCubic" });
+  tl.tween(scene.querySelector(".haze-near"), { opacity: 1 }, { at: 0.15, dur: 0.8, ease: "outCubic" });
+  tl.tween(scene.querySelector(".subject"), { opacity: 1, scale: [0.94, 1] }, { at: 0.1, dur: 1.0, ease: "outQuart" });
+  tl.tween(title, { opacity: [0, 1], y: [18, 0] }, { at: 0.6, dur: 1.0, ease: "outQuart" });
+  tl.tween(chars, { x: { from: (i) => (i - mid) * 14 } }, { at: 0.6, dur: 1.0, ease: "outQuart" });
+  tl.tween(scene.querySelector(".sub"), { opacity: 1 }, { at: 1.0, dur: 0.8, ease: "outQuart" });
+
+  KIT.motions.vignette(tl, scene, { at: 1.4 });
+
+  window.render = (t) => tl.at(t);
+</script>
+</body>
+</html>

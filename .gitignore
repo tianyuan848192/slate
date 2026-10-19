@@ -1,0 +1,13 @@
+# 本机的测试账号密码、部署输出和日志（含账号信息），永远不进 git
+.slate/
+.slate-deploy*.log
+# CDK 的查询缓存，里面有账号 ID 和 VPC 编号
+infra/cdk.context.json
+infra/cdk.out/
+infra/node_modules/
+# 本地环境和缓存
+.venv/
+.claude/
+.pytest_cache/
+__pycache__/
+*.pyc

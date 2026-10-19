@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<link rel="stylesheet" href="/skills/keynote/style.css">
+<script src="/skills/keynote/components.js"></script>
+</head>
+<body>
+<div id="stage"></div>
+<script>
+  // 发布会示例（7 秒，tech 配乐 120 BPM）：三屏硬切——"快一倍" → 关键数字 100% → 产品亮相
+  const { u: U, width: W, height: H } = SLATE;  // U = 短边的 1%
+  const root = document.getElementById('stage');
+  const s1 = KN.screen(root), s2 = KN.screen(root), s3 = KN.screen(root, { push: 0.015 });
+
+  // 第 1 屏：一句话，左对齐，强调色只给"一倍"
+  const x1 = W * 0.11, y1 = H * 0.25, size1 = U * 28;
+  const line = KN.headline(s1, { text: '快一倍', x: x1, y: y1, size: size1, accent: '一倍', delay: 0.05, gap: 0.07 });
+  const bar1 = KN.bar(s1, { x: x1 + U * 0.6, y: y1 + size1 * 1.12 + U * 2.2, w: U * 12, delay: 0.5 });
+  const sub1 = KN.sub(s1, { text: '全新 S3 芯片，同样的功耗', x: x1 + U * 0.6, y: y1 + size1 * 1.12 + U * 5.4, delay: 0.65 });
+
+  // 第 2 屏：关键数字单独一屏，字号 = 画面高度的 34%
+  const label2 = KN.sub(s2, { text: '图形性能提升', x: W / 2, y: H * 0.13, size: U * 3.8, align: 'center', color: '#C9D0E0', weight: 700 });
+  const num = KN.number(s2, { to: 100, suffix: '%', x: W / 2, y: H * 0.22, align: 'center', accent: 'suffix', delay: 0.1, dur: 1.2 });
+  const foot2 = KN.sub(s2, { text: '对比上一代 · 同等功耗下测得', x: W / 2, y: H * 0.22 + num.size + U * 3, size: U * 2.6, align: 'center', delay: 0.9 });
+
+  // 第 3 屏：产品亮相，左字右图
+  const x3 = W * 0.08, y3 = H * 0.34;
+  const bar3 = KN.bar(s3, { x: x3 + U * 0.4, y: y3 - U * 3, w: U * 8, delay: 0.15 });
+  const line3 = KN.headline(s3, { text: '今天发布', x: x3, y: y3, size: U * 13, mode: 'wipe', delay: 0.25, dur: 0.5 });
+  const sub3 = KN.sub(s3, { text: 'Slate Book Pro · 搭载 S3', x: x3 + U * 0.4, y: y3 + U * 17, size: U * 3, delay: 0.7 });
+  const cw = W * 0.43;
+  const card = KN.card(s3, { x: W * 0.49, y: H * 0.16, w: cw, h: cw * 0.625, label: '产品图' });
+
+  // 每屏开始的时刻对齐节拍：第 0、3、9 拍
+  const cut = KN.cuts([s1, s2, s3], [0, KN.beats(3), KN.beats(9)]);
+
+  function render(t) {
+    cut.set(t);
+    const a = cut.local(t, 0), b = cut.local(t, 1), c = cut.local(t, 2);
+    line.set(a); bar1.set(a); sub1.set(a);
+    label2.set(b); num.set(b); foot2.set(b);
+    bar3.set(c); line3.set(c); sub3.set(c); card.set(c);
+  }
+</script>
+</body>
+</html>
